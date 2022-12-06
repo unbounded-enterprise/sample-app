@@ -1,0 +1,27 @@
+node_modules
+.env
+/.pnp
+.pnp.js
+/.next
+
+# testing
+/coverage
+
+# production
+/dist
+/build
+/public/robots.txt
+/public/sitemap.xml
+src/pages/robots.txt
+src/pages/sitemap.xml
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

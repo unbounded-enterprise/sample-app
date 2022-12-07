@@ -64,6 +64,8 @@ nft-sample-app
 ```
 
 
+## Set Up the Proxy Server
+
 ## License
 
 - Licensed under MIT

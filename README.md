@@ -65,7 +65,7 @@ nft-sample-app
 
 
 ## Set Up the Proxy Server
-- here's how
+- here's how to set up the proxy
 
 ## License
 

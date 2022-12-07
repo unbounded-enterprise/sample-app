@@ -61,10 +61,6 @@ nft-sample-app
 		├── index.js
 		├── index.js
 		├── register.js
-		└── settings.js
-		└── sign-in
-			├── confirm.js
-			└── index.js
 ```
 
 

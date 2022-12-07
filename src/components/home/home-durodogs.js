@@ -46,7 +46,7 @@ export const HomeDurodogs = (props) => {
           sx={{ pt: 3 }}
         >
           <NextLink
-                href="/dogs"
+                href="/dog"
                 passHref
               >
                 <Button

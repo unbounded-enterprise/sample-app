@@ -17,9 +17,9 @@ const Page = () => (
     <main>
         <HomeHero />
         <Divider />
-        <HomeHandcash />
-        <Divider />
         <HomeProxy />
+        <Divider />
+        <HomeHandcash />
         <Divider />
         <HomeDurodogs />
         <Divider />

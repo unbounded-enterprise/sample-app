@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import { Box, Container, Grid, Pagination } from '@mui/material';
-import { dogs } from '../__mocks__/dogs';
-import { DogListToolbar } from '../components/dog/dog-list-toolbar';
-import { DogCard } from '../components/dog/dog-card';
-import { MainLayout } from '../components/main-layout';
+import { dogs } from '../../__mocks__/dogs';
+import { DogListToolbar } from '../../components/dog/dog-list-toolbar';
+import { DogCard } from '../../components/dog/dog-card';
+import { MainLayout } from '../../components/main-layout';
 
 const Page = () => (
   <>

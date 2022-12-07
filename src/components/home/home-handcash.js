@@ -3,6 +3,7 @@ import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Containe
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
+import { createEmotionCache } from '../../utils/create-emotion-cache';
 
 export const HomeHandcash = (props) => {
   const theme = useTheme();
@@ -43,12 +44,20 @@ export const HomeHandcash = (props) => {
                 href="/dogs"
                 passHref
               >
-                <Button
-                color="primary"
-                variant="contained"
-            >
-                Connect to HandCash
-            </Button>
+                <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} src='/static/icons/handcash1024.png' />} sx={{
+                  height: '4em',
+                  backgroundColor: '#38CB7B', marginLeft: 'auto', marginRight: 'auto',
+                  color: 'white',
+                  fontSize: '1em',
+                  px: '1em',
+                  textTransform: 'none',
+                  '&:hover': {
+                      backgroundColor: '#38CB7B',
+                      transform: 'scale(1.01)',
+                  }
+                      }}>
+                        Login with HandCash
+                </Button>
         </NextLink>
       </Container>
     </Box>

@@ -3,9 +3,8 @@ import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Containe
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
-import { createEmotionCache } from '../../utils/create-emotion-cache';
 
-export const HomeHandcash = (props) => {
+export const HomeNetlify = (props) => {
   const theme = useTheme();
 
   return (
@@ -30,34 +29,26 @@ export const HomeHandcash = (props) => {
           variant="h2"
           sx={{ py: 4 }}
         >
-          Now Connect to HandCash
+          Deploy This App on Netlify
         </Typography>
         <Typography
           align="center"
           color="textSecondary"
           variant="subtitle1"
-          sx={{ pt: 3, pb: 4 }}
+          sx={{ pt: 3, pb:5 }}
         >
-          This first thing you want to do is connect to your app to handcash wallet.
+          It's super easy.
         </Typography>
         <NextLink
-                href="/dogs"
+                href="/netlify"
                 passHref
               >
-                <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} src='/static/icons/handcash1024.png' />} sx={{
-                  height: '4em',
-                  backgroundColor: '#38CB7B', marginLeft: 'auto', marginRight: 'auto',
-                  color: 'white',
-                  fontSize: '1em',
-                  px: '1em',
-                  textTransform: 'none',
-                  '&:hover': {
-                      backgroundColor: '#38CB7B',
-                      transform: 'scale(1.01)',
-                  }
-                      }}>
-                        Login with HandCash
-                </Button>
+                <Button
+                color="primary"
+                variant="contained"
+            >
+                Learn How
+            </Button>
         </NextLink>
       </Container>
     </Box>

@@ -1,10 +1,7 @@
-import { Bar } from 'react-chartjs-2';
 import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Container, Typography, Grid } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 
-export const HomeProxy = (props) => {
+export const TutorialHero = (props) => {
   const theme = useTheme();
 
   return (
@@ -26,20 +23,20 @@ export const HomeProxy = (props) => {
       >
         <Typography
           align="center"
-          variant="h2"
-          sx={{ py: 4 }}
+          variant="h1"
+          sx={{ py: 4, mt:5 }}
         >
-          Setup the Proxy Server, Deploy & Connect
+          NFT Sample App Tutorial
         </Typography>
         <Typography
           align="center"
-          color="textSecondary"
-          variant="subtitle1"
-          sx={{ pt: 3 }}
+          variant="h3"
+          sx={{ py: 4 }}
         >
-          Why do I need to do this?  Security.
+          Learn how to build & deploy your own bitcoin NFT app or game in less than an hour. Imagine that - woot!
         </Typography>
       </Container>
+
     </Box>
   );
 };

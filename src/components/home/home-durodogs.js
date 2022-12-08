@@ -29,7 +29,7 @@ export const HomeDurodogs = (props) => {
           variant="h2"
           sx={{ py: 4 }}
         >
-          Access Your Duro Dogs, Then Expand
+          Access Duro Dogs.  Then Expand
         </Typography>
         <Typography
           align="center"

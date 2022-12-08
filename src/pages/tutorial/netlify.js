@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import { MainLayout } from '../components/main-layout';
-import { NetlifyHero } from '../components/netlify/netlify-hero';
+import { MainLayout } from '../../components/main-layout';
+import { NetlifyHero } from '../../components/netlify/netlify-hero';
 import { Divider } from '@mui/material';
 
 const Page = () => (

@@ -80,6 +80,16 @@ export const MainNavbar = (props) => {
                 </Box>
               </Link>
             </NextLink>
+            <NextLink
+              href="/tutorial"
+              passHref
+            >
+              <Link underline="none">
+                <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                  <Typography color="textSecondary" variant="subtitle2">Tutorial</Typography>
+                </Box>
+              </Link>
+            </NextLink>
           </Box>
         </Toolbar>
       </Container>

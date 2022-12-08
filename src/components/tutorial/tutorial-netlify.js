@@ -4,7 +4,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 
-export const HomeHero = (props) => {
+export const TutorialNetlify = (props) => {
   const theme = useTheme();
 
   return (
@@ -26,28 +26,31 @@ export const HomeHero = (props) => {
       >
         <Typography
           align="center"
-          variant="h1"
-          sx={{ py: 4, mt:5 }}
-        >
-          Welcome to NFT Sample App
-        </Typography>
-        <Typography
-          align="center"
-          variant="h3"
+          variant="h2"
           sx={{ py: 4 }}
         >
-          Learn how to build & deploy your own bitcoin NFT app or game in less than an hour. Imagine that - woot!
+          Deploy This App on Netlify
         </Typography>
         <Typography
           align="center"
           color="textSecondary"
           variant="subtitle1"
-          sx={{ pt: 3 }}
+          sx={{ pt: 3, pb:5 }}
         >
-          This sample app is a Next-based React client that demonstrates how one might create a game or other application on the Asset Layer platform.  Sure React might slow down your game, but we love it and it's great for a demo.  Duro Dogs runs on React and works great.  The code for this app is completely open-source and free to use.  Just thank us after you receive your unicorn status.
+          It's super easy.
         </Typography>
+        <NextLink
+                href="/tutorial/netlify"
+                passHref
+              >
+                <Button
+                color="primary"
+                variant="contained"
+            >
+                Learn How
+            </Button>
+        </NextLink>
       </Container>
-
     </Box>
   );
 };

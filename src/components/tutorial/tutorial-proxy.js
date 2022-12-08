@@ -4,7 +4,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 
-export const HomeNetlify = (props) => {
+export const TutorialProxy = (props) => {
   const theme = useTheme();
 
   return (
@@ -29,27 +29,16 @@ export const HomeNetlify = (props) => {
           variant="h2"
           sx={{ py: 4 }}
         >
-          Deploy This App on Netlify
+          Setup the Proxy Server, Deploy & Connect
         </Typography>
         <Typography
           align="center"
           color="textSecondary"
           variant="subtitle1"
-          sx={{ pt: 3, pb:5 }}
+          sx={{ pt: 3 }}
         >
-          It's super easy.
+          Why do I need to do this?  Security.
         </Typography>
-        <NextLink
-                href="/netlify"
-                passHref
-              >
-                <Button
-                color="primary"
-                variant="contained"
-            >
-                Learn How
-            </Button>
-        </NextLink>
       </Container>
     </Box>
   );

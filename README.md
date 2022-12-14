@@ -76,7 +76,7 @@ nft-sample-app
 
 ## Set Up the Proxy Server
 - here's how to set up the proxy if you are not using a NEXT client + API routes
-
+- need to open source our proxy sample
 
 ## License
 

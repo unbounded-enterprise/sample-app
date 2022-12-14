@@ -6,6 +6,17 @@
 
 - Make sure your Node.js and npm versions are up to date for `React 18`
 
+- Create an `.env` file in root and add the following:
+
+```bash
+ASSETLAYER_URL = "https://api.assetlayer.com/api/v1"
+APP_SECRET = "<asset-layer-app-secret>"
+HANDCASH_APP_ID = "<handcash-app-id>"
+HANDCASH_APP_SECRET = "<handcash-app-secret>"
+JWT_SECRET = "xxx"
+DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
+```
+
 - Install dependencies: `npm install` or `yarn`
 
 - Start the server: `npm run dev` or `yarn dev`
@@ -59,15 +70,13 @@ nft-sample-app
 		├── _app.js
 		├── _document.js
 		├── index.js
-		├── index.js
 		├── register.js
 ```
 
 
 ## Set Up the Proxy Server
-- here's how to set up the proxy
+- here's how to set up the proxy if you are not using a NEXT client + API routes
 
-- maybe don't need it
 
 ## License
 

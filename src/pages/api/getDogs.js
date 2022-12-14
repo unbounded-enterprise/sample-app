@@ -25,8 +25,9 @@ export default function getDogsHandler(req, res) {
 
 
 
-const dogCollectionId = '6376f7428233f567ac633361'; // ONLY TEST DOGS, NOT THE REAL DURODOGS CollectionId, DONT USE THIS
-const assetlayerURL = 'https://api.assetlayer.com/api/v1'
+const dogCollectionId = process.env.DOG_COLLECTION_ID;
+// old test id 6376f7428233f567ac633361
+const assetlayerURL = process.env.ASSETLAYER_URL;
 
 
 async function getDogSlice(from, to, idOnly) {

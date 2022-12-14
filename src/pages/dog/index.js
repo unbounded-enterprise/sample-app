@@ -5,8 +5,6 @@ import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
 
-
-
 const PixiNFTWithNoSSR = dynamic(
   () => import('../../components/PixiNFT'),
   { ssr: false }

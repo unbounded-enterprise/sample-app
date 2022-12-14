@@ -16,7 +16,6 @@ HANDCASH_APP_SECRET = "<handcash-app-secret>"
 JWT_SECRET = "xxx"
 DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
 ```
-netlify is not picking up the DOG_COLLECTION_ID
 
 - Install dependencies: `npm install` or `yarn`
 

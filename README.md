@@ -1,5 +1,5 @@
 
-## Quick start
+## Quick Start
 
 - [Download from Github] (https://github.com/unbounded-enterprise/sample-app)
   or [Download from Asset Layer](https://assetlayer.com/sample-app)
@@ -11,10 +11,10 @@
 ```bash
 ASSETLAYER_URL = "https://api.assetlayer.com/api/v1"
 APP_SECRET = "<asset-layer-app-secret>"
+DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
 HANDCASH_APP_ID = "<handcash-app-id>"
 HANDCASH_APP_SECRET = "<handcash-app-secret>"
-JWT_SECRET = "xxx"
-DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
+JWT_SECRET = "<very-secret-change-in-prod>"
 ```
 
 - Install dependencies: `npm install` or `yarn`

@@ -1,4 +1,4 @@
-import { HandCashConnect } from "@handcash/handcash-connect";
+import { Environments, HandCashConnect } from "@handcash/handcash-connect";
 
 const appId = process.env.HANDCASH_APP_ID;
 const appSecret = process.env.HANDCASH_APP_SECRET;

@@ -4,6 +4,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 import { createEmotionCache } from '../../utils/create-emotion-cache';
+// import HandCashService from "../../utils/HandCashService";
 
 export const HomeHandcash = (props) => {
   const theme = useTheme();

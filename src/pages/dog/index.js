@@ -22,7 +22,7 @@ const PixiPage = ()=>{
     const [currentDogIndex, setCurrentDogIndex] = useState(0);
     
     async function fetchDogs() {
-        const dogRes = await axios.post('/api/getDogs', { from: 0, to: 100 });
+        const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
         setDogs(dogRes.data);
     }
     

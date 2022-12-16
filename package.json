@@ -27,6 +27,7 @@
     "formik": "2.2.9",
     "next": "12.3.0",
     "axios": "^1.2.1",
+    "jsonwebtoken": "^8.5.1",
     "pixi-spine": "^3.1.0",
     "pixi.js": "^6.5.8",
     "nprogress": "0.2.0",

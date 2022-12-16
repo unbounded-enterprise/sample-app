@@ -21,7 +21,7 @@ export default function getDogsHandler(req, res) {
     } catch(e) {
         res.status(500);
     }
-    }
+  }
 
 
 
@@ -51,4 +51,4 @@ async function getDogSlice(from, to, idOnly) {
       // return false;
     }
     return [];
-  }
+}

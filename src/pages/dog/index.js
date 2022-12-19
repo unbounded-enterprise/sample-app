@@ -4,6 +4,8 @@ import { Button, Box, Stack, Typography } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
+const collectionId = process.env.COLLECTION_ID;
+const token = process.env.TOKEN;
 
 const PixiNFTWithNoSSR = dynamic(
   () => import('../../components/PixiNFT'),
@@ -23,6 +25,7 @@ const PixiPage = ()=>{
     
     async function fetchDogs() {
         const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
+        // const dogRes = await axios.post('/api/collection/getCollectionNFTs', { from: 0, to: 50, collectionId, token });
         setDogs(dogRes.data);
     }
     

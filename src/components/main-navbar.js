@@ -10,6 +10,7 @@ import { Bell as BellIcon } from '../icons/bell';
 import { UserCircle as UserCircleIcon } from '../icons/user-circle';
 import { Users as UsersIcon } from '../icons/users';
 import { AccountPopover } from './account-popover';
+import { useAuth } from 'src/hooks/use-auth';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -19,6 +20,7 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 export const MainNavbar = (props) => {
   const settingsRef = useRef(null);
   const [openAccountPopover, setOpenAccountPopover] = useState(false);
+  const { user } = useAuth();
 
   return (
     <AppBar
@@ -90,6 +92,9 @@ export const MainNavbar = (props) => {
                 </Box>
               </Link>
             </NextLink>
+            <Box sx={{ ml: '0.5em' }}>
+              <img height="50em" src={user.avatarUrl} alt=""/>
+            </Box>
           </Box>
         </Toolbar>
       </Container>

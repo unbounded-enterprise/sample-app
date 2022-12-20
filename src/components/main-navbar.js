@@ -92,9 +92,9 @@ export const MainNavbar = (props) => {
                 </Box>
               </Link>
             </NextLink>
-            <Box sx={{ ml: '0.5em' }}>
+            { user && <Box sx={{ ml: '0.5em' }}>
               <img height="50em" src={user.avatarUrl} alt=""/>
-            </Box>
+            </Box> }
           </Box>
         </Toolbar>
       </Container>

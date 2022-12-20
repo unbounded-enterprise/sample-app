@@ -36,7 +36,7 @@ function getCollectionNFTsHandler(req, res) {
   }
 }
 
-async function getCollectionNFTs(token, collectionId, idOnly = false, from = 0, to = 9999999) {
+async function getCollectionNFTs(token, collectionId, idOnly = false, from, to) {
   const user = await validateToken(token);
   if (!user || !user.id) {
     return [];

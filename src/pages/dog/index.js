@@ -4,7 +4,7 @@ import { Button, Box, Stack, Typography } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
-const collectionId = process.env.COLLECTION_ID;
+const collectionId = process.env.COLLECTION_ID;  //collectionId for duro dogs
 const token = process.env.TOKEN;
 
 const PixiNFTWithNoSSR = dynamic(
@@ -25,7 +25,7 @@ const PixiPage = ()=>{
     
     async function fetchDogs() {
         const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
-        // const dogRes = await axios.post('/api/collection/getCollectionNFTs', { from: 0, to: 50, collectionId, token });
+        // const dogRes = await axios.post('/api/collection/nfts', { from: 0, to: 50, collectionId, token, handle: 'durodogs' });
         setDogs(dogRes.data);
     }
     

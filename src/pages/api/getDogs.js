@@ -38,7 +38,7 @@ async function getDogSlice(from, to, idOnly) {
           data: {
             collectionId: dogCollectionId, serials: `${from}-${to}`, idOnly, handle: 'durodogs',
           },
-          headers: { appsecret: process.env.APP_SECRET},
+          headers: { appsecret: process.env.ASSETLAYER_APP_SECRET},
         },
       );
       // console.log(response.data);

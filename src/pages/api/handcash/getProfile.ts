@@ -9,13 +9,6 @@ const handCashConnect = new HandCashConnect({
   appSecret: String(process.env.ASSETLAYER_HANDCASH_SECRET),
 });
 
-const whitelist = new Set(['randomedge','dubby', 'jacklaskey', 'dave92', 'dstraffon', 'gmadden', 'infiniteloop', 'durodogs', 
-  'assetlayermarket', 'durodogs-storage', 'lmazur'.toLowerCase(), 'ruth', 'karsov', 'foundrium', 
-  'alphabsv.com', 'vicwtang',  'eyeone', 'cutedevs', 'brandonbryant', 'rjseibane', 'manifestable',
-  'jdh7190', 'zack', 'pewparty', 'vincejpark', 'stickdoodz', 'skilli', 'gworld', 'worldbuilder', 
-  'fama', 'bigriz', 'chefmyklove', 'mozza', 'lexssit', 'overlord', 'hasansuhaimi', 'byteheroes', 'iamtman']);
-
-
 export default function getHandcashProfile(req:any, res:any) {
   return new Promise((resolve, reject)=>{
 		const errorHandling = (e:any)=>{
@@ -64,15 +57,12 @@ export async function getProfile(account: any, publicOnly: boolean = true):Promi
 export function getUser(profile: any):User { 
   try {
     const handle = profile.publicProfile.handle.toLowerCase();
-    
-    if (!whitelist.has(handle)) throw new CustomError('not whitelisted', '401');
 
     const user:User = {
-      id: handle,
+      handle: handle,
       name: profile.publicProfile.name,
-      email: profile.privateProfile.email || '',
       avatarUrl: profile.publicProfile.avatarUrl,
-      exp: new Date().getTime() + 3 * 3600 * 1000, // 3 hour valid 
+      exp: new Date().getTime() + (24 * 3600 * 1000), // 24 hour valid 
       iat: new Date().getTime(),
     };
 

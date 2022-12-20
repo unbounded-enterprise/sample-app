@@ -81,7 +81,10 @@ async function getAccessToken(handcashToken) {
 }
 
 async function setLocalStorage({ authToken, accessToken }) {
+  // handcash / payment token isn't cached by default
   // localStorage.setItem('authToken', authToken);
+
+  // limited profile information is included by default
   localStorage.setItem('accessToken', accessToken);
 }
 
@@ -104,13 +107,15 @@ export const AuthProvider = (props) => {
     initialized.current = true;
 
     try {
-      const handcashToken = await checkForHandcashToken(router);
+      // Check URL & LS for auth token
+      const authToken = await checkForHandcashToken(router);
       // Wrap handcash user in token
-      const accessToken = (handcashToken) ? await getAccessToken(handcashToken) : null;
+      const accessToken = (authToken) ? await getAccessToken(authToken) : null;
       // Get user from Handcash JWT token
       const user = (accessToken) ? await authApi.me(accessToken) : null;
 
       console.log('user', user);
+      setLocalStorage({ authToken, accessToken });
         
       dispatch({
         type: HANDLERS.INITIALIZE,

@@ -60,7 +60,7 @@ export function getUser(profile: any):User {
 
     const user:User = {
       handle: handle,
-      name: profile.publicProfile.name,
+      displayName: profile.publicProfile.displayName,
       avatarUrl: profile.publicProfile.avatarUrl,
       exp: new Date().getTime() + (24 * 3600 * 1000), // 24 hour valid 
       iat: new Date().getTime(),

@@ -1,7 +1,7 @@
 
 export interface User {
-  name: string;
   handle: string;
+  displayName: string;
   avatarUrl: string;
 
   [key: string]: any;

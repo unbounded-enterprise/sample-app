@@ -87,7 +87,7 @@ class AuthApi {
         
         resolve({
           handle: user.handle,
-          name: user.name || user.handle,
+          displayName: user.displayName || user.handle,
           avatarUrl: user.avatarUrl,
         });
       } catch (err) {

@@ -1,12 +1,10 @@
 import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, Tooltip } from '@mui/material';
+import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, Avatar, ButtonBase } from '@mui/material';
 import NextLink from 'next/link';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Logo } from './logo';
-import SearchIcon from '@mui/icons-material/Search';
-import { Bell as BellIcon } from '../icons/bell';
 import { UserCircle as UserCircleIcon } from '../icons/user-circle';
 import { Users as UsersIcon } from '../icons/users';
 import { AccountPopover } from './account-popover';
@@ -18,9 +16,18 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 }));
 
 export const MainNavbar = (props) => {
-  const settingsRef = useRef(null);
+  const anchorRef = useRef(null);
   const [openAccountPopover, setOpenAccountPopover] = useState(false);
   const { user } = useAuth();
+  const [openPopover, setOpenPopover] = useState(false);
+
+  function handleOpenPopover() {
+    setOpenPopover(true);
+  }
+  
+  function handleClosePopover() {
+    setOpenPopover(false);
+  }
 
   return (
     <AppBar
@@ -47,7 +54,7 @@ export const MainNavbar = (props) => {
             sx={{
               width: 10
             }}
-          >
+            >
                 <Logo  />
             </Box>
             </a>
@@ -92,9 +99,36 @@ export const MainNavbar = (props) => {
                 </Box>
               </Link>
             </NextLink>
-            { user && <Box sx={{ ml: '0.5em' }}>
-              <img height="50em" src={user.avatarUrl} alt=""/>
-            </Box> }
+            <Box
+              component={ButtonBase}
+              onClick={handleOpenPopover}
+              ref={anchorRef}
+              sx={{
+                alignItems: 'center',
+                display: 'flex',
+                ml: 2
+              }}
+            >
+              { user && 
+                <div>
+                  <Avatar
+                    sx={{
+                      height: 50,
+                      width: 50,
+                    }}
+                    src={user.avatarUrl}
+                  >
+                    <UserCircleIcon fontSize="small" />
+                  </Avatar>
+                  <AccountPopover
+                    anchorEl={anchorRef.current}
+                    onClose={handleClosePopover}
+                    open={openPopover}
+                  />
+                </div>
+              }
+              
+            </Box>
           </Box>
         </Toolbar>
       </Container>

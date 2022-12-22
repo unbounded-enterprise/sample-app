@@ -1,52 +1,31 @@
 import { useContext } from 'react';
-import Router from 'next/router';
+import useRouter from 'next/router';
 import PropTypes from 'prop-types';
-import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material';
+import { Box, MenuItem, MenuList, Popover, Typography, Avatar, Divider, ListItemIcon, ListItemText } from '@mui/material';
 import { AuthContext } from '../contexts/auth-context';
-import { auth, ENABLE_AUTH } from '../lib/auth';
+import { useAuth } from '../hooks/use-auth';
+import toast from 'react-hot-toast';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import { Cog as CogIcon } from '../icons/cog';
+import { UserCircle as UserCircleIcon } from '../icons/user-circle';
+import { SwitchHorizontalOutlined as SwitchHorizontalOutlinedIcon } from '../icons/switch-horizontal-outlined';
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props;
+  const { signOut, user } = useAuth();
+  // const router = useRouter();
   const authContext = useContext(AuthContext);
 
-  const handleSignOut = async () => {
-    onClose?.();
 
-    // Check if authentication with Zalter is enabled
-    // If not enabled, then redirect is not required
-    if (!ENABLE_AUTH) {
-      return;
-    }
-
-    // Check if auth has been skipped
-    // From sign-in page we may have set "skip-auth" to "true"
-    // If this has been skipped, then redirect to "sign-in" directly
-    const authSkipped = globalThis.sessionStorage.getItem('skip-auth') === 'true';
-
-    if (authSkipped) {
-      // Cleanup the skip auth state
-      globalThis.sessionStorage.removeItem('skip-auth');
-
-      // Redirect to sign-in page
-      Router
-        .push('/sign-in')
-        .catch(console.error);
-      return;
-    }
-
+  const handleLogout = async () => {
     try {
-      // This can be call inside AuthProvider component, but we do it here for simplicity
-      await auth.signOut();
-
-      // Update Auth Context state
-      authContext.signOut();
-
-      // Redirect to sign-in page
-      Router
-        .push('/sign-in')
-        .catch(console.error);
+      onClose?.();
+      await signOut();
+      router.push('/').catch(console.error);
     } catch (err) {
       console.error(err);
+      toast.error('Unable to logout.');
     }
   };
 
@@ -54,49 +33,64 @@ export const AccountPopover = (props) => {
     <Popover
       anchorEl={anchorEl}
       anchorOrigin={{
-        horizontal: 'left',
+        horizontal: 'center',
         vertical: 'bottom'
       }}
+      keepMounted
       onClose={onClose}
-      open={open}
-      PaperProps={{
-        sx: { width: '300px' }
-      }}
+      open={!!open}
+      PaperProps={{ sx: { width: 300 } }}
+      transitionDuration={0}
+      variant='outlined'
       {...other}
     >
       <Box
         sx={{
-          py: 1.5,
-          px: 2
+          alignItems: 'center',
+          p: 2,
+          display: 'flex'
         }}
       >
-        <Typography variant="overline">
-          Account
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
+        <Avatar
+          src={user.avatarUrl}
+          sx={{
+            height: 40,
+            width: 40
+          }}
         >
-          John Doe
-        </Typography>
+          <UserCircleIcon fontSize="small" />
+        </Avatar>
+        <Box
+          sx={{
+            ml: 1
+          }}
+        >
+          <Typography variant="body1">
+            {user.handle}
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="body2"
+          >
+            
+          </Typography>
+        </Box>
       </Box>
-      <MenuList
-        disablePadding
-        sx={{
-          '& > *': {
-            '&:first-of-type': {
-              borderTopColor: 'divider',
-              borderTopStyle: 'solid',
-              borderTopWidth: '1px'
-            },
-            padding: '12px 16px'
-          }
-        }}
-      >
-        <MenuItem onClick={handleSignOut}>
-          Sign out
+      <Divider />
+      <Box sx={{ my: 1 }}>
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText
+            primary={(
+              <Typography variant="body1">
+                Logout
+              </Typography>
+            )}
+          />
         </MenuItem>
-      </MenuList>
+      </Box>
     </Popover>
   );
 };

@@ -42,7 +42,7 @@ export const HomeHandcash = (props) => {
           This first thing you want to do is connect to your app to handcash wallet.
         </Typography>
         <NextLink
-                href="/dogs"
+                href="https://app.handcash.io/#/authorizeApp?appId=639a3d1ca79d741a5aec8fc6"
                 passHref
               >
                 <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} src='/static/icons/handcash1024.png' />} sx={{

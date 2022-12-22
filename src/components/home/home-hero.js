@@ -1,5 +1,5 @@
 import { Bar } from 'react-chartjs-2';
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Container, Typography, Grid } from '@mui/material';
+import { Box, Link, useTheme, Container, Typography, Grid } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
@@ -44,8 +44,18 @@ export const HomeHero = (props) => {
           variant="subtitle1"
           sx={{ pt: 3 }}
         >
-          This sample app is a Next-based React client that demonstrates how one might create a game or other application on the Asset Layer platform.  Sure React might slow down your game, but we love it and it's great for a demo.  Duro Dogs runs on React and works great.  The code for this app is completely open-source and free to use.  Just thank us after you receive your unicorn status.
+          This sample app is a Next-based React client that demonstrates how one might create a game or other application on the Asset Layer platform.  The code provided in this free app is very similar to that used for Duro Dogs.  The code for this app is completely open-source - so have fun creating!  Just thank us after you receive your unicorn status.
         </Typography>
+        <NextLink
+              href="https://github.com/unbounded-enterprise/sample-app"
+              passHref
+            >
+              <Link underline="none">
+                <Box align="center" sx={{ borderRadius: 1, py: '0.5em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <img style={{width:'50%'}} src='/static/github.png' alt='' />
+                </Box>
+              </Link>
+            </NextLink>
       </Container>
 
     </Box>

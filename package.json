@@ -41,11 +41,14 @@
     "react-hot-toast": "^2.2.0",
     "react-perfect-scrollbar": "1.5.8",
     "simple-data-storage": "^1.0.0",
+    "three": "^0.148.0",
+    "three-mtl-loader": "^1.0.2",
     "uuid": "9.0.0",
     "yup": "0.32.11"
   },
   "devDependencies": {
     "@types/node": "18.11.17",
+    "@types/three": "^0.146.0",
     "eslint": "8.23.1",
     "eslint-config-next": "12.3.0"
   }

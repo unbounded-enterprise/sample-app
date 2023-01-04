@@ -3,6 +3,31 @@ import jwt_decode from "jwt-decode";
 import { parseError } from 'src/pages/api/validate';
 
 class AuthApi {
+  getRedirectionURL(){
+    return new Promise((resolve, reject) => {
+      const errorHandling = (err)=>{ 
+        console.log(err);
+        const e = parseError(err);
+        console.log('[Auth Api]: ', e.message);
+        reject(e);
+      };
+      try { 
+        axios.get('/api/getRedirectionURL').then((res)=>{
+          if (!res.data) {
+            reject(new Error('Failed to get redirect'));
+            return;
+          } 
+  
+          resolve(res.data);
+        }).catch(errorHandling)
+
+      } catch (err) {
+        errorHandling(err);
+      } 
+
+    });
+  }
+
   getEnvironmentRedirect(environment){
     return new Promise((resolve, reject) => {
       const errorHandling = (err)=>{ 
@@ -16,12 +41,10 @@ class AuthApi {
           if (!res.data) {
             reject(new Error('Failed to fetch path'));
             return;
-        } 
+          } 
   
           resolve(res.data);
         }).catch(errorHandling)
-
-        
        
       } catch (err) {
         errorHandling(err);

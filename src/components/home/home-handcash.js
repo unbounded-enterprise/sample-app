@@ -4,10 +4,17 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 import { createEmotionCache } from '../../utils/create-emotion-cache';
+import { useEffect } from 'react';
+import { authApi } from '../../_api_/auth-api';
 // import HandCashService from "../../utils/HandCashService";
 
 export const HomeHandcash = (props) => {
   const theme = useTheme();
+  const [redirectionUrl, setRedirectionUrl] = useState()
+
+  useEffect(() => {
+    authApi.getRedirectionURL().then((url) => { if (url) setRedirectionUrl(url); });
+  }, []);
 
   return (
     <Box
@@ -41,10 +48,7 @@ export const HomeHandcash = (props) => {
         >
           This first thing you want to do is connect to your app to handcash wallet.
         </Typography>
-        <NextLink
-                href="https://app.handcash.io/#/authorizeApp?appId=639a3d1ca79d741a5aec8fc6"
-                passHref
-              >
+        <NextLink href={redirectionUrl} passHref>
                 <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} src='/static/icons/handcash1024.png' />} sx={{
                   height: '4em',
                   backgroundColor: '#38CB7B', marginLeft: 'auto', marginRight: 'auto',

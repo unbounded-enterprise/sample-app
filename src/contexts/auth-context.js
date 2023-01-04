@@ -62,9 +62,19 @@ async function checkForHandcashToken(router) {
   const { search } = window.location;
   const { pathname, query } = router;
   const params = new URLSearchParams(search);
+  const state = params.get('state');
   const authToken = params.get('authToken') 
     || window.localStorage.getItem('authToken') 
     || null;
+    
+  if (state) {
+    const redirect = await authApi.getEnvironmentRedirect(state);
+    
+    if (redirect) {
+      window.location.href = `${redirect}/?authToken=${authToken}`;
+      return;
+    }
+  }
 
   if (authToken) router.replace({ pathname, query }, undefined, { shallow: true });
 

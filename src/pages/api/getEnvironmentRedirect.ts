@@ -1,7 +1,7 @@
 const redirects:any = {
     'local': 'http://localhost:3000',
     'preview': 'https://deploy-preview-2--nft-sample-app.netlify.app/',
-    'branch': 'https://dev.nftsample.app'
+    'branch': 'https://dev--nft-sample-app.netlify.app/'
 }
 
 export default function getEnvironmentRedirect(req:any, res:any) {

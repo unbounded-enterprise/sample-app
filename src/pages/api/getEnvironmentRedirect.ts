@@ -20,7 +20,8 @@ export default function getEnvironmentRedirect(req:any, res:any) {
 
 async function getURL(environment:string) {
     const redirect = redirects[environment];
-    console.log('redirect', redirect)
+    
     if (!redirect) throw new Error('No URL Match');
+    
     return redirect;
 }

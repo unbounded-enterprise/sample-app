@@ -22,5 +22,6 @@ export default function getRedirectionURLHandler(req:any, res:any) {
   async function getURL() {
         const state = (process.env.ENVIRONMENT !== 'production') ? { state: process.env.ENVIRONMENT } : {};
         const handcashResponse = await handCashConnect.getRedirectionUrl(state);
+        
         return handcashResponse;
   }

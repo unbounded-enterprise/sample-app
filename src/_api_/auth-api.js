@@ -17,7 +17,7 @@ class AuthApi {
             reject(new Error('Failed to get redirect'));
             return;
           } 
-  
+          
           resolve(res.data);
         }).catch(errorHandling)
 

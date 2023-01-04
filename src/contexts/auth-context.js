@@ -71,7 +71,7 @@ async function checkForHandcashToken(router) {
     const redirect = await authApi.getEnvironmentRedirect(state);
     
     if (redirect) {
-      window.location.href = `${redirect}/?authToken=${handcashAuth}`;
+      window.location.href = `${redirect}/?authToken=${authToken}`;
       return;
     }
   }

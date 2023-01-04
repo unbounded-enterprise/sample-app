@@ -1,7 +1,7 @@
 const { HandCashConnect } = require('@handcash/handcash-connect');
-  const handCashConnect = new HandCashConnect({
-  appId: String(process.env.ASSETLAYER_HANDCASH_APPID),
-  appSecret: String(process.env.ASSETLAYER_HANDCASH_SECRET),
+const handCashConnect = new HandCashConnect({
+  appId: String(process.env.HANDCASH_APP_ID),
+  appSecret: String(process.env.HANDCASH_APP_SECRET),
 });
 
 
@@ -12,7 +12,7 @@ export default function getRedirectionURLHandler(req:any, res:any) {
                 resolve(res.status(200).json(url));
             })
         } catch(e:any) {
-            resolve(res.status(200).json(`https://app.handcash.io/#/authorizeApp?appId=${String(process.env.ASSETLAYER_HANDCASH_APPID)}`)); 
+            resolve(res.status(200).json(`https://app.handcash.io/#/authorizeApp?appId=${String(process.env.HANDCASH_APP_ID)}`)); 
         }
     })
     

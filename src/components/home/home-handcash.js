@@ -1,16 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme, Container, Typography, Grid } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 import { createEmotionCache } from '../../utils/create-emotion-cache';
-import { useEffect } from 'react';
 import { authApi } from '../../_api_/auth-api';
 // import HandCashService from "../../utils/HandCashService";
 
 export const HomeHandcash = (props) => {
   const theme = useTheme();
-  const [redirectionUrl, setRedirectionUrl] = useState()
+  const [redirectionUrl, setRedirectionUrl] = useState("/")
 
   useEffect(() => {
     authApi.getRedirectionURL().then((url) => { if (url) setRedirectionUrl(url); });

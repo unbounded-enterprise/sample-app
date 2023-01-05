@@ -3,7 +3,7 @@ import { CustomError } from "../../../types/error";
 import App from "../../../types/app";
 import { parseError, validateToken } from "../validate";
 
-const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
+const headers = { appsecret: String(process.env.APP_SECRET) };
 
 export default function getSlotsHandler(req:any, res:any) {
 	return new Promise((resolve, reject)=>{

@@ -10,7 +10,7 @@
 
 ```bash
 ASSETLAYER_URL = "https://api.assetlayer.com/api/v1"
-ASSETLAYER_APP_SECRET = "<asset-layer-app-secret>"
+APP_SECRET = "<asset-layer-app-secret>"
 DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
 HANDCASH_APP_ID = "<handcash-app-id>"
 HANDCASH_APP_SECRET = "<handcash-app-secret>"

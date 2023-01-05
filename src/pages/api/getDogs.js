@@ -1,17 +1,20 @@
 import axios from "axios";
-
+import { CustomError } from "src/types/error";
+import { getCollectionNFTs } from "./collection/nfts";
 
 export default function getDogsHandler(req, res) {
     try {
       return new Promise((resolve, reject)=>{
           const errorHandling = (err)=>{
               console.log(err.message);
-              resolve(res.status(500).json({error: e.message}));
+              resolve(res.status(500).json({error: err.message}));
           }
         try {
-            const  { from, to } = req.body;
+            const  { from, to, serials } = req.body;
+
+            if (!serials && (Number.isNaN(from) || Number.isNaN(to))) throw new CustomError('Invalid Serial Range', '409');
     
-            getDogSlice(from, to, false).then((nfts)=>{
+            getDogSlice(serials || `${from}-${to}`).then((nfts)=>{
                 resolve(res.status(200).json(nfts));
             }).catch(errorHandling)
         } catch(e) {
@@ -30,25 +33,10 @@ const dogCollectionId = process.env.DOG_COLLECTION_ID;
 const assetlayerURL = process.env.ASSETLAYER_URL;
 
 
-async function getDogSlice(from, to, idOnly) {
-    try {
-      const response = await axios.get(
-        `${assetlayerURL}/collection/nfts`,
-        {
-          data: {
-            collectionId: dogCollectionId, serials: `${from}-${to}`, idOnly, handle: 'durodogs',
-          },
-          headers: { appsecret: process.env.ASSETLAYER_APP_SECRET},
-        },
-      );
-      // console.log(response.data);
-      if (response.data.success) {
-        return response.data.body?.collection?.nfts;
-      }
-      return [];
-    } catch (e) {
-      console.log('error dog Balance: ', e);
-      // return false;
-    }
-    return [];
+async function getDogSlice(serials, idOnly = false) {
+    const nfts = await getCollectionNFTs({ collectionId: dogCollectionId, serials, idOnly });
+
+    console.log(nfts)
+    
+    return nfts;
 }

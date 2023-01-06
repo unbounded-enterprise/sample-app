@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { parseError, validateToken } = require("../validate");
 
-const headers = { appsecret: String(process.env.APP_SECRET) };
+const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 module.exports = function getCollectionsHandler(req, res) {
   try {

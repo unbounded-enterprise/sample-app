@@ -1,7 +1,7 @@
 import axios from "axios";
 import { parseError, validateToken } from "../validate";
 
-const headers = { appsecret: String(process.env.APP_SECRET) };
+const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getNFTsHandler(req:any, res:any) {
   try {

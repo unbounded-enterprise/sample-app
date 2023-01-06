@@ -35,8 +35,6 @@ const assetlayerURL = process.env.ASSETLAYER_URL;
 
 async function getDogSlice(serials, idOnly = false) {
     const nfts = await getCollectionNFTs({ collectionId: dogCollectionId, serials, idOnly });
-
-    console.log(nfts)
     
     return nfts;
 }

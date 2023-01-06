@@ -79,7 +79,7 @@ export function getTokenFromProfile2(profile:any, req:any) {
   const { handcashtoken, cookie, pin, ['x-forwarded-for']:ip } = req.headers;
   const user = getUser(profile);
   
-  user.pld = encryptAuthToken(handcashtoken, { handle: user.handle, cookie, pin, ip });
+  // user.pld = encryptAuthToken(handcashtoken, { handle: user.handle, cookie, pin, ip });
 
   const token = getToken(user);
 
@@ -89,10 +89,10 @@ export function getTokenFromProfile2(profile:any, req:any) {
 export async function getTokenFromRequest(req:any) {
   const { handcashtoken, cookie, pin, ['x-forwarded-for']:ip } = req.headers;
   const account = await getAccount(handcashtoken);
-  const profile = await getProfile(account);
+  const profile = await getProfile(account, false);
   const user = getUser(profile);
 
-  user.pld = encryptAuthToken(handcashtoken, { handle: user.handle, cookie, pin, ip });
+  // user.pld = encryptAuthToken(handcashtoken, { handle: user.handle, cookie, pin, ip });
 
   const token = getToken(user);
 

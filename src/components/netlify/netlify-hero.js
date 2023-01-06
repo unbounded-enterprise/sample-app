@@ -34,7 +34,7 @@ export const NetlifyHero = (props) => {
         >
           Here's how...
 
-          Be sure to show how to set the environment variables in netlify.  You need to add your APP_SECRET to the file.
+          Be sure to show how to set the environment variables in netlify.  You need to add your ASSETLAYER_APP_SECRET to the file.
         </Typography>
       </Container>
 

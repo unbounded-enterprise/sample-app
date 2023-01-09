@@ -1,8 +1,8 @@
-import { CustomError } from "../../types/error";
-import { User } from "../../types/user";
+import { CustomError } from "src/types/error";
+import { User } from "src/types/user";
 import jwt from 'jsonwebtoken';
 import { decryptAuthToken } from "./handcash/getToken";
-import { parseError, validateTokenT } from "./validate";
+import { parseBasicError, parseError, validateTokenT } from "./validate";
 
 const { HandCashConnect } = require('@handcash/handcash-connect');
 
@@ -34,10 +34,10 @@ async function pay(authToken:string, paymentProps:PaymentProps) {
 
 export default function payHandler(req:any, res:any) {
     return new Promise((resolve, reject)=>{
-		const errorHandling = (e:any)=>{
-			const err = parseError(e);
-			console.log(err?.message);
-			return resolve(res.status(parseInt(err?.custom || '500')).json({ error: err?.message }));
+		const errorHandling = (error:any)=>{
+			const e = parseBasicError(error);
+			console.log(e.message);
+			return resolve(res.status(e.status).json({ error: e.message }));
 		}
 
         try {

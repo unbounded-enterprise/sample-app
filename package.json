@@ -9,7 +9,8 @@
     "start": "next start",
     "export": "next export",
     "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "lint-fix": "next lint --fix",
+    "create-env": "node ./src/utils/env-setup.js"
   },
   "dependencies": {
     "@emotion/cache": "11.10.3",

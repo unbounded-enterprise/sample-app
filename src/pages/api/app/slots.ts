@@ -1,34 +1,31 @@
 import axios from "axios";
-import { CustomError } from "../../../types/error";
-import App from "../../../types/app";
-import { parseError, validateToken } from "../validate";
+import { AppFull } from "src/types/app";
+import { errorHandling } from "../validate";
+import { getSessionUser } from "../auth/[...nextauth]";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getSlotsHandler(req:any, res:any) {
-	return new Promise((resolve, reject)=>{
-		const errorHandling = (e:any)=>{
-			const err = parseError(e);
-			console.log(err?.message);
-			return resolve(res.status(parseInt(err?.custom || '500')).json({ error: err?.message }));
-		}
+	return new Promise((resolve, reject) => {
+		const handleError = (e:any) => errorHandling(e, resolve, res);
 
 		try {
 			const { appId, idOnly } = req.body;
 
 			if (!appId) return resolve(res.status(409).json('missing appId'));
 			
-			getSlots(appId, idOnly).then((app)=>{
-				resolve(res.status(200).json(app));
-			}).catch(errorHandling)
+			getSessionUser(req, res)
+				.then((user) => getSlots(appId, idOnly))
+				.then((app) => resolve(res.status(200).json(app)))
+				.catch(handleError)
 		} catch(e:any) {
-			errorHandling(e);
+			handleError(e);
 		}
 	})
 }
 
 
-export async function getSlots(appId: string, idOnly: boolean = false): Promise<App | null> {
+export async function getSlots(appId: string, idOnly: boolean = false): Promise<AppFull> {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/app/slots', { 
 		data: { appId, idOnly }, 
 		headers },

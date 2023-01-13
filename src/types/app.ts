@@ -1,3 +1,5 @@
+import Slot from "./slot";
+
 export interface AppCreationProps {
   teamId: string;
   appName: string;
@@ -24,6 +26,23 @@ export interface App {
   updatedAt: number;
   slots: string[];
 
+
+  [key: string]: any;
+}
+
+export interface AppFull {
+  appId: string;
+  handcashAppId: string;
+  appName: string;
+  appImage: string;
+  teamId: string;
+  status: string;
+  description: string;
+  url: string;
+  autoGrantRead: boolean;
+  createdAt: number;
+  updatedAt: number;
+  slots: Slot[];
 
   [key: string]: any;
 }

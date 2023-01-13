@@ -8,6 +8,13 @@ export interface SlotUpdateProps {
     slotName: string;
 }
 
+export interface GetCollectionsProps {
+    handle: string;
+    slotId: string;
+    idOnly?: boolean;
+    includeDeactivated?: boolean;
+}
+
 export interface Slot {
     slotId: string;
     slotName: string;

@@ -1,34 +1,32 @@
 import axios from "axios";
-import { CustomError } from "../../../types/error";
-import Collection from "../../../types/collection";
-import { parseError, validateToken } from "../validate";
+import { BasicError } from "src/types/error";
+import Collection from "src/types/collection";
+import { errorHandling } from "../validate";
+import { getSessionUser } from "../auth/[...nextauth]";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getCollectionHandler(req:any, res:any) {
-	return new Promise((resolve, reject)=>{
-		const errorHandling = (e:any)=>{
-			const err = parseError(e);
-			console.log(err?.message);
-			return resolve(res.status(parseInt(err?.custom || '500')).json({ error: err?.message }));
-		}
+	return new Promise((resolve, reject) => {
+		const handleError = (e:any) => errorHandling(e, resolve, res);
 
 		try {
 			const { collectionId } = req.body;
 
 			if (!collectionId) return resolve(res.status(409).json('missing collectionId'));
 			
-			getCollection(collectionId).then((collection)=>{
-				resolve(res.status(200).json(collection));
-			}).catch(errorHandling)
+			getSessionUser(req, res)
+				.then((user) => getCollection(collectionId))
+				.then((collection) => resolve(res.status(200).json(collection)))
+				.catch(handleError)
 		} catch(e:any) {
-			errorHandling(e);
+			handleError(e);
 		}
 	})
 }
 
 
-export async function getCollection(collectionId: string): Promise<Collection | null> {
+export async function getCollection(collectionId: string): Promise<Collection> {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/collection/info', { 
 		data: { collectionId }, 
 		headers },
@@ -36,21 +34,4 @@ export async function getCollection(collectionId: string): Promise<Collection | 
 	const collection = response.data.body.collection;
 
 	return collection;
-}
-
-export async function tryGetCollection(collectionId: string): Promise<Collection | null> {
-  try {
-    if (!collectionId) throw new CustomError('missing collectionId', '409');
-	
-    const response = await axios.get('https://api.assetlayer.com/api/v1/collection/info', { 
-      data: { collectionId }, 
-      headers },
-    );
-
-    if (response.data.success) return response.data.body.collection;
-    else return null;
-  } 
-  catch(e:any) {
-    return null;
-  }
 }

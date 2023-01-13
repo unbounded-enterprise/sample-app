@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import Head from 'next/head';
+import { SessionProvider } from "next-auth/react"
 import { CacheProvider } from '@emotion/react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -17,6 +18,7 @@ const App = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
+    <SessionProvider session={pageProps.session}>
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
@@ -42,6 +44,7 @@ const App = (props) => {
         </ThemeProvider>
       </LocalizationProvider>
     </CacheProvider>
+    </SessionProvider>
   );
 };
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import { AppFull } from "src/types/app";
 import { errorHandling } from "../validate";
 import { getSessionUser } from "../auth/[...nextauth]";
+import { BasicError } from "src/types/error";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
@@ -12,7 +13,7 @@ export default function getSlotsHandler(req:any, res:any) {
 		try {
 			const { appId, idOnly } = req.body;
 
-			if (!appId) return resolve(res.status(409).json('missing appId'));
+			if (!appId) throw new BasicError('missing appId', 409);
 			
 			getSessionUser(req, res)
 				.then((user) => getSlots(appId, idOnly))

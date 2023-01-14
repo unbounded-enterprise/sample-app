@@ -1,7 +1,7 @@
-import { CustomError } from 'src/types/error';
+import { BasicError, CustomError } from 'src/types/error';
 import { User } from 'src/types/user';
 import { rk } from 'src/utils/random-key';
-import { parseError } from '../validate';
+import { errorHandling, parseError } from '../validate';
 
 const { HandCashConnect } = require('@handcash/handcash-connect');
 
@@ -12,25 +12,19 @@ const handCashConnect = new HandCashConnect({
 
 export default function getHandcashProfile(req:any, res:any) {
   return new Promise((resolve, reject)=>{
-		const errorHandling = (e:any)=>{
-			const err = parseError(e);
-			console.log(err?.message);
-			return resolve(res.status(parseInt(err?.custom || '500')).json({ error: err?.message }));
-		}
+		const handleError = (e:any) => errorHandling(e, resolve, res);
 
     try {
       const handcashToken = req.headers.handcashtoken;
 
-      if (!handcashToken) return resolve(res.status(401).json('no handcash token'));
+      if (!handcashToken) throw new BasicError('no handcash token', 409);
       
       getAccount(handcashToken)
         .then(getProfile)
-        .then((profile:any)=>{
-          resolve(res.status(200).json(profile));
-        })
-        .catch(errorHandling);
+        .then((profile) => resolve(res.status(200).json(profile)))
+        .catch(handleError);
     } catch(e:any) {
-      errorHandling(e);
+      handleError(e);
     }
   })
 }

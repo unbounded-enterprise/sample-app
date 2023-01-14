@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BasicError } from "src/types/error";
 import { GetCollectionsProps } from "src/types/slot";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
@@ -13,7 +14,7 @@ export default function getCollectionsHandler(req:any, res:any) {
             try {
                 const  { slotId, idOnly, includeDeactivated } = req.body;
 
-                if (!slotId) resolve(res.status(409).json('missing slotId'));
+                if (!slotId) throw new BasicError('missing slotId', 409);
 
                 getSessionUser(req, res)
                     .then((user) => ({ handle: user.handle, slotId, idOnly, includeDeactivated }))

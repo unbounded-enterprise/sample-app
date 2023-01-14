@@ -14,11 +14,17 @@ export default function getSlotsHandler(req:any, res:any) {
 			const { appId, idOnly } = req.body;
 
 			if (!appId) throw new BasicError('missing appId', 409);
+
+			getSlots(appId, idOnly)
+				.then((app) => resolve(res.status(200).json(app)))
+				.catch(handleError)
 			
+			/*
 			getSessionUser(req, res)
 				.then((user) => getSlots(appId, idOnly))
 				.then((app) => resolve(res.status(200).json(app)))
 				.catch(handleError)
+			*/
 		} catch(e:any) {
 			handleError(e);
 		}

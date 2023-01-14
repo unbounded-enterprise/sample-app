@@ -15,8 +15,7 @@ export default function getNFTsHandler(req:any, res:any) {
             if (!slotIds || !slotIds[0]) throw new BasicError('wrong input', 409);
             
             getSessionUser(req, res)
-                .then((user) => ({ handle: user.handle, slotIds, idOnly, countsOnly }))
-                .then(getNFTs)
+                .then((user) => getNFTs({ handle: user.handle, slotIds, idOnly, countsOnly }))
                 .then((nfts) => resolve(res.status(200).json(nfts)))
                 .catch(handleError)
         } catch(e:any) {

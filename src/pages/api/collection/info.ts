@@ -15,10 +15,16 @@ export default function getCollectionHandler(req:any, res:any) {
 
 			if (!collectionId) throw new BasicError('missing collectionId', 409);
 			
+			getCollection(collectionId)
+				.then((collection) => resolve(res.status(200).json(collection)))
+				.catch(handleError)
+
+			/*
 			getSessionUser(req, res)
 				.then((user) => getCollection(collectionId))
 				.then((collection) => resolve(res.status(200).json(collection)))
 				.catch(handleError)
+			*/
 		} catch(e:any) {
 			handleError(e);
 		}

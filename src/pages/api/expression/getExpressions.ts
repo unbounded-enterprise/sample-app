@@ -15,10 +15,16 @@ export default function getExpressionsHandler(req:any, res:any) {
 
 			if (!slotId) throw new BasicError('missing slotId', 409);
 			
+			getExpressions(slotId)
+				.then((expressions) => resolve(res.status(200).json(expressions)))
+				.catch(handleError)
+
+			/*
 			getSessionUser(req, res)
 				.then((user) => getExpressions(slotId))
 				.then((expressions) => resolve(res.status(200).json(expressions)))
 				.catch(handleError)
+			*/
 		} catch(e:any) {
 			handleError(e);
 		}

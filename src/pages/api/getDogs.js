@@ -12,7 +12,7 @@ export default function getDogsHandler(req, res) {
         try {
             const  { from, to, serials } = req.body;
 
-            if (!serials && (Number.isNaN(from) || Number.isNaN(to))) throw new CustomError('Invalid Serial Range', '409');
+            if (!serials && (isNaN(from) || isNaN(to))) throw new BasicError('Invalid Serial Range', 409);
     
             getDogSlice(serials || `${from}-${to}`).then((nfts)=>{
                 resolve(res.status(200).json(nfts));

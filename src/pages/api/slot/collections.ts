@@ -17,8 +17,7 @@ export default function getCollectionsHandler(req:any, res:any) {
                 if (!slotId) throw new BasicError('missing slotId', 409);
 
                 getSessionUser(req, res)
-                    .then((user) => ({ handle: user.handle, slotId, idOnly, includeDeactivated }))
-                    .then(getCollections)
+                    .then((user) => getCollections({ handle: user.handle, slotId, idOnly, includeDeactivated }))
                     .then((collections) => resolve(res.status(200).json(collections)))
                     .catch(handleError)
             } catch(e:any) {

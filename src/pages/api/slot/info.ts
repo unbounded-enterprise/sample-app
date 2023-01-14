@@ -16,8 +16,7 @@ export default function getSlotHandler(req:any, res:any) {
 			if (!slotId) throw new BasicError('missing slotId', 409);
 
 			getSessionUser(req, res)
-				.then((user) => slotId)
-				.then(getSlot)
+				.then((user) => getSlot(slotId))
 				.then((slot) => resolve(res.status(200).json(slot)))
 				.catch(handleError)
 		} catch(e:any) {

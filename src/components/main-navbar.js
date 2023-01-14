@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, Avatar, ButtonBase } from '@mui/material';
@@ -17,7 +17,6 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 
 export const MainNavbar = (props) => {
   const anchorRef = useRef(null);
-  const [openAccountPopover, setOpenAccountPopover] = useState(false);
   const { user } = useAuth();
   const [openPopover, setOpenPopover] = useState(false);
 
@@ -41,6 +40,11 @@ export const MainNavbar = (props) => {
       }}
     >
       <Container maxWidth="lg">
+        <AccountPopover
+          anchorEl={anchorRef.current}
+          onClose={handleClosePopover}
+          open={openPopover}
+        />
         <Toolbar
           disableGutters
           sx={{ minHeight: 64 }}
@@ -49,7 +53,6 @@ export const MainNavbar = (props) => {
             href="/"
             passHref
           >
-            <a>
             <Box
             sx={{
               width: 10
@@ -57,7 +60,6 @@ export const MainNavbar = (props) => {
             >
                 <Logo  />
             </Box>
-            </a>
           </NextLink>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton
@@ -82,6 +84,7 @@ export const MainNavbar = (props) => {
             <NextLink
               href="/about"
               passHref
+              legacyBehavior
             >
               <Link underline="none">
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
@@ -92,6 +95,7 @@ export const MainNavbar = (props) => {
             <NextLink
               href="/tutorial"
               passHref
+              legacyBehavior
             >
               <Link underline="none">
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
@@ -109,25 +113,15 @@ export const MainNavbar = (props) => {
                 ml: 2
               }}
             >
-              { user && 
-                <div>
-                  <Avatar
-                    sx={{
-                      height: 50,
-                      width: 50,
-                    }}
-                    src={user.avatarUrl}
-                  >
-                    <UserCircleIcon fontSize="small" />
-                  </Avatar>
-                  <AccountPopover
-                    anchorEl={anchorRef.current}
-                    onClose={handleClosePopover}
-                    open={openPopover}
-                  />
-                </div>
-              }
-              
+              { user && <Avatar
+                sx={{
+                  height: 50,
+                  width: 50,
+                }}
+                src={user.avatarUrl}
+              >
+                <UserCircleIcon fontSize="small" />
+              </Avatar> }
             </Box>
           </Box>
         </Toolbar>

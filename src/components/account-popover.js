@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import useRouter from 'next/router';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, MenuItem, MenuList, Popover, Typography, Avatar, Divider, ListItemIcon, ListItemText } from '@mui/material';
 import { AuthContext } from '../contexts/auth-context';
@@ -14,9 +14,7 @@ import { SwitchHorizontalOutlined as SwitchHorizontalOutlinedIcon } from '../ico
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props;
   const { signOut, user } = useAuth();
-  // const router = useRouter();
-  const authContext = useContext(AuthContext);
-
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -28,6 +26,8 @@ export const AccountPopover = (props) => {
       toast.error('Unable to logout.');
     }
   };
+
+  if (!user?.handle) return <></>;
 
   return (
     <Popover

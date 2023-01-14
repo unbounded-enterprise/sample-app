@@ -2,6 +2,7 @@ import { User } from "../../../types/user";
 import jwt from 'jsonwebtoken';
 import { getAccount, getProfile, getUser } from "./getProfile";
 import { parseError } from "../validate";
+import { BasicError } from "src/types/error";
 
 const crypto = require('crypto');
 
@@ -37,7 +38,7 @@ function generateSaltBuffer(props:SaltProps) {
 }
 
 function generateSaltKey(props:SaltProps) {
-  const secret = process.env.JWT_SECRET_2;
+  const secret = process.env.ENCRYPTION_SECRET;
   const salt = generateSalt(props);
   const key = crypto.scryptSync(secret, salt, 32);
   const iv = saltToBuffer(salt);
@@ -65,7 +66,10 @@ export function decryptAuthToken(encryptedToken:string, saltData:SaltProps) {
 }
 
 export function getToken(user:User):string {
+  if (process.env.JWT_SECRET) throw new BasicError('Missing JWT_SECRET', 500);
+
   const token = jwt.sign(user, String(process.env.JWT_SECRET));
+
   return token;
 }
 
@@ -84,6 +88,14 @@ export function getTokenFromProfile2(profile:any, req:any) {
   const token = getToken(user);
 
   return token;
+}
+
+export async function getUserFromHandcash(handcashtoken:string) {
+  const account = await getAccount(handcashtoken);
+  const profile = await getProfile(account, false);
+  const user = getUser(profile);
+
+  return user;
 }
 
 export async function getTokenFromRequest(req:any) {

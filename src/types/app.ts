@@ -1,3 +1,5 @@
+import Slot from "./slot";
+
 export interface AppCreationProps {
   teamId: string;
   appName: string;
@@ -12,20 +14,35 @@ export interface AppUpdateProps {
 }
 
 export interface App {
-  id?: string; // leaving those for now to not break non beta implementation, should be removed and replaced by api returned values below
-  name?: string;  // leaving those for now to not break non beta implementation, should be removed and replaced by api returned values below
-  icon?: string;  // leaving those for now to not break non beta implementation, should be removed and replaced by api returned values below
-
   appId: string;
   handcashAppId: string;
   appName: string;
   appImage: string;
   teamId: string;
   status: string;
+  description: string;
+  url: string;
   createdAt: number;
   updatedAt: number;
   slots: string[];
 
+
+  [key: string]: any;
+}
+
+export interface AppFull {
+  appId: string;
+  handcashAppId: string;
+  appName: string;
+  appImage: string;
+  teamId: string;
+  status: string;
+  description: string;
+  url: string;
+  autoGrantRead: boolean;
+  createdAt: number;
+  updatedAt: number;
+  slots: Slot[];
 
   [key: string]: any;
 }

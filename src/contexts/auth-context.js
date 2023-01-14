@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useSession, signIn as authSignIn, signOut as authSignOut } from "next-auth/react"
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { authApi } from '../_api_/auth-api';
@@ -22,18 +23,7 @@ const handlers = {
 
     return {
       ...state,
-      ...(
-        // if payload (user) is provided, then is authenticated
-        user
-          ? ({
-            isAuthenticated: true,
-            isLoading: false,
-            user
-          })
-          : ({
-            isLoading: false
-          })
-      )
+      isLoading: false
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
@@ -104,6 +94,7 @@ export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
   const { children } = props;
+  const { data:session } = useSession();
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
   const router = useRouter();
@@ -118,18 +109,12 @@ export const AuthProvider = (props) => {
 
     try {
       // Check URL & LS for auth token
-      const authToken = await checkForHandcashToken(router);
-      // Wrap handcash user in token
-      const accessToken = (authToken) ? await getAccessToken(authToken) : null;
-      // Get user from Handcash JWT token
-      const user = (accessToken) ? await authApi.me(accessToken) : null;
-
-      console.log('user', user);
-      setLocalStorage({ authToken, accessToken });
+      const handcashtoken = await checkForHandcashToken(router);
+      // If new token, sign in with it
+      if (handcashtoken) await authSignIn('credentials', { redirect: false, handcashtoken });
         
       dispatch({
-        type: HANDLERS.INITIALIZE,
-        payload: user
+        type: HANDLERS.INITIALIZE
       });
     } catch (err) {
       console.error(err);
@@ -143,6 +128,12 @@ export const AuthProvider = (props) => {
     initialize().catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (!state.isLoading && session?.user && !state.user) {
+      signIn(session.user);
+    }
+  }, [state.isLoading, session?.user]);
+
   const signIn = (user) => {
     dispatch({
       type: HANDLERS.SIGN_IN,
@@ -150,8 +141,10 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signOut = () => {
-    localStorage.removeItem('accessToken');
+  const signOut = async () => {
+    localStorage.removeItem('user');
+    
+    await authSignOut();
 
     dispatch({
       type: HANDLERS.SIGN_OUT

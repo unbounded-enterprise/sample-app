@@ -1,36 +1,29 @@
 import axios from "axios";
 import { GetCollectionNftsProps } from "src/types/collection";
-import { parseError, validateTokenT } from "../validate";
+import { getSessionUser } from "../auth/[...nextauth]";
+import { errorHandling } from "../validate";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getCollectionNFTsHandler(req:any, res:any) {
-    return new Promise((resolve, reject)=>{
-        const errorHandling = (err:any)=>{
-            const e = parseError(err);
-            console.log('get Nfts error: ', e.message);
-            if(e.custom === '401') {
-                resolve(res.status(401).json({error: e.message}));
-            }
-            resolve(res.status(e.custom?parseInt(e.custom):500).json({error: e.message}));
-        }
-        try {
-            const  { token, collectionId, idOnly, from, to } = req.body;
+    return new Promise((resolve, reject) => {
+		const handleError = (e:any) => errorHandling(e, resolve, res);
 
-            if (!token || !collectionId) resolve(res.status(409).json('wrong input'));
+        try {
+            const  { collectionId, idOnly, from, to } = req.body;
+
+            if (!collectionId) resolve(res.status(409).json('missing collectionId'));
 
             const serials = req.body.serials || (from && to) ? `${from}-${to}` : '';
+
+            if (!serials) resolve(res.status(409).json('missing serials'));
             
-            validateTokenT(token)
-                .then(async (user) => {
-                    return await getCollectionNFTs({ collectionId, serials, idOnly })
-                })
-                .then((nfts:any[])=>{
-                    resolve(res.status(200).json(nfts));
-                })
-                .catch(errorHandling)
+            getSessionUser(req, res)
+                .then(async (user) => getCollectionNFTs({ collectionId, serials, idOnly }))
+                .then((nfts) => resolve(res.status(200).json(nfts)))
+                .catch(handleError)
         } catch(e:any) {
-            errorHandling(e);
+            handleError(e);
         }
     })
 }

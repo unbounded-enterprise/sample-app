@@ -15,7 +15,7 @@ export interface TeamUpdateProps {
 
 export interface Team {
     teamId: string;
-    apps: App[];
+    apps: string[];
     companyName: string;
     email: string;
     status: string;

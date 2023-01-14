@@ -1,5 +1,6 @@
 import { CustomError } from 'src/types/error';
 import { User } from 'src/types/user';
+import { rk } from 'src/utils/random-key';
 import { parseError } from '../validate';
 
 const { HandCashConnect } = require('@handcash/handcash-connect');
@@ -59,10 +60,12 @@ export function getUser(profile: any):User {
     const handle = profile.publicProfile.handle.toLowerCase();
 
     const user:User = {
-      handle: handle,
+      id: rk(),
+      handle,
       displayName: profile.publicProfile.displayName,
+      email: profile.privateProfile.email || '',
       avatarUrl: profile.publicProfile.avatarUrl,
-      exp: new Date().getTime() + (24 * 3600 * 1000), // 24 hour valid 
+      exp: new Date().getTime() + 3 * 3600 * 1000, // 3 hour valid 
       iat: new Date().getTime(),
     };
 

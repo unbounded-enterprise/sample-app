@@ -1,6 +1,16 @@
 import { BasicError, CustomError } from "src/types/error";
 import { User } from "src/types/user";
 import jwt from 'jsonwebtoken';
+import Account from "src/types/account";
+import App from "src/types/app";
+import Slot from "src/types/slot";
+import Team from "src/types/team";
+
+export const errorHandling = (error:any, resolve:any, res:any)=>{
+    const e = parseBasicError(error);
+    console.log(e.message);
+    return resolve(res.status(e.status).json({ error: e.message }));
+}
 
 export function parseError(error: any, fallbackCode: string = '500'):CustomError {
     if (error?.response?.data?.message) { // node js axios errors
@@ -9,7 +19,7 @@ export function parseError(error: any, fallbackCode: string = '500'):CustomError
     if (error?.response?.data) { // client side axios errors
       return new CustomError(error.response.data, error.response.status?String(error.response.status):fallbackCode);
     }
-    if (error?.custom) {
+    if (error?.custom || error?.status) {
       return error;
     } 
     
@@ -21,15 +31,6 @@ export function parseBasicError(error:any, fallbackCode:number = 500):BasicError
     
     const message = error.message || error.response?.data?.message || error.response?.data || 'Unknown Error';
     const status = error.status || error.custom || error.response?.data?.statusCode || error.response?.status || fallbackCode;
-    
-    return new BasicError(message, status);
-}
-
-export function parseBasicErrorClient(error:any, fallbackCode:number = 500):BasicError {
-    if (!error) return new BasicError('Unknown Error', fallbackCode);
-
-    const message = error.message || error.data.error || 'Unknown Error';
-    const status = error.status || fallbackCode;
     
     return new BasicError(message, status);
 }
@@ -47,7 +48,7 @@ export function parseErrorMessage(error: any):string {
 }
 
 export async function validateToken(token: string): Promise<User | null> {
-    if (!token) return null;
+    if (!token || !process.env.JWT_SECRET) return null;
     
     const user = (await jwt.verify(token, String(process.env.JWT_SECRET))) as User;
   
@@ -56,6 +57,7 @@ export async function validateToken(token: string): Promise<User | null> {
 
 export async function validateTokenT(token: string, returnValue: any = null): Promise<any | null> {
     if (!token) throw new CustomError('Missing Token', '409');
+    else if (!process.env.JWT_SECRET) throw new CustomError('Missing JWT_SECRET', '409');
     
     let result:any = null;
 
@@ -66,6 +68,38 @@ export async function validateTokenT(token: string, returnValue: any = null): Pr
     if (result.error || !result.decode) throw new CustomError('Invalid Token', '401');
   
     return returnValue || (result.decode as User);
+}
+
+export function validateTeamId(account:Account, teamId:string) {
+    const role = account.roles.find(role => role.teamId === teamId);
+
+    if (!role) throw new BasicError('Failed to  validate Team ID', 409);
+
+    return role.teamId;
+}
+
+export function validateAppId(team:Team, appId:string) {
+    const app = team.apps.find((id) => id === appId);
+    
+    if (!app) throw new BasicError('Failed to validate App ID', 409);
+
+    return appId;
+}
+
+export function validateSlotId(app:App, slotId:string) {
+    const slot = app.slots.find((id) => id === slotId);
+    
+    if (!slot) throw new BasicError('Failed to validate Slot ID', 409);
+
+    return slotId;
+}
+
+export function validateExpressionId(slot:Slot, expressionId:string) {
+    const expression = slot.expressions.find((id) => id === expressionId);
+    
+    if (!expression) throw new BasicError('Failed to validate Slot ID', 409);
+
+    return expressionId;
 }
 
 export default function validationHandler(req:any, res:any) {

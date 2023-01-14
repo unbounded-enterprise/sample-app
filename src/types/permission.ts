@@ -20,7 +20,7 @@ export interface PermissionDeleteProps {
 
 export interface Permission extends PermissionRequestProps {
     permissionId: string;
-    status: 'pending' | 'granted';
+    status: 'pending' | 'granted' | 'denied' | 'deleted';
 }
 
 export default Permission;

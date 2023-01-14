@@ -16,7 +16,7 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
             if (!collectionId) throw new BasicError('missing collectionId', 409);
             if (!bSerials && (isNaN(from) || isNaN(to))) throw new BasicError('missing serials', 409);
 
-            const serials = req.body.serials || `${from}-${to}`;
+            const serials = bSerials || `${from}-${to}`;
             
             getCollectionNFTs({ collectionId, serials, idOnly })
                 .then((nfts) => resolve(res.status(200).json(nfts)))

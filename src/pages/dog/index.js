@@ -4,14 +4,10 @@ import { Button, Box, Stack, Typography } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
-const collectionId = process.env.COLLECTION_ID;  //collectionId for duro dogs
-const token = process.env.TOKEN;
-
 const PixiNFTWithNoSSR = dynamic(
   () => import('../../components/PixiNFT'),
   { ssr: false }
 )
-
 
 const buttonStyle = {border: '1px solid black', color: 'black'};
 
@@ -24,17 +20,17 @@ const PixiPage = ()=>{
     const [currentDogIndex, setCurrentDogIndex] = useState(0);
     
     async function fetchDogs() {
-        const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
-        // const dogRes = await axios.post('/api/collection/nfts', { from: 0, to: 50, collectionId, token, handle: 'durodogs' });
-        setDogs(dogRes.data);
+        try {
+            const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
+            
+            setDogs(dogRes.data);
+        } catch(e) {
+            console.log(e.response?.data?.error || 'unknown error');
+        }
     }
     
     useEffect(()=>{
-        try {
-            fetchDogs();
-        } catch(e) {
-            console.log(e.message);
-        }
+        fetchDogs();
     }, [])
 
     useEffect(()=>{

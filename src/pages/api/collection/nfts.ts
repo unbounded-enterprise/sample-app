@@ -12,11 +12,11 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
         try {
             const  { collectionId, idOnly, from, to } = req.body;
 
-            if (!collectionId) resolve(res.status(409).json('missing collectionId'));
+            if (!collectionId) return resolve(res.status(409).json('missing collectionId'));
 
-            const serials = req.body.serials || (from && to) ? `${from}-${to}` : '';
+            const serials = req.body.serials || (!isNaN(from) && !isNaN(to)) ? `${from}-${to}` : '';
 
-            if (!serials) resolve(res.status(409).json('missing serials'));
+            if (!serials) return resolve(res.status(409).json('missing serials'));
             
             getSessionUser(req, res)
                 .then(async (user) => getCollectionNFTs({ collectionId, serials, idOnly }))
@@ -33,6 +33,7 @@ export async function getCollectionNFTs(props:GetCollectionNftsProps) {
         data: props, 
         headers },
     );
+    console.log('coll res: ', collectionsResponse.data.body.collection.nfts);
     const collections = collectionsResponse.data.body.collection.nfts;
 
     return collections;

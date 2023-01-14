@@ -1,7 +1,7 @@
 import { User } from "../../../types/user";
 import jwt from 'jsonwebtoken';
 import { getAccount, getProfile, getUser } from "./getProfile";
-import { parseError } from "../validate";
+import { errorHandling, parseError } from "../validate";
 import { BasicError } from "src/types/error";
 
 const crypto = require('crypto');
@@ -113,22 +113,16 @@ export async function getTokenFromRequest(req:any) {
 
 export default function getHandcashTokenHandler(req:any, res:any) {
   return new Promise((resolve, reject)=>{
-		const errorHandling = (e:any)=>{
-			const err = parseError(e);
-			console.log(err?.message);
-			return resolve(res.status(parseInt(err?.custom || '500')).json({ error: err?.message }));
-		}
+		const handleError = (e:any) => errorHandling(e, resolve, res);
     
     try {
-      if (!req.headers.handcashtoken) return resolve(res.status(401).json('no handcash token'));
+      if (!req.headers.handcashtoken) throw new BasicError('no handcash token', 409);
       
       getTokenFromRequest(req)
-        .then((token:any)=>{
-          resolve(res.status(200).json(token));
-        })
-        .catch(errorHandling);
+        .then((token) => resolve(res.status(200).json(token)))
+        .catch(handleError);
     } catch(e:any) {
-      errorHandling(e);
+      handleError(e);
     }
   })
 }

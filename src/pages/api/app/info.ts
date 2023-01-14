@@ -13,7 +13,7 @@ export default function getAppHandler(req:any, res:any) {
 		try {
 			const { appId } = req.body;
 
-			if (!appId) return resolve(res.status(409).json('missing appId'));
+			if (!appId) throw new BasicError('missing appId', 409);
 			
 			getSessionUser(req, res)
 				.then((user) => getApp(appId))

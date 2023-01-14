@@ -13,7 +13,7 @@ export default function getCollectionHandler(req:any, res:any) {
 		try {
 			const { collectionId } = req.body;
 
-			if (!collectionId) return resolve(res.status(409).json('missing collectionId'));
+			if (!collectionId) throw new BasicError('missing collectionId', 409);
 			
 			getSessionUser(req, res)
 				.then((user) => getCollection(collectionId))

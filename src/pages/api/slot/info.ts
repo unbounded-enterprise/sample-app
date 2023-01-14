@@ -13,7 +13,7 @@ export default function getSlotHandler(req:any, res:any) {
 		try {
 			const { slotId } = req.body;
 
-			if (!slotId) return resolve(res.status(409).json('missing slotId'));
+			if (!slotId) throw new BasicError('missing slotId', 409);
 
 			getSessionUser(req, res)
 				.then((user) => slotId)

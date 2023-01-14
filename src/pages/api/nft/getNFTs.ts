@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BasicError } from "src/types/error";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
 
@@ -11,7 +12,7 @@ export default function getNFTsHandler(req:any, res:any) {
         try {
             const  { slotIds, idOnly, countsOnly } = req.body;
 
-            if (!slotIds || !slotIds[0]) resolve(res.status(409).json('wrong input'));
+            if (!slotIds || !slotIds[0]) throw new BasicError('wrong input', 409);
             
             getSessionUser(req, res)
                 .then((user) => ({ handle: user.handle, slotIds, idOnly, countsOnly }))

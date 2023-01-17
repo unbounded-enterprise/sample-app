@@ -9,12 +9,15 @@
 - Create an `.env` file in root and add the following:
 
 ```bash
+ENVIRONMENT = "local"
+URL = "http://localhost:3000"
 ASSETLAYER_URL = "https://api.assetlayer.com/api/v1"
 ASSETLAYER_APP_SECRET = "<asset-layer-app-secret>"
 DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
 HANDCASH_APP_ID = "<handcash-app-id>"
 HANDCASH_APP_SECRET = "<handcash-app-secret>"
-JWT_SECRET = "<very-secret-change-in-prod>"
+NEXTAUTH_SECRET="<nextauth-secret>"
+ENCRYPTION_SECRET="<encr-secret">
 ```
 
 - Install dependencies: `npm install` or `yarn`

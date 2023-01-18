@@ -25,6 +25,7 @@ HANDCASH_APP_SECRET = "<handcash-app-secret>"
 NEXTAUTH_SECRET="<nextauth-secret>"
 ENCRYPTION_SECRET="<encr-secret">
 ```
+- Next add your ASSETLAYER_APP_SECRET, HANDCASH_APP_ID & HANDCASH_APP_SECRET to your `.env` file.  You obtain these values in the handcash & assetlayer dashboards.
 
 - Install dependencies: `npm install` or `yarn`
 

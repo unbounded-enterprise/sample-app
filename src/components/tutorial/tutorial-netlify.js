@@ -37,7 +37,7 @@ export const TutorialNetlify = (props) => {
           variant="subtitle1"
           sx={{ pt: 3, pb:5 }}
         >
-          It's super easy.
+          It&apos;s super easy.
         </Typography>
         <NextLink
                 href="/tutorial/netlify"

@@ -6,11 +6,11 @@ import { Button, Box, Grid, Stack, Typography } from '@mui/material';
 
 
 
-function getExpressionValue(expressionValues, expressionName, expressionAttributeName, showAnimations) {
+export function getExpressionValue(expressionValues, expressionName, expressionAttributeName) {
     return String(expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value);
 }
 
-function parseNFT(nft, expression) {
+export function parseNFT(nft, expression) {
     if (!nft) {
         return { parsedJson: null, parsedAtlas: null, parsedPng: null}
     }
@@ -22,6 +22,32 @@ function parseNFT(nft, expression) {
         parsedAtlas,
         parsedImage, 
     };
+}
+
+export function setNewSlotImage(spine, slotName, texture) {
+    if(!texture) {
+      spine.hackTextureBySlotName(slotName, PIXI.Texture.EMPTY);
+      return;
+    }
+    if(texture.baseTexture) {
+      spine.hackTextureBySlotName(slotName, texture);
+    } else {
+      const baseTex = new PIXI.BaseTexture(texture);
+      const tex = new PIXI.Texture(baseTex);
+      spine.hackTextureBySlotName(slotName, tex);
+    }
+  }
+
+export function playAnimation(animationName, spine, looped= true) {
+    if (!spine || !animationName) {
+        return;
+    }
+    if (spine.state?.hasAnimation(animationName)) {
+        spine.state.setAnimation(0, animationName, looped);
+        spine.state.timeScale = 1;
+    } else {
+        console.log('animation not found');
+    }
 }
 
 
@@ -187,20 +213,6 @@ export default function PixiNFT({
         }
         
     }
-
-
-    function playAnimation(animationName, spine, looped= true) {
-        if (!spine || !animationName) {
-            return;
-        }
-        if (spine.state?.hasAnimation(animationName)) {
-            spine.state.setAnimation(0, animationName, looped);
-            spine.state.timeScale = 1;
-        } else {
-            console.log('animation not found');
-        }
-    }
-
 
     function resourcesLoaded (loader, resources) {
         const nftSpine = new PIXISPINE.Spine(resources[(assetlayerNFT.nftId + expression)].spineData);

@@ -172,10 +172,10 @@ export default function PixiNFT({
 
     useEffect(()=>{
         if(animations && animations.length > 0) {
-            const fontSize = '12px';
+            const fontSize = {xs: animationAlign==='top'?'1.5vh':'1.7vw', lg: '12px'};
             const animationButtons = 
-            <Grid container sx={{height: '100%', overflow: 'auto'}}>
-                <Grid item xs={12}><Typography sx={{fontSize}}>Animations: </Typography></Grid>
+            <Grid container direction={animationAlign==='top'?'column':'row'} sx={{height: '100%', overflow: 'auto'}}>
+                {animationAlign!=='top' && <Grid item xs={12}><Typography sx={{fontSize}}>Animations: </Typography></Grid>}
                 {animations.map((animation) =>
                     <React.Fragment key={animation}>
                         <Grid item xs={12} sx={{padding: 1}}>
@@ -187,7 +187,7 @@ export default function PixiNFT({
             
             setAnimationButtons(animationButtons);
         }
-    }, [animations, canvasWidth])
+    }, [animations, canvasWidth, animationAlign])
 
     useEffect(()=>{
         playAnimation(currentAnimation, spine, true);
@@ -256,10 +256,11 @@ export default function PixiNFT({
                 sx={{
                     position: 'absolute', 
                     top: 0, 
-                    left: animationAlign !== 'right'?'-200px':undefined, 
-                    right: animationAlign === 'right'?'-200px':undefined, 
-                    width: '200px', 
-                    height: container.current?.offsetHeight || 0,
+                    left: animationAlign === 'left'?{xs: '0vw', lg: '0px'}:undefined, 
+                    right: animationAlign === 'right'?{xs: '0vw', lg: '0px'}:undefined, 
+                    top: animationAlign === 'top'?{xs: '0vw', lg: '0px'}:undefined, 
+                    width: {xs: animationAlign === 'top'?container.current?.offsetWidth || 0:'20vw', lg: '200px'}, 
+                    height: animationAlign==='top'?'7vh':container.current?.offsetHeight || 0,
                 }}
                     
             >

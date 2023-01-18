@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState, useRef } from 'react';
-import { Button, Box, Stack, Typography } from '@mui/material';
+import { Button, Box, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
@@ -18,6 +18,9 @@ const PixiPage = ()=>{
     const [defaultAnimation, setDefaultAnimation] = useState('durodog_idle_1');
     const [currentDog, setCurrentDog] = useState(null);
     const [currentDogIndex, setCurrentDogIndex] = useState(0);
+
+    const theme = useTheme();
+    const isMobileDevice = useMediaQuery(theme.breakpoints.down('lg'));
     
     async function fetchDogs() {
         try {
@@ -51,13 +54,13 @@ const PixiPage = ()=>{
 
 
                 <Stack sx={{}} alignItems='center'>
-                    <Box sx={{position: 'relative', height: '70vh', width: 'calc(100vw - 400px)'}}>{currentDog && 
+                    <Box sx={{position: 'relative', height: isMobileDevice?'50vh':'60vh', width: '100vw'}}>{currentDog && 
                     <PixiNFTWithNoSSR 
                         assetlayerNFT={currentDog} 
                         expression={expression} 
                         defaultAnimation={defaultAnimation} 
                         showAnimations={true}
-                        animationAlign='right'
+                        animationAlign={isMobileDevice?'top':'right'}
                         nftSizePercentage={65}
                         onLoaded={onLoaded}
                     /> }</Box>

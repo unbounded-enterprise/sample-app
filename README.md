@@ -6,14 +6,20 @@
 
 - Make sure your Node.js and npm versions are up to date for `React 18`
 
-- Create an `.env` file in root and add the following:
+- Generate a new `.env` file locally, which will also generate a random secret, by running the following command:
+
+```shell
+npm run create-env
+ ```
+
+That command will create a `.env` that looks like this:
 
 ```bash
 ENVIRONMENT = "local"
 URL = "http://localhost:3000"
+DOG_COLLECTION_ID = "638665d8506da1c31926beef"
 ASSETLAYER_URL = "https://api.assetlayer.com/api/v1"
 ASSETLAYER_APP_SECRET = "<asset-layer-app-secret>"
-DOG_COLLECTION_ID = "<nft-collection-id> for duro dogs"
 HANDCASH_APP_ID = "<handcash-app-id>"
 HANDCASH_APP_SECRET = "<handcash-app-secret>"
 NEXTAUTH_SECRET="<nextauth-secret>"

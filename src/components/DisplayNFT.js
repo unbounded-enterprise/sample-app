@@ -12,7 +12,11 @@ export function getExpressionValue(expressionValues, expressionName, expressionA
 
 export function parseNFT(nft, expression) {
     if (!nft) {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null}
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView: null}
+    }
+    const parsedMenuView = getExpressionValue(nft.expressionValues || [], expression, 'Image');
+    if (expression === 'Menu View') {
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView };
     }
     const parsedJson = getExpressionValue(nft.expressionValues || [], expression, 'JSON');
     const parsedAtlas = getExpressionValue(nft.expressionValues || [], expression, 'Atlas');
@@ -21,6 +25,7 @@ export function parseNFT(nft, expression) {
         parsedJson, 
         parsedAtlas,
         parsedImage, 
+        parsedMenuView,
     };
 }
 
@@ -52,18 +57,19 @@ export function playAnimation(animationName, spine, looped= true) {
 
 
 
-export default function PixiNFT({ 
+export default function DisplayNFT({ 
     assetlayerNFT,  // the nft you receive from assetlayer requests
-    expression,  // choose the expression(Name) that should be displayed
-    defaultAnimation, // animation name that will be played loop on start, leave undefined to not animate at start.
-    showAnimations,  // displays buttons on the left or right of the container that can trigger the animations of the chosen expression of your nft
-    animationAlign,  // 'right' or 'left' to choose if the animationbuttosn should be displayed right or left of the container. If left undefined, it will be displayed left.
-    nftSizePercentage, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
-    onLoaded, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
+    expression = 'Menu View',  // choose the expression(Name) that should be displayed
+    defaultAnimation = 'idle', // animation name that will be played loop on start, leave undefined to not animate at start.
+    showAnimations = false,  // displays buttons on the left or right of the container that can trigger the animations of the chosen expression of your nft
+    animationAlign = 'right',  // 'right' or 'left' to choose if the animationbuttosn should be displayed right or left of the container. If left undefined, it will be displayed left.
+    nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
+    onLoaded = (spine)=>{console.log('spine: ', spine)}, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
     }) { 
 
     const container = useRef();
     const animationContainer = useRef();
+    const containerParent = useRef();
 
     const [app, setApp] = useState(null);
     const [nftLoaded, setNftLoaded] = useState(false);
@@ -71,6 +77,7 @@ export default function PixiNFT({
     const [spineJson, setSpineJson] = useState(null);
     const [spineAtlas, setSpineAtlas]  = useState(null);
     const [spinePng, setSpinePng] = useState(null);
+    const [menuView, setMenuView] = useState(null);
 
     const [spine, setSpine] = useState(null);
 
@@ -86,17 +93,30 @@ export default function PixiNFT({
     
 
     useEffect(()=>{
-        const { parsedJson, parsedAtlas, parsedImage } = parseNFT(assetlayerNFT, expression);
+        const { parsedJson, parsedAtlas, parsedImage, parsedMenuView } = parseNFT(assetlayerNFT, expression);
         if (parsedJson) {
             // setSpineJson('jsonNamehere.json'); // setting this do a local copy of any nfts, they are not nft specific, only the image is
-            setSpineJson(parsedJson);  // using the parse Json from the nft.
+            if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
+                setSpineJson('/static/dd.json');
+            } else {
+                setSpineJson(parsedJson); // using the parse Atlas from the nft.
+            }
         }
         if (parsedAtlas) {
             // setSpineAtlas('atlasNamehere.atlas');  // setting this do a local copy of any nfts, they are not nft specific, only the image is
-            setSpineAtlas(parsedAtlas); // using the parse Atlas from the nft.
+            if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
+                setSpineAtlas('/static/dd.atlas');
+            } else {
+                setSpineAtlas(parsedAtlas); // using the parse Atlas from the nft.
+            }
+            
         }
         if (parsedImage) {
             setSpinePng(parsedImage); 
+        }
+
+        if (parsedMenuView) {
+            setMenuView(parsedMenuView);
         }
     
 
@@ -111,12 +131,15 @@ export default function PixiNFT({
         if(!app) {
             return;
         }
-        const parent = container.current.parentElement;
+        const parent = container.current?.parentElement;
+        if (!parent) {
+            return;
+        }
         app.resizeTo = parent;
         app.resize();
         setCanvasWidth(app.view.clientWidth); // will trigger resize of spine in useEffect
         setCanvasHeight(app.view.clientHeight);
-    }, [app]);
+    }, [app, container.current]);
 
     useEffect(()=>{
         window.addEventListener('resize', handleResize)
@@ -131,11 +154,11 @@ export default function PixiNFT({
     }, [spineJson, spineAtlas, spinePng])
 
     useEffect(()=>{
-        if (app && app.view) {
+        if (app && app.view && container.current) {
             container.current.appendChild(app.view);
             handleResize();
         }
-    }, [app])
+    }, [app, container.current])
 
 
     const adjustSizeOfSpine = useCallback((externalSpine)  => {
@@ -251,10 +274,11 @@ export default function PixiNFT({
 
         return (
            <>
-           {showAnimations && 
+           {showAnimations && expression !== 'Menu View' && 
             <Box ref={animationContainer} 
                 sx={{
                     position: 'absolute', 
+                    zIndex: 1,
                     top: 0, 
                     left: animationAlign === 'left'?{xs: '0vw', lg: '0px'}:undefined, 
                     right: animationAlign === 'right'?{xs: '0vw', lg: '0px'}:undefined, 
@@ -266,8 +290,19 @@ export default function PixiNFT({
             >
                 {animationButtons}
             </Box>}
-            <Box sx={{width: '100%', height:'100%'}}>
-                <Box sx={{}} ref={container}></Box>
+            <Box ref={containerParent} sx={{width: '100%', height:'100%', position: 'relative'}}>
+                {expression === 'Menu View' &&
+                    <Stack alignItems='center'>
+                        <img 
+                            src={menuView} 
+                            alt='Menu View' 
+                            style={{
+                                width: containerParent.current?.clientHeight > containerParent.current?.clientWidth?'100%':undefined, 
+                                height:containerParent.current?.clientHeight < containerParent.current?.clientWidth?'100%':undefined }} />
+                    </Stack>
+                    }
+                    
+                     {expression !== 'Menu View' && <Box sx={{}} ref={container}></Box>}
             </Box>
            </>
     )

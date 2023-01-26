@@ -98,7 +98,6 @@ export default function DisplayNFT({
             // setSpineJson('jsonNamehere.json'); // setting this do a local copy of any nfts, they are not nft specific, only the image is
             if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
                 setSpineJson('/static/dd.json');
-                console.log('set hard');
             } else {
                 setSpineJson(parsedJson); // using the parse Atlas from the nft.
             }
@@ -107,7 +106,6 @@ export default function DisplayNFT({
             // setSpineAtlas('atlasNamehere.atlas');  // setting this do a local copy of any nfts, they are not nft specific, only the image is
             if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
                 setSpineAtlas('/static/dd.atlas');
-                console.log('set hard');
             } else {
                 setSpineAtlas(parsedAtlas); // using the parse Atlas from the nft.
             }

@@ -6,6 +6,11 @@ import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import React from 'react';
 
+const DisplayNFTWithNoSSR = dynamic(
+  () => import('../../components/DisplayNFT'),
+  { ssr: false }
+)
+
 const ImagePage = ()=>{
 
   const [images, setImages] = useState(null);
@@ -84,7 +89,15 @@ const ImagePage = ()=>{
                       color="textSecondary"
                       variant="h6"
                     >
-                      {image.collectionImage}
+                      <DisplayNFTWithNoSSR 
+                        assetlayerNFT={image}
+                        expression='Menu View'
+                        // defaultAnimation={defaultAnimation}
+                        showAnimations={false}
+                        // animationAlign={isMobileDevice?'top':'right'}
+                        nftSizePercentage={65}
+                        // onLoaded={onLoaded}
+                    />
                     </Typography>
                 </Card>
             </Grid>

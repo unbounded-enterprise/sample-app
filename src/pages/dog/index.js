@@ -70,6 +70,7 @@ const PixiPage = ()=>{
                 <Stack sx={{}}>
                         <Button variant='outlined' sx={buttonStyle} onClick={()=>{setExpression('Front View'); setDefaultAnimation('durodog_idle_1')}}>Front View</Button>
                         <Button variant='outlined' sx={buttonStyle} onClick={()=>{setExpression('Three Quarter View'); setDefaultAnimation('run')}}>Three Quarter View</Button>
+                        <Button variant='outlined' sx={buttonStyle} onClick={()=>{setExpression('Menu View'); setDefaultAnimation('run')}}>Menu View</Button>
                 </Stack>       
             </Box> 
         </>

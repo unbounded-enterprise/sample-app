@@ -12,7 +12,11 @@ export function getExpressionValue(expressionValues, expressionName, expressionA
 
 export function parseNFT(nft, expression) {
     if (!nft) {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null}
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView: null}
+    }
+    const parsedMenuView = getExpressionValue(nft.expressionValues || [], expression, 'Image');
+    if (expression === 'Menu View') {
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView };
     }
     const parsedJson = getExpressionValue(nft.expressionValues || [], expression, 'JSON');
     const parsedAtlas = getExpressionValue(nft.expressionValues || [], expression, 'Atlas');
@@ -21,6 +25,7 @@ export function parseNFT(nft, expression) {
         parsedJson, 
         parsedAtlas,
         parsedImage, 
+        parsedMenuView,
     };
 }
 
@@ -64,6 +69,7 @@ export default function PixiNFT({
 
     const container = useRef();
     const animationContainer = useRef();
+    const containerParent = useRef();
 
     const [app, setApp] = useState(null);
     const [nftLoaded, setNftLoaded] = useState(false);
@@ -71,6 +77,7 @@ export default function PixiNFT({
     const [spineJson, setSpineJson] = useState(null);
     const [spineAtlas, setSpineAtlas]  = useState(null);
     const [spinePng, setSpinePng] = useState(null);
+    const [menuView, setMenuView] = useState(null);
 
     const [spine, setSpine] = useState(null);
 
@@ -86,7 +93,7 @@ export default function PixiNFT({
     
 
     useEffect(()=>{
-        const { parsedJson, parsedAtlas, parsedImage } = parseNFT(assetlayerNFT, expression);
+        const { parsedJson, parsedAtlas, parsedImage, parsedMenuView } = parseNFT(assetlayerNFT, expression);
         if (parsedJson) {
             // setSpineJson('jsonNamehere.json'); // setting this do a local copy of any nfts, they are not nft specific, only the image is
             setSpineJson(parsedJson);  // using the parse Json from the nft.
@@ -97,6 +104,10 @@ export default function PixiNFT({
         }
         if (parsedImage) {
             setSpinePng(parsedImage); 
+        }
+
+        if (parsedMenuView) {
+            setMenuView(parsedMenuView);
         }
     
 
@@ -111,12 +122,15 @@ export default function PixiNFT({
         if(!app) {
             return;
         }
-        const parent = container.current.parentElement;
+        const parent = container.current?.parentElement;
+        if (!parent) {
+            return;
+        }
         app.resizeTo = parent;
         app.resize();
         setCanvasWidth(app.view.clientWidth); // will trigger resize of spine in useEffect
         setCanvasHeight(app.view.clientHeight);
-    }, [app]);
+    }, [app, container.current]);
 
     useEffect(()=>{
         window.addEventListener('resize', handleResize)
@@ -131,11 +145,11 @@ export default function PixiNFT({
     }, [spineJson, spineAtlas, spinePng])
 
     useEffect(()=>{
-        if (app && app.view) {
+        if (app && app.view && container.current) {
             container.current.appendChild(app.view);
             handleResize();
         }
-    }, [app])
+    }, [app, container.current])
 
 
     const adjustSizeOfSpine = useCallback((externalSpine)  => {
@@ -251,7 +265,7 @@ export default function PixiNFT({
 
         return (
            <>
-           {showAnimations && 
+           {showAnimations && expression !== 'Menu View' && 
             <Box ref={animationContainer} 
                 sx={{
                     position: 'absolute', 
@@ -266,8 +280,19 @@ export default function PixiNFT({
             >
                 {animationButtons}
             </Box>}
-            <Box sx={{width: '100%', height:'100%'}}>
-                <Box sx={{}} ref={container}></Box>
+            <Box ref={containerParent} sx={{width: '100%', height:'100%'}}>
+                {expression === 'Menu View' &&
+                    <Stack alignItems='center'>
+                        <img 
+                            src={menuView} 
+                            alt='Menu View' 
+                            style={{
+                                width: containerParent.current?.clientHeight > containerParent.current?.clientWidth?'100%':undefined, 
+                                height:containerParent.current?.clientHeight < containerParent.current?.clientWidth?'100%':undefined }} />
+                    </Stack>
+                    }
+                    
+                     {expression !== 'Menu View' && <Box sx={{}} ref={container}></Box>}
             </Box>
            </>
     )

@@ -1,0 +1,79 @@
+dd.png
+	size: 1558, 531
+	filter: Linear, Linear
+	pma: false
+back_foot_1
+	bounds: 1266, 55, 150, 100
+back_foot_2
+	bounds: 1266, 55, 150, 100
+back_knee_1
+	bounds: 1268, 157, 150, 150
+back_knee_2
+	bounds: 1268, 157, 150, 150
+collar_01
+	bounds: 331, 28, 0, 0
+eyebrow_left
+	bounds: 760, 2, 32, 23
+front_foot_1
+	bounds: 1420, 177, 150, 100
+	rotate: 90
+front_foot_2
+	bounds: 1420, 177, 150, 100
+	rotate: 90
+glasses_01
+	bounds: 2, 331, 0, 0
+hat_01
+	bounds: 2, 508, 0, 0
+head_1
+	bounds: 941, 204, 325, 325
+inner
+	bounds: 1420, 101, 107, 74
+iris
+	bounds: 466, 116, 36, 36
+iris_left
+	bounds: 466, 88, 26, 36
+	rotate: 90
+left_ear_1
+	bounds: 760, 27, 175, 175
+left_eye_1
+	bounds: 1418, 43, 56, 56
+lower_back_leg_1
+	bounds: 1114, 17, 150, 185
+lower_back_leg_2
+	bounds: 1114, 17, 150, 185
+lower_front_leg_1
+	bounds: 244, 2, 150, 220
+	rotate: 90
+lower_front_leg_2
+	bounds: 244, 2, 150, 220
+	rotate: 90
+mouth_1
+	bounds: 1420, 329, 200, 74
+	rotate: 90
+right_ear_1
+	bounds: 937, 27, 175, 175
+right_eye_1
+	bounds: 1496, 452, 77, 60
+	rotate: 90
+right_eyebrow_1
+	bounds: 1266, 15, 74, 38
+snout_1
+	bounds: 504, 2, 254, 200
+tail_1
+	bounds: 504, 204, 325, 435
+	rotate: 90
+tongue
+	bounds: 1496, 368, 82, 39
+	rotate: 90
+torso_1
+	bounds: 2, 154, 500, 375
+upper_back_leg_1
+	bounds: 2, 2, 150, 240
+	rotate: 90
+upper_back_leg_2
+	bounds: 2, 2, 150, 240
+	rotate: 90
+upper_front_leg_1
+	bounds: 1268, 309, 150, 220
+upper_front_leg_2
+	bounds: 1268, 309, 150, 220

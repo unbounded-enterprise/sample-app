@@ -4,8 +4,8 @@ import { Button, Box, Stack, Typography, useMediaQuery, useTheme } from '@mui/ma
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 
-const PixiNFTWithNoSSR = dynamic(
-  () => import('../../components/PixiNFT'),
+const DisplayNFTWithNoSSR = dynamic(
+  () => import('../../components/DisplayNFT'),
   { ssr: false }
 )
 
@@ -55,7 +55,7 @@ const PixiPage = ()=>{
 
                 <Stack sx={{}} alignItems='center'>
                     <Box sx={{position: 'relative', height: isMobileDevice?'50vh':'60vh', width: '100vw'}}>{currentDog && 
-                    <PixiNFTWithNoSSR 
+                    <DisplayNFTWithNoSSR 
                         assetlayerNFT={currentDog} 
                         expression={expression} 
                         defaultAnimation={defaultAnimation} 

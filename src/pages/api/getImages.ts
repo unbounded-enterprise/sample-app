@@ -3,7 +3,7 @@ import { BasicError } from "src/types/error";
 import { getCollectionNFTs } from "./collection/nfts";
 import { errorHandling } from "./validate";
 
-const imageCollectionId = '6351efbc3c5f199ed79d4bc4';  //Blue Bandana collection
+const imageCollectionId = process.env.DOG_COLLECTION_ID; // '6351efbc3c5f199ed79d4bc4';  //Blue Bandana collection
 
 export default function getImagesHandler(req, res) {
     return new Promise((resolve, reject) => {

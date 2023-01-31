@@ -14,7 +14,7 @@ const buttonStyle = {border: '1px solid black', color: 'black'};
 const PixiPage = ()=>{
 
     const [dogs, setDogs] = useState(null);
-    const [expression, setExpression] = useState('Front View')
+    const [expression, setExpression] = useState('Menu View')
     const [defaultAnimation, setDefaultAnimation] = useState('durodog_idle_1');
     const [currentDog, setCurrentDog] = useState(null);
     const [currentDogIndex, setCurrentDogIndex] = useState(0);

@@ -14,6 +14,7 @@ const DisplayNFTWithNoSSR = dynamic(
 const ImagePage = ()=>{
 
   const [images, setImages] = useState(null);
+  const [hoveredNFT, setHoveredNFT] = useState(null);
 
   const fetchImages = async () => {
     try {
@@ -50,7 +51,6 @@ const ImagePage = ()=>{
       <Box
         sx={{
           py: 5,
-          alignItems: 'center'
         }}
       >
         <Grid
@@ -59,20 +59,23 @@ const ImagePage = ()=>{
         sx={{ p: 3 }}
       >
         {images && images.map((image) => (
-          <NextLink key={image.nftId} href={`/image/${image.nftId}`}>
+          <React.Fragment key={image.nftId}>
+          
             <Grid
                 item
                 key={image.nftId}
                 md={4}
                 xs={12}
+                onMouseEnter={()=>{setHoveredNFT(image.nftId)}}
             >
+              <NextLink href={image?.nftId?`/image/${image.nftId}`:''}>
                 <Card
                   sx={{
                     alignItems: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    p: 14,
-                    m: 4,
+                    p: 1,
+                    m: 1,
                   }}
                   variant="outlined"
                 >
@@ -81,7 +84,7 @@ const ImagePage = ()=>{
                     </Typography>
                     <Typography
                       color="textSecondary"
-                      variant="h6"
+                      variant="body2"
                     >
                       {image.nftId}
                     </Typography>
@@ -89,19 +92,22 @@ const ImagePage = ()=>{
                       color="textSecondary"
                       variant="h6"
                     >
+                    </Typography>
                       <DisplayNFTWithNoSSR 
                         assetlayerNFT={image}
-                        expression='Menu View'
+                        expression={hoveredNFT===image.nftId?'Front View':'Menu View'}
+                        defaultAnimation={'durodog_idle_1'}
                         // defaultAnimation={defaultAnimation}
                         showAnimations={false}
                         // animationAlign={isMobileDevice?'top':'right'}
                         nftSizePercentage={65}
                         // onLoaded={onLoaded}
                     />
-                    </Typography>
                 </Card>
+                </NextLink>
             </Grid>
-          </NextLink>
+
+          </React.Fragment>
         ))}
         </Grid>
         </Box>

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, {useCallback, useEffect, useState, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import * as PIXISPINE from 'pixi-spine';
@@ -66,8 +65,8 @@ export default function DisplayNFT({
     animationAlign = 'right',  // 'right' or 'left' to choose if the animationbuttosn should be displayed right or left of the container. If left undefined, it will be displayed left.
     nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
     onLoaded = (spine)=>{console.log('spine: ', spine)}, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
-    width, // if width is not set, it will be the width of the container
-    height, // if height is not set, the canvas will have the size of the width and be squared
+    width = undefined, // if width is not set, it will be the width of the container
+    height = undefined, // if height is not set, the canvas will have the size of the width and be squared
 }) { 
 
     const container = useRef();

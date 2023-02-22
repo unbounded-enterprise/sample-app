@@ -7,16 +7,17 @@ import { Button, Box, Grid, Stack, Typography } from '@mui/material';
 
 
 export function getExpressionValue(expressionValues, expressionName, expressionAttributeName) {
-    return String(expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value);
+    const expressionValue = expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value
+    return expressionValue;
 }
 
 export function parseNFT(nft, expression) {
     if (!nft) {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView: null}
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression: null}
     }
-    const parsedMenuView = getExpressionValue(nft.expressionValues || [], expression, 'Image');
-    if (expression === 'Menu View') {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView };
+    const parsedImageExpression = getExpressionValue(nft.expressionValues || [], expression, 'Image');
+    if (parsedImageExpression) {
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression };
     }
     const parsedJson = getExpressionValue(nft.expressionValues || [], expression, 'JSON');
     const parsedAtlas = getExpressionValue(nft.expressionValues || [], expression, 'Atlas');
@@ -25,7 +26,7 @@ export function parseNFT(nft, expression) {
         parsedJson, 
         parsedAtlas,
         parsedImage, 
-        parsedMenuView,
+        parsedImageExpression,
     };
 }
 
@@ -65,7 +66,9 @@ export default function DisplayNFT({
     animationAlign = 'right',  // 'right' or 'left' to choose if the animationbuttosn should be displayed right or left of the container. If left undefined, it will be displayed left.
     nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
     onLoaded = (spine)=>{console.log('spine: ', spine)}, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
-    }) { 
+    width = undefined, // if width is not set, it will be the width of the container
+    height = undefined, // if height is not set, the canvas will have the size of the width and be squared
+}) { 
 
     const container = useRef();
     const animationContainer = useRef();
@@ -77,7 +80,7 @@ export default function DisplayNFT({
     const [spineJson, setSpineJson] = useState(null);
     const [spineAtlas, setSpineAtlas]  = useState(null);
     const [spinePng, setSpinePng] = useState(null);
-    const [menuView, setMenuView] = useState(null);
+    const [imageExpression, setImageExpression] = useState(null);
 
     const [spine, setSpine] = useState(null);
 
@@ -85,15 +88,17 @@ export default function DisplayNFT({
     const [animationButtons, setAnimationButtons] = useState(null);
     const [currentAnimation, setCurrentAnimation] = useState(null);
 
-    const [canvasWidth, setCanvasWidth] = useState(800);
-    const [canvasHeight, setCanvasHeight] = useState(800);
+    const [canvasWidth, setCanvasWidth] = useState(width?width:800);
+    const [canvasHeight, setCanvasHeight] = useState(height?height:(width?width:800));
+
+    const [displayRatio, setDisplayRatio] = useState(1);
 
 
 
     
 
     useEffect(()=>{
-        const { parsedJson, parsedAtlas, parsedImage, parsedMenuView } = parseNFT(assetlayerNFT, expression);
+        const { parsedJson, parsedAtlas, parsedImage, parsedImageExpression } = parseNFT(assetlayerNFT, expression);
         if (parsedJson) {
             // setSpineJson('jsonNamehere.json'); // setting this do a local copy of any nfts, they are not nft specific, only the image is
             if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
@@ -115,46 +120,81 @@ export default function DisplayNFT({
             setSpinePng(parsedImage); 
         }
 
-        if (parsedMenuView) {
-            setMenuView(parsedMenuView);
-        }
+        setImageExpression(parsedImageExpression);
     
 
     }, [assetlayerNFT, expression])
 
 
     useEffect(()=>{
-            setApp(new PIXI.Application({ forceCanvas: true, backgroundAlpha: 0, width: container?.current?.clientWidth || 800, height: container?.current?.clientHeight || 800  }))      
-    }, [])
-
-    const handleResize = useCallback(() =>{
-        if(!app) {
+        if (imageExpression) {
+            setApp(null);
+            setNftLoaded(false);
             return;
         }
-        const parent = container.current?.parentElement;
+        if (!app) {
+            setNftLoaded(false);
+            setApp(new PIXI.Application({ forceCanvas: true, backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
+        }
+    }, [imageExpression])
+
+    const handleResize = useCallback(() =>{
+        if (!app) {
+            return;
+          }
+          const { view } = app;
+          if (!view) {
+            return;
+          }
+        if (width) {
+            return;
+        }
+        const parent = containerParent.current;
         if (!parent) {
             return;
         }
+        parent.height = parent.width;
         app.resizeTo = parent;
         app.resize();
-        setCanvasWidth(app.view.clientWidth); // will trigger resize of spine in useEffect
-        setCanvasHeight(app.view.clientHeight);
-    }, [app, container.current]);
+        setCanvasWidth(app.view?.width); // will trigger resize of spine in useEffect
+        setCanvasHeight(app.view?.height);
+    }, [app, container.current, height, width]);
 
     useEffect(()=>{
-        window.addEventListener('resize', handleResize)
+        // window.removeEventListener('resize', handleResize);
+        if (imageExpression) {
+            return;
+        }
         handleResize();
-        return ()=>{window.removeEventListener('resize', handleResize)}
-        
-      }, [handleResize]);
+
+      }, [handleResize, expression]);
 
 
     useEffect(()=>{
         setNftLoaded(false);
     }, [spineJson, spineAtlas, spinePng])
 
+    function clearContainer(container) {
+        // removes all children from a container
+        if (!container) {
+            return;
+        }
+        for (let i = 0; i < container.children.length; i++) {
+            // remove the child element
+             container.removeChild(container.children[i]);
+         }
+    }
+
     useEffect(()=>{
-        if (app && app.view && container.current) {
+        if (!app) {
+            clearContainer(container?.current);
+            return;
+          }
+          const { view } = app;
+          if (!view) {
+            return;
+          }
+        if (container.current) {
             container.current.appendChild(app.view);
             handleResize();
         }
@@ -185,13 +225,20 @@ export default function DisplayNFT({
     }, [adjustSizeOfSpine])
 
     useEffect(()=>{
-        if (app && app?.view) {
+        if (!app) {
+            return;
+          }
+          const { view } = app;
+          if (!view) {
+            return;
+          }
+        if (!imageExpression) {
             if (!nftLoaded && spineJson && spineAtlas && spinePng) {
                 loadPixiNFT();
             }
             
         }
-    }, [app, app?.view, spineJson, spineAtlas, spinePng, nftLoaded])
+    }, [app, spineJson, spineAtlas, spinePng, nftLoaded, expression])
 
     useEffect(()=>{
         if(animations && animations.length > 0) {
@@ -250,6 +297,9 @@ export default function DisplayNFT({
         }
 
     async function loadPixiNFT() {
+        if (!app || !spinePng) {
+            return;
+        }
         clearStage();
         const texture = await PIXI.Texture.fromURL(spinePng);
         let spineLoaderOptions = { metadata: { 
@@ -272,9 +322,18 @@ export default function DisplayNFT({
         }
     } ,[nftLoaded, spine]);
 
+    useEffect(()=>{
+        if (containerParent?.current?.clientHeight && containerParent?.current?.clientWidth) {
+            setDisplayRatio(containerParent.current.clientWidth / containerParent.current.clientHeight);
+        } else {
+            setDisplayRatio(null); 
+        }
+    }, [containerParent.current?.clientWidth, container.current?.clientHeight])
+
+
         return (
            <>
-           {showAnimations && expression !== 'Menu View' && 
+           {showAnimations && !imageExpression && 
             <Box ref={animationContainer} 
                 sx={{
                     position: 'absolute', 
@@ -290,19 +349,28 @@ export default function DisplayNFT({
             >
                 {animationButtons}
             </Box>}
-            <Box ref={containerParent} sx={{width: '100%', height:'100%', position: 'relative'}}>
-                {expression === 'Menu View' &&
+            
+
+            <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
+                {(imageExpression) ?
                     <Stack alignItems='center'>
                         <img 
-                            src={menuView} 
+                            src={imageExpression} 
                             alt='Menu View' 
                             style={{
-                                width: containerParent.current?.clientHeight > containerParent.current?.clientWidth?'100%':undefined, 
-                                height:containerParent.current?.clientHeight < containerParent.current?.clientWidth?'100%':undefined }} />
+                                width: displayRatio && displayRatio < 1? undefined:'100', 
+                                height: displayRatio && displayRatio < 1? '100%':undefined}} />
                     </Stack>
-                    }
+                    :
                     
-                     {expression !== 'Menu View' && <Box sx={{}} ref={container}></Box>}
+                    <Box 
+                        sx={{
+                            width: width?width:'100%', 
+                            height: height?height:(width?width:containerParent.current?.clientHeight)
+                            }} 
+                            ref={container}>
+                    </Box>
+             }
             </Box>
            </>
     )

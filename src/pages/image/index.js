@@ -1,41 +1,44 @@
 import dynamic from 'next/dynamic'
-import { useEffect, useState, useRef } from 'react';
-import { Avatar, Box, Container, Typography, Grid, Card } from '@mui/material';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import NextLink from 'next/link';
+import { Box, Container, Typography, Grid, Card } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import React from 'react';
 
-import { Users as UsersIcon } from '../../icons/users';
+const DisplayNFTWithNoSSR = dynamic(
+  () => import('../../components/DisplayNFT'),
+  { ssr: false }
+)
 
-const items = [
-    {
-      subtitle: 'Active Apps',
-      value: '8'
-    },
-    {
-      subtitle: 'Digital Assets Created',
-      value: '1,000,000+'
-    },
-    {
-      subtitle: 'Transactions',
-      value: '5,000,000+'
+const ImagePage = ()=>{
+
+  const [images, setImages] = useState(null);
+  const [hoveredNFT, setHoveredNFT] = useState(null);
+
+  const fetchImages = async () => {
+    try {
+        const imagesRes = await axios.post('/api/getImages', { from: 0, to: 10 });
+        setImages(imagesRes.data);
+        console.log(imagesRes.data);
+    } catch(e) {
+        console.log(e.response?.data?.error || 'unknown error');
     }
-  ];
+  }
 
-const buttonStyle = {border: '1px solid black', color: 'black'};
-
-const ImagePage = (props)=>{
-
+  useEffect(()=>{
+    fetchImages();
+  }, [])
+  
     
-    return (
-        <>  
-            <Box
-    sx={{
-      backgroundColor: 'primary.main',
-      py: 15
-    }}
-    {...props}
-  >
+  return (
+    <>  
+      <Box
+        sx={{
+          backgroundColor: 'primary.main',
+          py: 15
+        }}
+      >
 
       <Typography
         align="center"
@@ -47,7 +50,7 @@ const ImagePage = (props)=>{
 
       <Box
         sx={{
-          py: 5
+          py: 5,
         }}
       >
         <Grid
@@ -55,40 +58,62 @@ const ImagePage = (props)=>{
         spacing={3}
         sx={{ p: 3 }}
       >
-        {items.map((item) => (
-        <Grid
-            item
-            key={item.value}
-            md={4}
-            xs={12}
-      >
-            <Card
-              sx={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                p: 2,
-                m: 4,
-              }}
-              variant="outlined"
+        {images && images.map((image) => (
+          <React.Fragment key={image.nftId}>
+          
+            <Grid
+                item
+                key={image.nftId}
+                md={4}
+                xs={12}
+                onMouseEnter={()=>{setHoveredNFT(image.nftId)}}
             >
-              <Typography variant="h5">
-                {item.value}
-              </Typography>
-              <Typography
-                color="textSecondary"
-                variant="h6"
-              >
-                {item.subtitle}
-              </Typography>
-            </Card>
-          </Grid>
+              <NextLink href={image?.nftId?`/image/${image.nftId}`:''}>
+                <Card
+                  sx={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    p: 1,
+                    m: 1,
+                  }}
+                  variant="outlined"
+                >
+                    <Typography variant="h5">
+                      {image.serial}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      variant="body2"
+                    >
+                      {image.nftId}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      variant="h6"
+                    >
+                    </Typography>
+                      <DisplayNFTWithNoSSR 
+                        assetlayerNFT={image}
+                        expression={hoveredNFT===image.nftId?'Front View':'Menu View'}
+                        defaultAnimation={'durodog_idle_1'}
+                        // defaultAnimation={defaultAnimation}
+                        showAnimations={false}
+                        // animationAlign={isMobileDevice?'top':'right'}
+                        nftSizePercentage={65}
+                        // onLoaded={onLoaded}
+                    />
+                </Card>
+                </NextLink>
+            </Grid>
+
+          </React.Fragment>
         ))}
         </Grid>
         </Box>
   </Box>
         </>
-      )
+  )
 }
 
 ImagePage.getLayout = (page) => (

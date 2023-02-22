@@ -7,16 +7,17 @@ import { Button, Box, Grid, Stack, Typography } from '@mui/material';
 
 
 export function getExpressionValue(expressionValues, expressionName, expressionAttributeName) {
-    return String(expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value);
+    const expressionValue = expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value
+    return expressionValue;
 }
 
 export function parseNFT(nft, expression) {
     if (!nft) {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView: null}
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression: null}
     }
-    const parsedMenuView = getExpressionValue(nft.expressionValues || [], expression, 'Image');
-    if (expression === 'Menu View') {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedMenuView };
+    const parsedImageExpression = getExpressionValue(nft.expressionValues || [], expression, 'Image');
+    if (parsedImageExpression) {
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression };
     }
     const parsedJson = getExpressionValue(nft.expressionValues || [], expression, 'JSON');
     const parsedAtlas = getExpressionValue(nft.expressionValues || [], expression, 'Atlas');
@@ -25,7 +26,7 @@ export function parseNFT(nft, expression) {
         parsedJson, 
         parsedAtlas,
         parsedImage, 
-        parsedMenuView,
+        parsedImageExpression,
     };
 }
 
@@ -79,7 +80,7 @@ export default function DisplayNFT({
     const [spineJson, setSpineJson] = useState(null);
     const [spineAtlas, setSpineAtlas]  = useState(null);
     const [spinePng, setSpinePng] = useState(null);
-    const [menuView, setMenuView] = useState(null);
+    const [imageExpression, setImageExpression] = useState(null);
 
     const [spine, setSpine] = useState(null);
 
@@ -97,7 +98,7 @@ export default function DisplayNFT({
     
 
     useEffect(()=>{
-        const { parsedJson, parsedAtlas, parsedImage, parsedMenuView } = parseNFT(assetlayerNFT, expression);
+        const { parsedJson, parsedAtlas, parsedImage, parsedImageExpression } = parseNFT(assetlayerNFT, expression);
         if (parsedJson) {
             // setSpineJson('jsonNamehere.json'); // setting this do a local copy of any nfts, they are not nft specific, only the image is
             if (expression === 'Three Quarter View') { // this is a temporary fix until the right atlas is reuploaded to all dogs
@@ -119,16 +120,14 @@ export default function DisplayNFT({
             setSpinePng(parsedImage); 
         }
 
-        if (parsedMenuView) {
-            setMenuView(parsedMenuView);
-        }
+        setImageExpression(parsedImageExpression);
     
 
     }, [assetlayerNFT, expression])
 
 
     useEffect(()=>{
-        if (expression === 'Menu View') {
+        if (imageExpression) {
             setApp(null);
             setNftLoaded(false);
             return;
@@ -137,7 +136,7 @@ export default function DisplayNFT({
             setNftLoaded(false);
             setApp(new PIXI.Application({ forceCanvas: true, backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
         }
-    }, [expression])
+    }, [imageExpression])
 
     const handleResize = useCallback(() =>{
         if (!app) {
@@ -163,7 +162,7 @@ export default function DisplayNFT({
 
     useEffect(()=>{
         // window.removeEventListener('resize', handleResize);
-        if (expression === 'Menu View') {
+        if (imageExpression) {
             return;
         }
         handleResize();
@@ -233,7 +232,7 @@ export default function DisplayNFT({
           if (!view) {
             return;
           }
-        if (expression !== 'Menu View') {
+        if (!imageExpression) {
             if (!nftLoaded && spineJson && spineAtlas && spinePng) {
                 loadPixiNFT();
             }
@@ -334,7 +333,7 @@ export default function DisplayNFT({
 
         return (
            <>
-           {showAnimations && expression !== 'Menu View' && 
+           {showAnimations && !imageExpression && 
             <Box ref={animationContainer} 
                 sx={{
                     position: 'absolute', 
@@ -353,10 +352,10 @@ export default function DisplayNFT({
             
 
             <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
-                {expression === 'Menu View' ?
+                {(imageExpression) ?
                     <Stack alignItems='center'>
                         <img 
-                            src={menuView} 
+                            src={imageExpression} 
                             alt='Menu View' 
                             style={{
                                 width: displayRatio && displayRatio < 1? undefined:'100', 

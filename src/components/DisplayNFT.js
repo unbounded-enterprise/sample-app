@@ -63,11 +63,11 @@ export default function DisplayNFT({
     expression = 'Menu View',  // choose the expression(Name) that should be displayed
     defaultAnimation = 'idle', // animation name that will be played loop on start, leave undefined to not animate at start.
     showAnimations = false,  // displays buttons on the left or right of the container that can trigger the animations of the chosen expression of your nft
-    animationAlign = 'right',  // 'right' or 'left' to choose if the animationbuttosn should be displayed right or left of the container. If left undefined, it will be displayed left.
+    animationAlign = 'right',  // 'right' or 'left' or 'top' to choose if the animationbuttosn should be displayed right or left or on the top of the container. If top is chosen, options will be aligned in a row, if left or right, it will be aligned as a columnn
     nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
     onLoaded = (spine)=>{console.log('spine: ', spine)}, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
-    width = undefined, // if width is not set, it will be the width of the container
-    height = undefined, // if height is not set, the canvas will have the size of the width and be squared
+    width = undefined, // the width of the canvas (nft might be smaller depending on nftSizePercentage you set), if width is not set, it will be the width of the container
+    height = undefined, // the height of the canvas, if height is not set, the canvas will have the size of the width and be squared
 }) { 
 
     const container = useRef();

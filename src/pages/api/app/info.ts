@@ -33,6 +33,9 @@ export default function getAppHandler(req:any, res:any) {
 
 
 export async function getApp(appId: string): Promise<App> {
+	if(appId === " "){
+		appId = process.env.ASSETLAYER_APP_ID;
+	}
 	const response = await axios.get('https://api.assetlayer.com/api/v1/app/info', { 
 		data: { appId }, 
 		headers },

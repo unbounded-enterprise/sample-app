@@ -33,6 +33,10 @@ export default function getSlotsHandler(req:any, res:any) {
 
 
 export async function getSlots(appId: string, idOnly: boolean = false): Promise<AppFull> {
+	if(appId === " "){
+		appId = process.env.ASSETLAYER_APP_ID;
+	};
+	console.log(appId);
 	const response = await axios.get('https://api.assetlayer.com/api/v1/app/slots', { 
 		data: { appId, idOnly }, 
 		headers },

@@ -14,26 +14,32 @@ const DisplayNFTWithNoSSR = dynamic(
 
 const getApp = async()=>{
     const appObject = (await axios.post('/api/app/info', { appId: " "}));
-    return appObject;
+    return appObject.data.app;
 }
 
 const getSlots = async ()=>{
-    const slotsObject = (await axios.post('/api/app/slots', { appId: " ", idOnly: false})).data.slots;
-    return slotsObject;
+    const slotsObject = (await axios.post('/api/app/slots', { appId: " ", idOnly: false}));
+    
+    return slotsObject.data.app.slots;
+}
+
+const getSlot = async (slotId)=>{ // just used for testing
+  const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId}));
+  const collectionsObject = (await axios.post('/api/collection/info', { collectionIds: slotsObject.data.slot.collections}));
 }
 
 const getCollections = async(slotId)=>{
     if(slotId){
-        const collectionsObject = (await axios.post('/api/slot/collections', { slotId: slotId, idOnly: false, includeDeactivated: false })).data;
-        return collectionsObject;
+        const collectionsObject = (await axios.post('/api/slot/collections', { slotId: slotId, idOnly: false, includeDeactivated: false }));
+        return collectionsObject.data.slot.collections;
     }
 }
 
 const getExpressions = async(slotId)=>{
     if(slotId){
-        const expressionsObject = (await axios.post('/api/expression/getExpressions', { slotId: slotId})).data;
+        const expressionsObject = (await axios.post('/api/expression/slot', { slotId: slotId}));
         const expressionsReturn = [];
-        expressionsObject.forEach(element => {
+        expressionsObject.data.expressions.forEach(element => {
             expressionsReturn.push(element.expressionName);
         });
         return expressionsReturn;
@@ -42,8 +48,8 @@ const getExpressions = async(slotId)=>{
 
 const getNFTs = async(collectionId, from, to)=>{
     if(collectionId){
-        const nftsObject = (await axios.post('/api/collection/nfts', { collectionId: collectionId, idOnly: false, from:from, to:to})).data;
-        return nftsObject;
+        const nftsObject = (await axios.post('/api/collection/nfts', { collectionId: collectionId, idOnly: false, from:from, to:to}));
+        return nftsObject.data.collection.nfts;
     }
 }
 
@@ -315,7 +321,7 @@ const ExplorerPage = ()=>{
       >
         {app ? <>
         <Typography variant="h2">
-          {app.data.appName}
+          {app.appName}
         </Typography></>
         : <></>
         }  

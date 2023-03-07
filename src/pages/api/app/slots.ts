@@ -3,6 +3,7 @@ import { AppFull } from "src/types/app";
 import { errorHandling } from "../validate";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { BasicError } from "src/types/error";
+import { GetSlotsProps } from "src/types/app";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
@@ -15,7 +16,7 @@ export default function getSlotsHandler(req:any, res:any) {
 
 			if (!appId) throw new BasicError('missing appId', 409);
 
-			getSlots(appId, idOnly)
+			getSlots(req.body)
 				.then((app) => resolve(res.status(200).json(app)))
 				.catch(handleError)
 			
@@ -32,16 +33,15 @@ export default function getSlotsHandler(req:any, res:any) {
 }
 
 
-export async function getSlots(appId: string, idOnly: boolean = false): Promise<AppFull> {
-	if(appId === " "){
-		appId = process.env.ASSETLAYER_APP_ID;
+export async function getSlots(props:GetSlotsProps): Promise<AppFull> {
+	if(props.appId === " "){
+		props.appId = process.env.ASSETLAYER_APP_ID;
 	};
-	console.log(appId);
 	const response = await axios.get('https://api.assetlayer.com/api/v1/app/slots', { 
-		data: { appId, idOnly }, 
+		data: props, 
 		headers },
 	);
-	const app = response.data.body.app;
-
+	const app = response.data.body;
+	console.log(app);
 	return app;
 }

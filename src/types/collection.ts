@@ -23,6 +23,15 @@ export interface CollectionUpdateProps {
 	collectionImage?: string;
 }
 
+export interface GetCollectionProps{
+    collectionId: string;
+}
+
+export interface GetCollectionsProps{
+    collectionIds: Array<string>;
+
+}
+
 export interface GetCollectionNftsProps {
     collectionId: string;
     serials?: string;

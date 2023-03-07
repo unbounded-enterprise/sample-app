@@ -47,4 +47,13 @@ export interface AppFull {
   [key: string]: any;
 }
 
+export interface GetAppProps {
+  appId: string;
+}
+
+export interface GetSlotsProps {
+  appId: string;
+  idOnly: boolean;
+}
+
 export default App;

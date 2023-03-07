@@ -10,6 +10,10 @@ export interface ExpressionUpdateProps {
     expressionTypeId: string;
 }
 
+export interface GetExpressionSlotProps{
+    slotId: string;
+}
+
 export interface Expression {
     slotId: string;
     expressionId: string;

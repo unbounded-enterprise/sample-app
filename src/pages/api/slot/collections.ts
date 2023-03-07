@@ -12,8 +12,8 @@ export default function getCollectionsHandler(req:any, res:any) {
             const handleError = (e:any) => errorHandling(e, resolve, res);
 
             try {
+                console.log(req.body);
                 const  { slotId, idOnly, includeDeactivated } = req.body;
-
                 if (!slotId) throw new BasicError('missing slotId', 409);
 
                 getSessionUser(req, res)
@@ -34,7 +34,7 @@ async function getCollections(props:GetCollectionsProps) {
         data: props, 
         headers },
     );
-    const collections = collectionsResponse.data.body.slot.collections;
+    const collections = collectionsResponse.data.body;
 
     return collections;
 }

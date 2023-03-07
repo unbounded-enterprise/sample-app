@@ -8,6 +8,10 @@ export interface SlotUpdateProps {
     slotName: string;
 }
 
+export interface GetSlotProps {
+    slotId: string;
+}
+
 export interface GetCollectionsProps {
     handle: string;
     slotId: string;

@@ -12,13 +12,21 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 
         try {
             const  { collectionId, idOnly, serials:bSerials, from, to } = req.body;
-
-            if (!collectionId) throw new BasicError('missing collectionId', 409);
-            if (!bSerials && (isNaN(from) || isNaN(to))) throw new BasicError('missing serials', 409);
-
+            if (!req.body.collectionId) throw new BasicError('missing collectionId', 409);
+            /*//if (!bSerials && (isNaN(from) || isNaN(to))) throw new BasicError('missing serials', 409);
+            if(bSerials){
+                delete req.body.from;
+                delete req.body.to;
+            } else if(from && )*/
             const serials = bSerials || `${from}-${to}`;
+            delete req.body.from;
+            delete req.body.to;
+            delete req.body.serials;
+            if(serials){
+                req.body.serials = serials;
+            }
             
-            getCollectionNFTs({ collectionId, serials, idOnly })
+            getCollectionNFTs(req.body)
                 .then((nfts) => resolve(res.status(200).json(nfts)))
                 .catch(handleError)
 
@@ -39,7 +47,7 @@ export async function getCollectionNFTs(props:GetCollectionNftsProps) {
         data: props, 
         headers },
     );
-    const collections = collectionsResponse.data.body.collection.nfts;
+    const collections = collectionsResponse.data.body;
 
     return collections;
 }

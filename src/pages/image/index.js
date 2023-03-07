@@ -19,7 +19,7 @@ const ImagePage = ()=>{
   const fetchImages = async () => {
     try {
         const imagesRes = await axios.post('/api/getImages', { from: 0, to: 10 });
-        setImages(imagesRes.data);
+        setImages(imagesRes.data.collection.nfts);
         console.log(imagesRes.data);
     } catch(e) {
         console.log(e.response?.data?.error || 'unknown error');

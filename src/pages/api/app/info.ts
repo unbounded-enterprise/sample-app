@@ -17,6 +17,7 @@ export default function getAppHandler(req:any, res:any) {
 
 			if (!appId) {
 				if (!defaultAppId) throw new BasicError('missing appId', 409);
+				else if (defaultAppId === "YOURASSETLAYERAPPID") throw new BasicError('please set ASSETLAYER_APP_ID in your .env', 409);
 				else req.body.appId = defaultAppId;
 			}
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BasicError } from "src/types/error";
+import { GetCollectionProps } from "src/types/collection";
 import Collection from "src/types/collection";
 import { errorHandling } from "../validate";
 import { getSessionUser } from "../auth/[...nextauth]";
@@ -14,21 +15,10 @@ export default function getCollectionHandler(req:any, res:any) {
 			const { collectionId, collectionIds } = req.body;
 
 			if (!(collectionId || collectionIds)) throw new BasicError('missing collectionId', 409);
-			if (collectionIds) {
-				getCollections(collectionIds)
-					.then((collections) => resolve(res.status(200).json(collections)))
-					.catch(handleError)
-			} else {
-			getCollection(collectionId)
-				.then((collection) => resolve(res.status(200).json(collection)))
+			
+			getCollection(req.body)
+				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
-			}
-			/*
-			getSessionUser(req, res)
-				.then((user) => getCollection(collectionId))
-				.then((collection) => resolve(res.status(200).json(collection)))
-				.catch(handleError)
-			*/
 		} catch(e:any) {
 			handleError(e);
 		}
@@ -36,22 +26,11 @@ export default function getCollectionHandler(req:any, res:any) {
 }
 
 
-export async function getCollection(collectionId: string): Promise<Collection> {
+export async function getCollection(props:GetCollectionProps) {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/collection/info', { 
-		data: { collectionId }, 
+		data: props, 
 		headers },
 	);
-	const collection = response.data.body.collection;
 
-	return collection;
-}
-
-export async function getCollections(collectionIds: string[]): Promise<Collection[]> {
-	const response = await axios.get('https://api.assetlayer.com/api/v1/collection/info', { 
-		data: { collectionIds }, 
-		headers },
-	);
-	const collections = response.data.body.collections;
-
-	return collections;
+	return response.data.body;
 }

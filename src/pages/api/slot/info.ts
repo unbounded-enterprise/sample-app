@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BasicError } from "src/types/error";
+import {GetSlotProps} from "src/types/slot";
 import Slot from "src/types/slot";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
@@ -16,8 +17,8 @@ export default function getSlotHandler(req:any, res:any) {
 			if (!slotId) throw new BasicError('missing slotId', 409);
 
 			getSessionUser(req, res)
-				.then((user) => getSlot(slotId))
-				.then((slot) => resolve(res.status(200).json(slot)))
+				.then((user) => getSlot(req.body))
+				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
 		} catch(e:any) {
 			handleError(e);
@@ -26,12 +27,11 @@ export default function getSlotHandler(req:any, res:any) {
 }
 
 
-export async function getSlot(slotId: string): Promise<Slot> {
+export async function getSlot(props:GetSlotProps) {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/slot/info', { 
-		data: { slotId }, 
+		data: props, 
 		headers },
 	);
-	const slot = response.data.body.slot;
 
-	return slot;
+	return response.data.body;
 }

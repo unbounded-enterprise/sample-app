@@ -1,9 +1,11 @@
 import axios from "axios";
 import { BasicError } from "src/types/error";
 import App from "src/types/app";
+import { GetAppProps } from "src/types/app";
 import { errorHandling } from "../validate";
 import { getSessionUser } from "../auth/[...nextauth]";
 
+const defaultAppId = process.env.ASSETLAYER_APP_ID;
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getAppHandler(req:any, res:any) {
@@ -13,18 +15,14 @@ export default function getAppHandler(req:any, res:any) {
 		try {
 			const { appId } = req.body;
 
-			if (!appId) throw new BasicError('missing appId', 409);
+			if (!appId) {
+				if (!defaultAppId) throw new BasicError('missing appId', 409);
+				else req.body.appId = defaultAppId;
+			}
 
-			getApp(appId)
-				.then((app) => resolve(res.status(200).json(app)))
+			getApp(req.body)
+				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
-			
-			/*
-			getSessionUser(req, res)
-				.then((user) => getApp(appId))
-				.then((app) => resolve(res.status(200).json(app)))
-				.catch(handleError)
-			*/
 		} catch(e:any) {
 			handleError(e);
 		}
@@ -32,15 +30,11 @@ export default function getAppHandler(req:any, res:any) {
 }
 
 
-export async function getApp(appId: string): Promise<App> {
-	if(appId === " "){
-		appId = process.env.ASSETLAYER_APP_ID;
-	}
+export async function getApp(props:GetAppProps) {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/app/info', { 
-		data: { appId }, 
+		data: props, 
 		headers },
 	);
-	const app = response.data.body.app;
 
-	return app;
+	return response.data.body;
 }

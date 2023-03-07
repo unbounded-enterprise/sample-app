@@ -135,10 +135,10 @@ const AccessoryPage = ()=>{
 
   const fetchSlot = async (slotName) => {
     try {
-      const collections = (await axios.post('/api/slot/collections', { slotId: getSlotId(slotName), idOnly: true, includeDeactivated: false })).data;
+      const collections = (await axios.post('/api/slot/collections', { slotId: getSlotId(slotName), idOnly: true, includeDeactivated: false })).data.slot.collections;
       const nftData = [];
       const collectionInfos = await axios.post('/api/collection/info',  { collectionIds: collections });
-      const filteredCollections = collectionInfos.data.filter(col => !col?.collectionName?.includes('Test'))
+      const filteredCollections = collectionInfos.data.collections.filter(col => !col?.collectionName?.includes('Test'))
       slotCollections[slotName] = filteredCollections;
       setSlotCollections({...slotCollections});
       return filteredCollections;
@@ -167,7 +167,7 @@ const AccessoryPage = ()=>{
 
   async function fetchNfts(collectionId) {
     try {
-      const nfts = (await axios.post('/api/collection/nfts', { collectionId, idOnly: false, includeDeactivated: false, from, to })).data;
+      const nfts = (await axios.post('/api/collection/nfts', { collectionId, idOnly: false, includeDeactivated: false, from, to })).data.collection.nfts;
       setImages(nfts);
     } catch(e) {
       console.log('nft fetching error: ', e.message);

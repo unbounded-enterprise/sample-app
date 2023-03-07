@@ -1,8 +1,3 @@
-export interface MintedRange {
-    start: number;
-    end: number;
-}
-
 export interface NftId {
     nftId: string;
 }
@@ -23,6 +18,11 @@ export interface CollectionUpdateProps {
 	collectionImage?: string;
 }
 
+export interface GetCollectionProps{
+    collectionId?: string;
+    collectionIds?: string[];
+}
+
 export interface GetCollectionNftsProps {
     collectionId: string;
     serials?: string;
@@ -35,7 +35,7 @@ export interface Collection {
     collectionImage: string;
     creator: string; 
     slotId: string;
-    minted: MintedRange[];
+    minted: number;
     maximum: number;
     type: 'Indentical' | 'Unique';
     createdAt: number;

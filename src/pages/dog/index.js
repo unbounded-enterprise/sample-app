@@ -26,7 +26,7 @@ const PixiPage = ()=>{
         try {
             const dogRes = await axios.post('/api/getDogs', { from: 0, to: 50 });
             
-            setDogs(dogRes.data);
+            setDogs(dogRes.data.collection.nfts);
         } catch(e) {
             console.log(e.response?.data?.error || 'unknown error');
         }

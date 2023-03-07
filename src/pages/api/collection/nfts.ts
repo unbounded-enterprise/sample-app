@@ -11,23 +11,16 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const  { collectionId, idOnly, serials:bSerials, from, to } = req.body;
+            const  { collectionId, idOnly, serials, from, to } = req.body;
 
-            if (!collectionId) throw new BasicError('missing collectionId', 409);
-            if (!bSerials && (isNaN(from) || isNaN(to))) throw new BasicError('missing serials', 409);
-
-            const serials = bSerials || `${from}-${to}`;
+            if (!req.body.collectionId) throw new BasicError('missing collectionId', 409);
+            if (!serials && from && to) req.body.serials = `${from}-${to}`;
+            if (from) delete req.body.from;
+            if (to) delete req.body.to;
             
-            getCollectionNFTs({ collectionId, serials, idOnly })
-                .then((nfts) => resolve(res.status(200).json(nfts)))
+            getCollectionNFTs(req.body)
+                .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
-
-            /*
-            getSessionUser(req, res)
-                .then((user) => getCollectionNFTs({ collectionId, serials, idOnly }))
-                .then((nfts) => resolve(res.status(200).json(nfts)))
-                .catch(handleError)
-            */
         } catch(e:any) {
             handleError(e);
         }
@@ -35,11 +28,10 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 }
 
 export async function getCollectionNFTs(props:GetCollectionNftsProps) {
-    const collectionsResponse = await axios.get('https://api.assetlayer.com/api/v1/collection/nfts', { 
+    const response = await axios.get('https://api.assetlayer.com/api/v1/collection/nfts', { 
         data: props, 
         headers },
     );
-    const collections = collectionsResponse.data.body.collection.nfts;
 
-    return collections;
+    return response.data.body;
 }

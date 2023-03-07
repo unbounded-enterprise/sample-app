@@ -11,31 +11,16 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const  { collectionId, idOnly, serials:bSerials, from, to } = req.body;
+            const  { collectionId, idOnly, serials, from, to } = req.body;
+
             if (!req.body.collectionId) throw new BasicError('missing collectionId', 409);
-            /*//if (!bSerials && (isNaN(from) || isNaN(to))) throw new BasicError('missing serials', 409);
-            if(bSerials){
-                delete req.body.from;
-                delete req.body.to;
-            } else if(from && )*/
-            const serials = bSerials || `${from}-${to}`;
-            delete req.body.from;
-            delete req.body.to;
-            delete req.body.serials;
-            if(serials){
-                req.body.serials = serials;
-            }
+            if (!serials && from && to) req.body.serials = `${from}-${to}`;
+            if (from) delete req.body.from;
+            if (to) delete req.body.to;
             
             getCollectionNFTs(req.body)
-                .then((nfts) => resolve(res.status(200).json(nfts)))
+                .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
-
-            /*
-            getSessionUser(req, res)
-                .then((user) => getCollectionNFTs({ collectionId, serials, idOnly }))
-                .then((nfts) => resolve(res.status(200).json(nfts)))
-                .catch(handleError)
-            */
         } catch(e:any) {
             handleError(e);
         }
@@ -43,11 +28,10 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 }
 
 export async function getCollectionNFTs(props:GetCollectionNftsProps) {
-    const collectionsResponse = await axios.get('https://api.assetlayer.com/api/v1/collection/nfts', { 
+    const response = await axios.get('https://api.assetlayer.com/api/v1/collection/nfts', { 
         data: props, 
         headers },
     );
-    const collections = collectionsResponse.data.body;
 
-    return collections;
+    return response.data.body;
 }

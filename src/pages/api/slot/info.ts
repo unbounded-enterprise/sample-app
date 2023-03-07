@@ -18,7 +18,7 @@ export default function getSlotHandler(req:any, res:any) {
 
 			getSessionUser(req, res)
 				.then((user) => getSlot(req.body))
-				.then((slot) => resolve(res.status(200).json(slot)))
+				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
 		} catch(e:any) {
 			handleError(e);
@@ -27,12 +27,11 @@ export default function getSlotHandler(req:any, res:any) {
 }
 
 
-export async function getSlot(props:GetSlotProps): Promise<Slot> {
+export async function getSlot(props:GetSlotProps) {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/slot/info', { 
 		data: props, 
 		headers },
 	);
-	const slot = response.data.body;
 
-	return slot;
+	return response.data.body;
 }

@@ -13,12 +13,12 @@ const DisplayNFTWithNoSSR = dynamic(
 )
 
 const getApp = async()=>{
-    const appObject = (await axios.post('/api/app/info', { appId: " "}));
+    const appObject = (await axios.post('/api/app/info', { }));
     return appObject.data.app;
 }
 
 const getSlots = async ()=>{
-    const slotsObject = (await axios.post('/api/app/slots', { appId: " ", idOnly: false}));
+    const slotsObject = (await axios.post('/api/app/slots', { idOnly: false }));
     
     return slotsObject.data.app.slots;
 }

@@ -17,15 +17,8 @@ export default function getExpressionsHandler(req:any, res:any) {
 			if (!slotId) throw new BasicError('missing slotId', 409);
 			
 			getExpressions(req.body)
-				.then((expressions) => resolve(res.status(200).json(expressions)))
+				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
-
-			/*
-			getSessionUser(req, res)
-				.then((user) => getExpressions(slotId))
-				.then((expressions) => resolve(res.status(200).json(expressions)))
-				.catch(handleError)
-			*/
 		} catch(e:any) {
 			handleError(e);
 		}
@@ -33,12 +26,11 @@ export default function getExpressionsHandler(req:any, res:any) {
 }
 
 
-export async function getExpressions(props:GetExpressionSlotProps): Promise<Expression[]> {
+export async function getExpressions(props:GetExpressionSlotProps) {
 	const response = await axios.get('https://api.assetlayer.com/api/v1/expression/slot', { 
 		data: props, 
 		headers },
 	);
-	const expressions = response.data.body;
 
-	return expressions;
+	return response.data.body;
 }

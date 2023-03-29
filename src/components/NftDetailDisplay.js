@@ -44,7 +44,7 @@ export const NftPropertyDisplay = ({nft, properties, setProperties}) => {
                 onChange={select}
               >
               {apps.map((app) => (
-            <MenuItem value={app}>{app}</MenuItem>  
+                  <MenuItem key={app} value={app}>{app}</MenuItem>  
              ))}
             </Select>
         </FormControl>
@@ -83,7 +83,6 @@ export const NftDetailDisplay = ({nft, setCurrentExpression, currentExpression})
         propertyString = JSON.stringify(nft.properties, 2, null);
     }
     var expressionNames = [];
-    console.log(nft.expressionValues);
     if(nft.expressionValues){
         nft.expressionValues.forEach(element => {
             if(!expressionNames.includes(element.expression.expressionName)){

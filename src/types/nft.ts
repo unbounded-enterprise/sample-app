@@ -11,6 +11,10 @@ export interface GetNFTSlotsProps {
     countsOnly?: boolean;
 }
 
+export interface GetNFTInfoProps {
+    nftId: string
+}
+
 export interface ExpressionValue {
     value: string // url to content
     expressionValueId: string;

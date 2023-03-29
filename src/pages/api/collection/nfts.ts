@@ -14,10 +14,9 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
             const  { collectionId, idOnly, serials, from, to } = req.body;
 
             if (!req.body.collectionId) throw new BasicError('missing collectionId', 409);
-            if (!serials && from && to) req.body.serials = `${from}-${to}`;
+            if (!serials && (from>=0) && to) req.body.serials = `${from}-${to}`;
             if (from) delete req.body.from;
             if (to) delete req.body.to;
-            
             getCollectionNFTs(req.body)
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)

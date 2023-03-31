@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
 import { Box, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic-searchbar';
+import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
 import { CollectionCard } from 'src/components/CollectionCard';
 import axios from 'axios';

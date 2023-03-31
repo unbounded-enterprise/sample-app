@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GetCollectionNftsProps } from "src/types/collection";
 import { BasicError } from "src/types/error";
+import { toNumber } from "src/utils/basic/basic-numbers";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
 
@@ -11,12 +12,14 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const  { collectionId, idOnly, serials, from, to } = req.body;
+            const { from, to, ...body } = req.body;
 
-            if (!req.body.collectionId) throw new BasicError('missing collectionId', 409);
-            if (!serials && (from>=0) && to) req.body.serials = `${from}-${to}`;
-            if (from) delete req.body.from;
-            if (to) delete req.body.to;
+            if (!body.collectionId) throw new BasicError('missing collectionId', 409);
+            if (!body.serials && to) {
+                const [{ result: fNum }, { result: tNum }] = [toNumber(from), toNumber(to)];
+                if (fNum && tNum) body.serials = `${fNum}-${tNum}`;
+            }
+            
             getCollectionNFTs(req.body)
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)

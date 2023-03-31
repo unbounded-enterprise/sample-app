@@ -1,6 +1,6 @@
-import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, MenuItem, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import dynamic from 'next/dynamic'
 import React from 'react';
+import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, MenuItem, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 
 const DisplayNFTWithNoSSR = dynamic(
   () => import('src/components/DisplayNFT'),

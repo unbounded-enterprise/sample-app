@@ -19,9 +19,9 @@ export const CollectionCard = ({ search, collection, slot }) =>{
     returnValue = (
       <Grid
         item
-        lg={3}
-        sm={4}
         xs={12}
+        sm={4}
+        lg={3}
         onClick={()=>{}}
       >
         <NextLink href={`/explorer/slot/${slot.slotId}/collection/${collection.collectionId}`} passHref legacyBehavior>

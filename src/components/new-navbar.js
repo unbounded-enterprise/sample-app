@@ -48,32 +48,33 @@ export const NewNavbar = (props) => {
         />
         <Toolbar
           disableGutters
-          sx={{ minHeight: 64, width: '100%'}}
+          sx={{ minHeight: 64, width: '100%' }}
         >
-          
           <Box
             sx={{
-                flex: 1,
+              flex: 1,
               alignItems: 'center',
               display: {
                 md: 'flex',
                 xs: 'none'
               }
             }}
-          ><Box sx={{paddingRight: 3}}>
-            <NextLink
-            href="/"
-            passHref>
+          >
+            <Box sx={{ paddingRight: 3 }}>
+              <NextLink href="/" passHref>
                 <Logo  />
-          </NextLink></Box>
+              </NextLink>
+            </Box>
             <NextLink
               href="https://www.nftsample.app/explorer"
               passHref
               legacyBehavior
             >
-              <Link underline="none" sx={{paddingRight: 2}} >
+              <Link underline="none" sx={{ paddingRight: 2 }} >
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">NFT Explorer</Typography>
+                  <Typography color="textSecondary" variant="subtitle2">
+                    NFT Explorer
+                  </Typography>
                 </Box>
               </Link>
             </NextLink>
@@ -84,7 +85,9 @@ export const NewNavbar = (props) => {
             >
               <Link underline="none" sx={{paddingRight: 2}}>
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">My NFTs</Typography>
+                  <Typography color="textSecondary" variant="subtitle2">
+                    My NFTs
+                  </Typography>
                 </Box>
               </Link>
             </NextLink>
@@ -95,7 +98,9 @@ export const NewNavbar = (props) => {
             >
               <Link underline="none" sx={{paddingRight: 2}}>
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Marketplace</Typography>
+                  <Typography color="textSecondary" variant="subtitle2">
+                    Marketplace
+                  </Typography>
                 </Box>
               </Link>
             </NextLink>
@@ -106,31 +111,35 @@ export const NewNavbar = (props) => {
             >
               <Link underline="none" sx={{paddingRight: 2}}>
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Storefront</Typography>
+                  <Typography color="textSecondary" variant="subtitle2">
+                    Storefront
+                  </Typography>
                 </Box>
               </Link>
             </NextLink>
           </Box>
           <Box
-              component={ButtonBase}
-              onClick={handleOpenPopover}
-              ref={anchorRef}
-              sx={{
-                right: 0,
-                display: 'flex',
-                ml: 2
-              }}
-            >
-              { user && <Avatar
+            component={ButtonBase}
+            onClick={handleOpenPopover}
+            ref={anchorRef}
+            sx={{
+              right: 0,
+              display: 'flex',
+              ml: 2
+            }}
+          >
+            { user && 
+              <Avatar
+                src={user.avatarUrl}
                 sx={{
                   height: 50,
                   width: 50,
                 }}
-                src={user.avatarUrl}
               >
                 <UserCircleIcon fontSize="small" />
-              </Avatar> }
-            </Box>
+              </Avatar> 
+            }
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

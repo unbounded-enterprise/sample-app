@@ -36,8 +36,8 @@ export const NftPropertyDisplay = ({nft, properties, setProperties}) => {
           <FormControl sx={{width:"20%", right:0, p:1}}>
             <InputLabel id="demo-simple-select-label">Select App</InputLabel>
              <Select
-                defaultValue={""}
-                value={apps}
+                defaultValue={apps[0]}
+                value={apps[0]}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="Select App"

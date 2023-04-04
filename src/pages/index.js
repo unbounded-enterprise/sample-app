@@ -9,7 +9,6 @@ import { HomeHero } from '../components/home/home-hero';
 import { HomeHandcash } from '../components/home/home-handcash';
 import { HomeDurodogs } from '../components/home/home-durodogs';
 
-
 const Page = () => {
   const [app, setApp] = useState(null);
 
@@ -34,7 +33,7 @@ const Page = () => {
             }}>
               <HomeHero app={app} />
             </Grid>
-            <Grid item sm={12} md={5} lg={6} sx={{ mt: '2em', alignItems: 'center', display: 'flex', flexDirection: {xs:'column', md:'row' }}}>
+            <Grid item sm={12} md={5} lg={6} sx={{ mt: {xs:'.5em', md:'2em'}, alignItems: 'center', display: 'flex', flexDirection: {xs:'column', md:'row' }}}>
               <Card  sx={{
                 backgroundColor: '#ffffff',
                 alignItems: 'center',

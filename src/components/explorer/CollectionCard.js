@@ -2,7 +2,6 @@ import { Box, Card, Grid, Typography} from '@mui/material';
 import NextLink from 'next/link';
 
 export const CollectionCard = ({search, collection, slot}) =>{
-  console.log(collection);
     const searchTrue = collection.collectionName.toLowerCase().includes(search.toLowerCase());
     var collectionImage = "/static/collectionImage.png";
     if(collection.collectionImage){
@@ -13,8 +12,8 @@ export const CollectionCard = ({search, collection, slot}) =>{
     if(searchTrue){
       returnValue = (<Grid
       item
-      lg={3}
-      sm={4}
+      xl={3}
+      md={4}
       xs={12}
       onClick={()=>{}}
       >
@@ -24,6 +23,7 @@ export const CollectionCard = ({search, collection, slot}) =>{
               flexDirection: 'column',
               p: 1,
               m: 1,
+              minWidth: "320px"
             }}
             variant="outlined"
           >

@@ -5,6 +5,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
 import { authApi } from '../../_api_/auth-api';
+import { useAuth } from 'src/hooks/use-auth';
+
 
 
 
@@ -12,10 +14,10 @@ export const HomeHero = (props) => {
   const theme = useTheme();
   const [redirectionUrl, setRedirectionUrl] = useState("/")
   const {app} = props;
+  const { user } = useAuth();
 
   useEffect(() => {
     authApi.getRedirectionURL().then((url) => { if (url) setRedirectionUrl(url); });
-    console.log(redirectionUrl);
   }, []);
   
   return (
@@ -29,8 +31,8 @@ export const HomeHero = (props) => {
       <Container
         maxWidth="md"
         sx={{
-          mt:'6em',
-          ml:'6em',
+          mt:{xs:'1em', md:'6em'},
+          ml:{xs:'.5em', md:'6em'},
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -45,10 +47,11 @@ export const HomeHero = (props) => {
         <Typography
           align="left"
           variant="h5"
-          sx={{ mb: '2em', mr:'5em'  }}
+          sx={{ mb: '1em', mr:'5em'  }}
         >
           {app.description}
         </Typography>
+        {!user ? <>
         <NextLink href={redirectionUrl} legacyBehavior passHref>
                 <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} 
                 src='/static/icons/handcash1024.png' />} 
@@ -68,6 +71,15 @@ export const HomeHero = (props) => {
                         Login with HandCash
                 </Button>
         </NextLink>
+        </> : <>
+        <Typography
+          align="left"
+          variant="h5"
+          sx={{ mb: {xs:'.5em', md:'2em'}, mr:{xs:'0em', md:'5em'}  }}
+        >
+         Greetings ${user.handle}!
+        </Typography>
+        </>}
       </Container>
 
     </Box>

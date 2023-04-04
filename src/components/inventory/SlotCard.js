@@ -33,6 +33,7 @@ export const SlotCard = ({ slot, numCollections }) => {
                             p: "16px",
                             maxWidth: "372px",
                             maxHeight: "454px",
+                            minWidth: "320px",
                             boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 1px rgba(100, 116, 139, 0.06), 0px 1px 2px rgba(100, 116, 139, 0.1)",
                             borderRadius: "8px"
                         }}

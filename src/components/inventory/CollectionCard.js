@@ -23,6 +23,7 @@ export const CollectionCard = ({search, collection, slot, collectionCount}) =>{
               flexDirection: 'column',
               p: 1,
               m: 1,
+              minWidth: "320px"
             }}
             variant="outlined"
           >

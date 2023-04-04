@@ -40,7 +40,7 @@ export const NewNavbar = (props) => {
         padding: 1
       }}
     >
-      <Container maxWidth={false}>
+      <Container maxWidth="lg">
         <AccountPopover
           anchorEl={anchorRef.current}
           onClose={handleClosePopover}

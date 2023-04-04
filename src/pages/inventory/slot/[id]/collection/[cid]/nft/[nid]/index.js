@@ -82,7 +82,7 @@ const InventoryNftDetailPage = ()=>{
           backgroundColor: 'none'
         }}
       >
-      <Grid container spacing={2}>
+      <Grid container spacing={2} minWidth="320px">
       <Grid item xs={12}>
               <Breadcrumbs aria-label="breadcrumb">
                 <NextLink underline="hover" color="inherit" href="/inventory">
@@ -101,10 +101,10 @@ const InventoryNftDetailPage = ()=>{
             <Typography variant="h3" sx={{ lineHeight:'40px'}}>
             {chosenCollection.collectionName} #{chosenNft.serial}
       </Typography>
-      <Typography variant="h5" sx={{lineHeight:'80px'}}>
+      <Typography variant="h5" sx={{lineHeight:{xs: '35px', lg:'80px'}}}>
        Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
       </Typography>
-      <Typography variant="p2" sx={{lineHeight:'30px', marginBottom:"40px"}}>
+      <Typography variant="p2" sx={{lineHeight:'25px', marginBottom:"40px"}}>
        Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
       </Typography>
       <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">

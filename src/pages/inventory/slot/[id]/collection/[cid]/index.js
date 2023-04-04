@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
 import { Box, Button, Typography, Grid } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { BasicSearchbar } from 'src/components/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
 import { NftCard } from 'src/components/inventory/NftCard';
 import axios from 'axios';

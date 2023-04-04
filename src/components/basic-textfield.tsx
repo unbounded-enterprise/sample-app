@@ -42,11 +42,8 @@ export type BasicTextFieldProps = StandardTextFieldProps | FilledTextFieldProps 
 export const BasicTextField: FC<BasicTextFieldProps> = ({ sx={}, ...props }) => {
 
   return (
-    <TextField 
-      InputLabelProps={{ sx: { color: "#555555" } }} 
-      sx={{ '& .MuiOutlinedInput-root': (props.disabled) ? textfieldStyleDisabled : textfieldStyleEnabled, ...sx }}
-      { ...props } 
-    />
+    <TextField {...props} InputLabelProps={{ sx: { color: "#555555" } }} 
+      sx={{ '& .MuiOutlinedInput-root': (props.disabled) ? textfieldStyleDisabled : textfieldStyleEnabled, ...sx }}/>
   );
 };
 

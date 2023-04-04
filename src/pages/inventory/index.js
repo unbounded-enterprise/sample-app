@@ -3,13 +3,16 @@ import { Box, Typography, Grid } from '@mui/material';
 import { NewLayout } from '../../components/new-layout';
 import axios from 'axios';
 import React from 'react';
-import { SlotCard } from 'src/components/inventory/SlotCard'
+import { SlotCard } from 'src/components/inventory/SlotCard';
+import { HomeHandcash } from 'src/components/home/home-handcash';
+import { useAuth } from 'src/hooks/use-auth';
 
 const InventoryPage = () => {
   const [app, setApp] = useState(null);
   const [slots, setSlots] = useState([]);
   const [totalCollections, setTotalCollections] = useState(0);
   const [slotCounts, setSlotCounts] = useState({});
+  const {user} = useAuth();
 
   useEffect(() => {
     getSlots().then((slots) => {
@@ -43,6 +46,8 @@ const InventoryPage = () => {
 
   return (
     <>
+      {!user ? <>
+      <HomeHandcash></HomeHandcash> </> : <>
       <Box
         sx={{
           backgroundColor: 'none',
@@ -89,7 +94,7 @@ const InventoryPage = () => {
                   Select Slot:
                 </Typography></>
                 : <></>}</Grid>
-            <Grid item>
+            <Grid item xs={12}>
               <Grid container spacing={2}>
                 {slots && slots.map((slot) => (
 
@@ -102,7 +107,7 @@ const InventoryPage = () => {
           </Grid>
         </Box>
       </Box>
-    </>
+    </>}</>
   )
 }
 

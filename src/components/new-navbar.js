@@ -67,7 +67,7 @@ export const NewNavbar = (props) => {
                 <Logo  />
           </NextLink></Box>
             <NextLink
-              href="https://www.nftsample.app/explorer"
+              href="/explorer"
               passHref
               legacyBehavior
             >
@@ -78,7 +78,7 @@ export const NewNavbar = (props) => {
               </Link>
             </NextLink>
             <NextLink
-              href="https://www.nftsample.app"
+              href="/inventory"
               passHref
               legacyBehavior
             >
@@ -89,7 +89,7 @@ export const NewNavbar = (props) => {
               </Link>
             </NextLink>
             <NextLink
-              href="https://www.nftsample.app"
+              href="/"
               passHref
               legacyBehavior
             >
@@ -100,13 +100,24 @@ export const NewNavbar = (props) => {
               </Link>
             </NextLink>
             <NextLink
-              href="https://www.nftsample.app"
+              href="/"
               passHref
               legacyBehavior
             >
               <Link underline="none" sx={{paddingRight: 2}}>
                 <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
                   <Typography color="textSecondary" variant="subtitle2">Storefront</Typography>
+                </Box>
+              </Link>
+            </NextLink>
+            <NextLink
+              href="https://docs.assetlayer.com"
+              passHref
+              legacyBehavior
+            >
+              <Link underline="none" sx={{paddingRight: 2}}>
+                <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                  <Typography color="textSecondary" variant="subtitle2">Docs</Typography>
                 </Box>
               </Link>
             </NextLink>

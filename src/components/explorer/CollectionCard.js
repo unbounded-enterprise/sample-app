@@ -2,6 +2,7 @@ import { Box, Card, Grid, Typography} from '@mui/material';
 import NextLink from 'next/link';
 
 export const CollectionCard = ({search, collection, slot}) =>{
+  console.log(collection);
     const searchTrue = collection.collectionName.toLowerCase().includes(search.toLowerCase());
     var collectionImage = "/static/collectionImage.png";
     if(collection.collectionImage){
@@ -48,7 +49,17 @@ export const CollectionCard = ({search, collection, slot}) =>{
               <Typography
                 variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
               >
-                {collection.creator}
+                {collection.handle}
+              </Typography></Box>
+              <Box><Typography
+                variant="p2" sx={{fontWeight:"bold",lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                Total Minted:&nbsp;
+              </Typography>
+              <Typography
+                variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                {collection.mintedAmt}
               </Typography></Box>
               <Box><Typography
                 variant="p2" sx={{fontWeight:"bold",lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
@@ -58,7 +69,7 @@ export const CollectionCard = ({search, collection, slot}) =>{
               <Typography
                 variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
               >
-                {collection.maximum>=999999999 ? '\u221e': collection.maximum}
+                {collection.maximum>=900000000 ? '\u221e': collection.maximum}
               </Typography></Box>
           </Card></NextLink>
       </Grid>

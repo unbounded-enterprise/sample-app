@@ -12,15 +12,15 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const { from, to, ...body } = req.body;
+            const { from, to, ...bod } = req.body;
 
-            if (!body.collectionId) throw new BasicError('missing collectionId', 409);
-            if (!body.serials && to) {
+            if (!bod.collectionId) throw new BasicError('missing collectionId', 409);
+            if (!bod.serials && to) {
                 const [{ result: fNum }, { result: tNum }] = [toNumber(from), toNumber(to)];
-                if (fNum && tNum) body.serials = `${fNum}-${tNum}`;
+                if (fNum && tNum) bod.serials = `${fNum}-${tNum}`;
             }
             
-            getCollectionNFTs(req.body)
+            getCollectionNFTs(bod)
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {

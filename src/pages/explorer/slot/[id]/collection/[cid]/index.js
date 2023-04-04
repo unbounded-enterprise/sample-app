@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Typography, Grid } from '@mui/material';
+import { Box, Button, Breadcrumbs, Typography, Grid } from '@mui/material';
 import { BasicSearchbar } from 'src/components/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
-import { NftCard } from 'src/components/NftCard';
+import { NftCard } from 'src/components/explorer/NftCard';
 import axios from 'axios';
 import React from 'react';
 
@@ -88,17 +88,52 @@ const ExploreCollectionPage = ()=>{
         }}
       >
       <Grid container spacing={2}>
-      <Grid item xs={12} sx={{backgroundColor: "none"}}>
-        <NextLink href={`/explorer/slot/${slotId}`} passHref><Button sx={slotButtonStyle}>Back</Button></NextLink> </Grid>
-        </Grid>
+      <Grid item xs={12}>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink underline="hover" color="inherit" href="/explorer">
+                  App
+                </NextLink>
+                <NextLink underline="hover" color="inherit" href={`/explorer/slot/${slotId}`}>
+                  Slot
+                </NextLink>
+                <Typography color="text.primary">Collection</Typography>
+              </Breadcrumbs></Grid>
         
         <Grid item>
           <Typography variant="h3" sx={{font:'nunito', fontWeight:'bold', lineHeight:'40px'}}>
         {chosenCollection.collectionName}
       </Typography> 
+      <Typography variant="p2" sx={{font:'nunito', lineHeight:'50px'}}>
+       Creator:&nbsp;
+      </Typography>
       <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
-       Creator: {chosenCollection.creator} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; Type: {chosenCollection.type}
-      </Typography></Grid>
+      {chosenCollection.handle} &emsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', lineHeight:'50px'}}>
+       App:&nbsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
+      {app.appName} &emsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', lineHeight:'50px'}}>
+       Slot:&nbsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
+      {chosenSlot.slotName} &emsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', lineHeight:'50px'}}>
+       Max Supply:&nbsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
+      {chosenCollection.maximum>900000000 ? '\u221e' : chosenCollection.maximum} &emsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', lineHeight:'50px'}}>
+       Type:&nbsp;
+      </Typography>
+      <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
+      {chosenCollection.type} &emsp;
+      </Typography>
+      </Grid>
         
          
         
@@ -137,7 +172,7 @@ const ExploreCollectionPage = ()=>{
           }}>Next 20</Button>
          </Grid>
          
-        </Grid>
+        </Grid></Grid>
         </Box>
   </Box> </>: <></>}
         </>

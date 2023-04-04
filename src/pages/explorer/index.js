@@ -3,7 +3,11 @@ import { Box, Typography, Grid } from '@mui/material';
 import { NewLayout } from '../../components/new-layout';
 import axios from 'axios';
 import React from 'react';
-import { SlotCard } from 'src/components/SlotCard'
+import { SlotCard } from 'src/components/explorer/SlotCard';
+import { HomeHandcash } from 'src/components/home/home-handcash';
+import { useAuth } from 'src/hooks/use-auth';
+
+
 
 const ExplorerPage = () => {
   const [app, setApp] = useState(null);
@@ -11,6 +15,8 @@ const ExplorerPage = () => {
   const [totalCollections, setTotalCollections] = useState(0);
 
   const [chosenSlot, setChosenSlot] = useState(null);
+
+  const {user} = useAuth();
 
   useEffect(() => {
     getSlots().then((slots) => {
@@ -36,6 +42,8 @@ const ExplorerPage = () => {
 
   return (
     <>
+     {!user ? <>
+      <HomeHandcash></HomeHandcash> </> : <>
       <Box
         sx={{
           backgroundColor: 'none',
@@ -95,7 +103,7 @@ const ExplorerPage = () => {
           </Grid>
         </Box>
       </Box>
-    </>
+    </>}</>
   )
 }
 

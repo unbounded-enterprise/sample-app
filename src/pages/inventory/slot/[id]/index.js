@@ -1,7 +1,7 @@
 import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Breadcrumbs, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { BasicSearchbar } from 'src/components/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
 import { CollectionCard } from 'src/components/inventory/CollectionCard';
@@ -107,9 +107,13 @@ const InventorySlotPage = ()=>{
         }}
       >
       <Grid container spacing={2}>
-      <Grid item xs={12} sx={{backgroundColor: "none"}}>
-        <NextLink href="/inventory" passHref><Button sx={slotButtonStyle}>Back</Button></NextLink> </Grid>
-        </Grid>
+      <Grid item>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink underline="hover" color="inherit" href="/inventory">
+                  App
+                </NextLink>
+                <Typography color="text.primary">Slot</Typography>
+              </Breadcrumbs></Grid>
         <Grid item xs={12} sx={{backgroundColor: "none"}}>
     <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'40px', fontSize:{ xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px'}}}>
         App:&nbsp;
@@ -157,14 +161,14 @@ const InventorySlotPage = ()=>{
               <MenuItem value={"zToA"}>Reverse Alphabetical</MenuItem>
             </Select>
         </FormControl></Box></Grid>
-        <Grid item>
-            <Grid container>
+        <Grid item xs={12}>
+          <Grid container spacing={1} sx={{ p: 1 }}>
         {collections.map((collection) => (
           <React.Fragment key={collection.collectionId}>
             <CollectionCard search={search} collection={collection} slot={chosenSlot} collectionCount={activeCollections[collection.collectionId]}/>
           </React.Fragment>
         ))}</Grid>
-        </Grid>
+        </Grid></Grid>
                 </Box>
   </Box> </>: <></>} 
         </>

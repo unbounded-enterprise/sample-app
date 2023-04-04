@@ -106,6 +106,7 @@ export const NftDetailDisplay = ({nft, setCurrentExpression, currentExpression})
             flexDirection: 'column',
             p: 1,
             m: 1,
+            maxWidth: '800px'
           }}
           variant="outlined"
         >

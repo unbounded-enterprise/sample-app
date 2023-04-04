@@ -27,6 +27,7 @@ export const NftCard = ({ search, collection, nft, slot}) => {
           flexDirection: 'column',
           p: 1,
           m: 1,
+          minWidth: "320px"
         }}
         variant="outlined"
       > <img src={menuViewExpressionValue} alt={'Collection Image'} style={{maxHeight: '300px', maxWidth: '300px', placeSelf: 'center'}} />

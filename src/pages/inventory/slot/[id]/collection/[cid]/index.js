@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Typography, Grid } from '@mui/material';
+import { Box, Breadcrumbs, Typography, Grid } from '@mui/material';
 import { BasicSearchbar } from 'src/components/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
 import { NftCard } from 'src/components/inventory/NftCard';
@@ -58,7 +58,6 @@ const InventoryCollectionPage = ()=>{
         setNFTs(nfts)})
         .catch(e=>{console.log('setting error: ', e.message)});
       }
-      console.log(nfts);
   }, [chosenCollection]);
 
   useEffect(()=>{
@@ -89,16 +88,23 @@ const InventoryCollectionPage = ()=>{
         }}
       >
       <Grid container spacing={2}>
-      <Grid item xs={12} sx={{backgroundColor: "none"}}>
-        <NextLink href={`/inventory/slot/${slotId}`} passHref><Button sx={slotButtonStyle}>Back</Button></NextLink> </Grid>
-        </Grid>
+      <Grid item xs={12}>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink underline="hover" color="inherit" href="/inventory">
+                  App
+                </NextLink>
+                <NextLink underline="hover" color="inherit" href={`/inventory/slot/${slotId}`}>
+                  Slot
+                </NextLink>
+                <Typography color="text.primary">Collection</Typography>
+              </Breadcrumbs></Grid>
         
         <Grid item>
           <Typography variant="h3" sx={{font:'nunito', fontWeight:'bold', lineHeight:'40px'}}>
         {chosenCollection.collectionName}
       </Typography> 
       <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'50px'}}>
-       Creator: {chosenCollection.creator} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts.length} &emsp; Type: {chosenCollection.type}
+       Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts.length} &emsp; Type: {chosenCollection.type}
       </Typography></Grid>
         
          
@@ -126,7 +132,7 @@ const InventoryCollectionPage = ()=>{
           </React.Fragment>
         ))}</Grid>
         
-        </Grid>
+        </Grid></Grid>
         </Box>
   </Box> </>: <></>}
         </>
@@ -166,7 +172,6 @@ var nftsObject;
 if(collectionId){
       
       nftsObject = (await axios.post('/api/nft/collections', { collectionIds: [collectionId], idOnly: false}));
-      console.log(nftsObject);
       return nftsObject.data.collections[collectionId];
   }
 }

@@ -1,39 +1,67 @@
 import Head from 'next/head';
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { Divider } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Divider, Card, CardMedia, Grid, Paper } from '@mui/material';
 import { useAuthContext } from '../contexts/auth-context';
-import { MainLayout } from '../components/main-layout';
+import { NewLayout } from '../components/new-layout';
 import { HomeHero } from '../components/home/home-hero';
 import { HomeHandcash } from '../components/home/home-handcash';
 import { HomeDurodogs } from '../components/home/home-durodogs';
 
-
 const Page = () => {
+  const [app, setApp] = useState(null);
+
+  useEffect(() => {
+    getApp().then((app) => {
+      setApp(app)
+    })
+      .catch(e => { console.log('setting error: ', e.message) });
+  }, []);
 
   return (
     <>
-      <Head>
-        <title>
-          NFT Sample App | Asset Layer
-        </title>
-      </Head>
-      <main>
-          <HomeHero />
-          <Divider />
-          <HomeHandcash />
-          <Divider />
-          <HomeDurodogs />
-          <Divider />
-      </main>
-    </>
+      {app ? <>
+        <Head>
+          <title>
+            {app.appName}
+          </title>
+        </Head>
+        <main>
+          <Grid container spacing={2}>
+            <Grid item sm={12} md={7} lg={6} sx={{
+            }}>
+              <HomeHero app={app} />
+            </Grid>
+            <Grid item sm={12} md={5} lg={6} sx={{ mt: {xs:'.5em', md:'2em'}, alignItems: 'center', display: 'flex', flexDirection: {xs:'column', md:'row' }}}>
+              <Card  sx={{
+                backgroundColor: '#ffffff',
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: '32px',
+                border: 32,
+                borderColor: "background.paper"
+              }}><CardMedia
+              component="img"
+              alt="app image"
+              image={app.appImage}
+            /></Card></Grid>
+          </Grid>
+        </main>
+      </> : <></>}</>
   );
 };
 
 Page.getLayout = (page) => (
-  <MainLayout>
+  <NewLayout>
     {page}
-  </MainLayout>
+  </NewLayout>
 );
 
 export default Page;
+
+const getApp = async () => {
+  const appObject = (await axios.post('/api/app/info', {}));
+  return appObject.data.app;
+}

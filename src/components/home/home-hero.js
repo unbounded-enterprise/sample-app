@@ -1,61 +1,85 @@
 import { Bar } from 'react-chartjs-2';
-import { Box, Link, useTheme, Container, Typography, Grid } from '@mui/material';
+import { Box, Button, Link, useTheme, Container, Typography, Grid } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
+import { authApi } from '../../_api_/auth-api';
+import { useAuth } from 'src/hooks/use-auth';
+
+
+
 
 export const HomeHero = (props) => {
   const theme = useTheme();
+  const [redirectionUrl, setRedirectionUrl] = useState("/")
+  const {app} = props;
+  const { user } = useAuth();
 
+  useEffect(() => {
+    authApi.getRedirectionURL().then((url) => { if (url) setRedirectionUrl(url); });
+  }, []);
+  
   return (
     <Box
       sx={{
-        backgroundColor: 'background.paper',
-        pt: 6,
-        pb: '8em'
+        pt: 2,
+        pb: '2em'
       }}
       {...props}
     >    
       <Container
         maxWidth="md"
         sx={{
-          alignItems: 'center',
+          mt:{xs:'1em', md:'6em'},
+          ml:{xs:'.5em', md:'6em'},
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
         }}
       >
         <Typography
-          align="center"
-          variant="h1"
-          sx={{ py: 4, mt:5 }}
+          align="left"
+          variant="h4"
+          sx={{mb:".5em"}}
         >
-          Welcome to NFT Sample App
+          Welcome to {app.appName}
         </Typography>
         <Typography
-          align="center"
-          variant="h3"
-          sx={{ py: 4 }}
+          align="left"
+          variant="h5"
+          sx={{ mb: '1em', mr:'5em'  }}
         >
-          Learn how to build & deploy your own bitcoin NFT app or game in less than an hour. Imagine that - woot!
+          {app.description}
         </Typography>
+        {!user ? <>
+        <NextLink href={redirectionUrl} legacyBehavior passHref>
+                <Button startIcon={<img style={{ height: '1.5em', marginBottom: '2px', width: '1.5em' }} 
+                src='/static/icons/handcash1024.png' />} 
+                sx={{
+                  height: '4em',
+                  width: '20em',
+                  backgroundColor: '#38CB7B', 
+                  color: 'white',
+                  fontSize: '1em',
+                  px: '1em',
+                  textTransform: 'none',
+                  '&:hover': {
+                      backgroundColor: '#38CB7B',
+                      transform: 'scale(1.01)',
+                  }
+                      }}>
+                        Login with HandCash
+                </Button>
+        </NextLink>
+        </> : <>
         <Typography
-          align="center"
-          color="textSecondary"
-          variant="subtitle1"
-          sx={{ pt: 3 }}
+          align="left"
+          variant="h5"
+          sx={{ mb: {xs:'.5em', md:'2em'}, mr:{xs:'0em', md:'5em'}  }}
         >
-          This sample app is a Next-based React client that demonstrates how one might create a game or other application on the Asset Layer platform.  The code provided in this free app is very similar to that used for Duro Dogs.  The code for this app is completely open-source - so have fun creating!  Just thank us after you receive your unicorn status.
+         Greetings ${user.handle}!
         </Typography>
-        <NextLink
-              href="https://github.com/unbounded-enterprise/sample-app"
-              passHref
-            >
-              <Link underline="none">
-                <Box align="center" sx={{ borderRadius: 1, py: '0.5em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                <img style={{width:'50%'}} src='/static/github.png' alt='' />
-                </Box>
-              </Link>
-            </NextLink>
+        </>}
       </Container>
 
     </Box>

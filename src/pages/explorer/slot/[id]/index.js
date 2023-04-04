@@ -1,10 +1,10 @@
 import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Breadcrumbs, Button, Typography, Grid, Link, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { BasicSearchbar } from 'src/components/basic-searchbar';
 import { NewLayout } from 'src/components/new-layout';
-import { CollectionCard } from 'src/components/CollectionCard';
+import { CollectionCard } from 'src/components/explorer/CollectionCard';
 import axios from 'axios';
 import React from 'react';
 
@@ -81,11 +81,15 @@ const ExploreSlotPage = ()=>{
           backgroundColor: 'none'
         }}
       >
-      <Grid container spacing={2}>
-      <Grid item xs={12} sx={{backgroundColor: "none"}}>
-        <NextLink href="/explorer" passHref><Button sx={slotButtonStyle}>Back</Button></NextLink> </Grid>
-        </Grid>
-        <Grid item xs={12} sx={{backgroundColor: "none"}}>
+      <Grid container spacing={1}>
+            <Grid item>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink underline="hover" color="inherit" href="/explorer">
+                  App
+                </NextLink>
+                <Typography color="text.primary">Slot</Typography>
+              </Breadcrumbs></Grid>
+              <Grid item xs={12} sx={{backgroundColor: "none"}}>
     <Typography variant="p2" sx={{font:'nunito', fontWeight:'bold', lineHeight:'40px', fontSize:{ xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px'}}}>
         App:&nbsp;
       </Typography>
@@ -132,14 +136,14 @@ const ExploreSlotPage = ()=>{
               <MenuItem value={"zToA"}>Reverse Alphabetical</MenuItem>
             </Select>
         </FormControl></Box></Grid>
-        <Grid item>
+        <Grid item xs={12}>
             <Grid container>
         {collections.map((collection) => (
           <React.Fragment key={collection.collectionId}>
             <CollectionCard search={search} collection={collection} slot={chosenSlot} />
           </React.Fragment>
         ))}</Grid>
-        </Grid>
+        </Grid></Grid>
                 </Box>
   </Box> </>: <></>} 
         </>

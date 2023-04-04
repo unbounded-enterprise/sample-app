@@ -23,6 +23,7 @@ export const CollectionCard = ({search, collection, slot, collectionCount}) =>{
               flexDirection: 'column',
               p: 1,
               m: 1,
+              minWidth: "320px"
             }}
             variant="outlined"
           >
@@ -49,6 +50,26 @@ export const CollectionCard = ({search, collection, slot, collectionCount}) =>{
                 variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
               >
                 {collection.handle}
+              </Typography></Box>
+              <Box><Typography
+                variant="p2" sx={{fontWeight:"bold",lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                Total Minted:&nbsp;
+              </Typography>
+              <Typography
+                variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                {collection.minted}
+              </Typography></Box>
+              <Box><Typography
+                variant="p2" sx={{fontWeight:"bold",lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                Max Supply:&nbsp;
+              </Typography>
+              <Typography
+                variant="p2" sx={{lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}
+              >
+                {collection.maximum>=900000000 ? '\u221e': collection.maximum}
               </Typography></Box>
               <Box><Typography
                 variant="p2" sx={{fontWeight:"bold",lineHeight:"25px", fontSize: collection.collectionName.length > 50?'10px':{ xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px'}}}

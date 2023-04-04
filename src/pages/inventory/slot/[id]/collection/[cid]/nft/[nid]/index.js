@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Typography, Grid } from '@mui/material';
+import { Box, Breadcrumbs, Typography, Link, Grid } from '@mui/material';
 import { NewLayout } from 'src/components/new-layout';
 import axios from 'axios';
 import React from 'react';
@@ -82,32 +82,39 @@ const InventoryNftDetailPage = ()=>{
           backgroundColor: 'none'
         }}
       >
-      <Grid container spacing={2}>
-      <Grid item xs={12} sx={{backgroundColor: "none"}}>
-        <NextLink href={`/inventory/slot/${slotId}/collection/${collectionId}`} passHref><Button sx={slotButtonStyle}>Back</Button></NextLink> </Grid>
-        </Grid>
+      <Grid container spacing={2} minWidth="320px">
+      <Grid item xs={12}>
+              <Breadcrumbs aria-label="breadcrumb">
+                <NextLink underline="hover" color="inherit" href="/inventory">
+                  App
+                </NextLink>
+                <NextLink underline="hover" color="inherit" href={`/inventory/slot/${slotId}`}>
+                  Slot
+                </NextLink>
+                <NextLink underline="hover" color="inherit" href={`/inventory/slot/${slotId}/collection/${collectionId}`}>
+                  Collection
+                </NextLink>
+                <Typography color="text.primary">NFT</Typography>
+              </Breadcrumbs></Grid>
         
-         
-      {chosenNft ?
-        <>
       <Grid item xs={12} sx={{backgroundColor: "none"}}>
             <Typography variant="h3" sx={{ lineHeight:'40px'}}>
             {chosenCollection.collectionName} #{chosenNft.serial}
       </Typography>
-      <Typography variant="h5" sx={{lineHeight:'80px'}}>
-       Creator: {chosenCollection.creator} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
+      <Typography variant="h5" sx={{lineHeight:{xs: '35px', lg:'80px'}}}>
+       Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
       </Typography>
-      <Typography variant="p2" sx={{lineHeight:'30px', marginBottom:"40px"}}>
+      <Typography variant="p2" sx={{lineHeight:'25px', marginBottom:"40px"}}>
        Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
       </Typography>
+      <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
+  Location
+</Link>
             <NftDetailDisplay nft={chosenNft} setCurrentExpression={setCurrentExpression} currentExpression={currentExpression} />
-        </Grid></>
-        :
-        <></>
-        }
-        {chosenNft ? <Grid item xs={12} sx={{backgroundColor: "none"}}>
+        </Grid>
+       <Grid item xs={12} sx={{backgroundColor: "none"}}>
           <NftPropertyDisplay nft={chosenNft} properties={properties} setProperties={setProperties} />
-        </Grid> : <></>}
+        </Grid></Grid>
 
         </Box>
   </Box> </>: <></>}

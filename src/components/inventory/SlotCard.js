@@ -2,6 +2,10 @@ import { Box, Card, Grid, Link, Typography } from '@mui/material';
 import NextLink from 'next/link';
 
 export const SlotCard = ({ slot, numCollections }) => {
+    var slotImage = '/static/collectionImage.png';
+    if(slot.slotImage){
+        slotImage = slot.slotImage;
+    }
     return (
         <Grid
             item
@@ -29,12 +33,13 @@ export const SlotCard = ({ slot, numCollections }) => {
                             p: "16px",
                             maxWidth: "372px",
                             maxHeight: "454px",
+                            minWidth: "320px",
                             boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 1px rgba(100, 116, 139, 0.06), 0px 1px 2px rgba(100, 116, 139, 0.1)",
                             borderRadius: "8px"
                         }}
                         variant="outlined"
                     >
-                        <img src={'/static/collectionImage.png'} alt='collectionimage' style={{ width: '100%', maxWidth: "340px", maxHeight: "340px", alignContent: "center" }} />
+                        <img src={slotImage} alt='collectionimage' style={{ width: '100%', maxWidth: "340px", maxHeight: "340px", alignContent: "center" }} />
                         <Typography variant="p2" sx={{ gap: "8px", font: 'nunito', fontWeight: "bold", lineHeight: "40px", fontSize: slot.slotName.length > 18 ? '10px' : { xs: '12px', sm: '12px', md: '14px', lg: '14px', xl: '14px' } }}>
                             {slot.slotName}<br></br>
                         </Typography>

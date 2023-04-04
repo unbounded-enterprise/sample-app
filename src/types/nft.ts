@@ -11,13 +11,6 @@ export interface GetNFTSlotsProps {
     countsOnly?: boolean;
 }
 
-export interface GetNFTCollectionsProps {
-    handle: string;
-    collectionIds: string[];
-    idOnly?: boolean;
-    countsOnly?: boolean;
-}
-
 export interface GetNFTInfoProps {
     nftId: string
 }

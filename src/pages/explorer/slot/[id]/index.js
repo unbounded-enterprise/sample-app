@@ -10,7 +10,7 @@ import React from 'react';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
-const sortMethods = {
+export const collectionSortMethods = {
   maximum: maximumSort,
   maximumReverse: maximumSortReverse,
   minted: mintedSort,
@@ -273,8 +273,8 @@ const getCollections = async (slot, sortFunction) => {
   }
 }
   
-const sortCollections = async (collections, sortFunction) => {
-  const sortMethod = sortMethods[sortFunction];
+export const sortCollections = async (collections, sortFunction) => {
+  const sortMethod = collectionSortMethods[sortFunction];
   
   return (!!sortMethod) ? [...collections.sort(sortMethod)] : collections;
 }

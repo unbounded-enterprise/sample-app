@@ -15,7 +15,7 @@ export const NewLayout = (props) => {
     return (
         <NewLayoutRoot>
             <NewerNavbar />
-                {children}
+            { children }
             <Footer />
         </NewLayoutRoot>
     );

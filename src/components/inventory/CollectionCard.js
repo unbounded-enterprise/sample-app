@@ -1,11 +1,13 @@
 import NextLink from 'next/link';
 import { Box, Card, Grid, Typography } from '@mui/material';
 
-var collectionImage = "/static/collectionImage.png";
-var returnValue = <></>;
+var collectionImage;
+var returnValue;
 
 export const CollectionCard = ({ search, collection, slot, collectionCount }) => {
   const searchTrue = collection.collectionName.toLowerCase().includes(search.toLowerCase());
+  collectionImage = "/static/collectionImage.png";
+  returnValue = <></>;
 
   if (collection.collectionImage) {
     if (collection.collectionImage.includes("http")) {

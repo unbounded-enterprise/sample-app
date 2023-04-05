@@ -9,6 +9,7 @@ import axios from 'axios';
 import React from 'react';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
+const emptyNode = <></>;
 
 const ExploreCollectionPage = () => {
   const router = useRouter();

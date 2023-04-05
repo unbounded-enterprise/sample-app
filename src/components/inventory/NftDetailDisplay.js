@@ -8,8 +8,8 @@ const DisplayNFTWithNoSSR = dynamic(
   { ssr: false }
 );
 
-var select;
 var apps;
+var select;
 
 export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
   apps = [""];
@@ -33,10 +33,10 @@ export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
     
   return (
     <Grid item key={nft.nftId} xs={12}>
-      <Typography variant="p2" sx={{ alignSelf:"end", fontWeight:'bold',fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' }}}>
+      <Typography variant="p2" sx={{ alignSelf:"end", fontWeight:'bold', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' }}}>
         Properties &emsp;
       </Typography>
-      <FormControl sx={{width:"20%", right:0, p:1}}>
+      <FormControl sx={{ width: "20%", right: 0, p: 1 }}>
         <InputLabel id="demo-simple-select-label">
           Select App
         </InputLabel>
@@ -49,8 +49,10 @@ export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
           onChange={select}
         >
           { apps.map((app) => (
-            <MenuItem key={app} value={app}>{app}</MenuItem>  
-          ))}
+            <MenuItem key={app} value={app}>
+              { app }
+            </MenuItem>  
+          )) }
         </Select>
       </FormControl>
       <Box sx={{ width:650 }}>
@@ -104,7 +106,7 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
   }
 
   return (
-    <Grid item key={nft.nftId} xs={12} onClick={()=>{ /*setChosenNFT(nft);*/ }}>
+    <Grid item key={nft.nftId} xs={12} onClick={() => { /*setChosenNFT(nft);*/ }}>
       <Card variant="outlined" sx={{
         alignItems: 'center',
         display: 'flex',
@@ -115,17 +117,17 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
         <DisplayNFTWithNoSSR 
           assetlayerNFT={nft}
           expression={currentExpression}
-          //defaultAnimation={'durodog_idle_1'} // this would need to be abstracted. maybe look for idle or just go alphabetical?
+          // defaultAnimation={'durodog_idle_1'} // this would need to be abstracted. maybe look for idle or just go alphabetical?
           // defaultAnimation={defaultAnimation}
           showAnimations={true}
-          // animationAlign={isMobileDevice?'top':'right'}
+          // animationAlign={ (isMobileDevice) ? 'top' : 'right' }
           nftSizePercentage={65}
           // onLoaded={onLoaded}
           />
       </Card>
       { expressionNames.map((name) => (
         <React.Fragment key={name}>
-          <Button onClick={()=>{ setCurrentExpression(name); }}>
+          <Button onClick={() => { setCurrentExpression(name); }}>
             { name }
           </Button>          
         </React.Fragment>

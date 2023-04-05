@@ -112,35 +112,33 @@ export const NewerNavbar = (props) => {
               <MenuIcon fontSize="small" />
             </IconButton>
           </Box>
-          { /*
-            <Box sx={{ alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
-              <NextLink href="/explorer" passHref legacyBehavior>
-                <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">NFT Explorer</Typography>
-                </Button>
-              </NextLink>
-              <NextLink href="/inventory" passHref legacyBehavior>
-                <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">My NFTs</Typography>
-                </Button>
-              </NextLink>
-              <NextLink href="/" passHref legacyBehavior>
-                <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Marketplace</Typography>
-                </Button>
-              </NextLink>
-              <NextLink href="/" passHref legacyBehavior>
-                <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Store</Typography>
-                </Button>
-              </NextLink>
-              <NextLink href="https://docs.assetlayer.com" passHref legacyBehavior>
-                <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Docs</Typography>
-                </Button>
-              </NextLink>
-            </Box>
-          */ }
+          <Box sx={{ alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
+            <NextLink href="/explorer" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">NFT Explorer</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/inventory" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">My NFTs</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Marketplace</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Store</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="https://docs.assetlayer.com" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Docs</Typography>
+              </Button>
+            </NextLink>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

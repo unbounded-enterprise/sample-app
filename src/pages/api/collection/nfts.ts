@@ -15,9 +15,11 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
             const { from, to, ...bod } = req.body;
 
             if (!bod.collectionId) throw new BasicError('missing collectionId', 409);
-            if (!bod.serials && to) {
+            if (!bod.serials && (to || to === 0)) {
                 const [{ result: fNum }, { result: tNum }] = [toNumber(from), toNumber(to)];
-                if (fNum && tNum) bod.serials = `${fNum}-${tNum}`;
+                if ((fNum !== undefined) && (tNum !== undefined) && (fNum >= 0) && (tNum >= 0) && (tNum >= fNum)) {
+                    bod.serials = `${fNum}-${tNum}`;
+                }
             }
             
             getCollectionNFTs(bod)

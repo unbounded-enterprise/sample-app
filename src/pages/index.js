@@ -9,6 +9,8 @@ import { HomeHero } from '../components/home/home-hero';
 import { HomeHandcash } from '../components/home/home-handcash';
 import { HomeDurodogs } from '../components/home/home-durodogs';
 
+// NOTE: must enable SSR for app here for SEO (unimplemented)
+
 const Page = () => {
   const [app, setApp] = useState(null);
 

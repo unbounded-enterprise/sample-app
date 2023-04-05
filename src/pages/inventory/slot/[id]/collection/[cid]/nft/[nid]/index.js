@@ -24,7 +24,7 @@ const InventoryNftDetailPage = ()=>{
   const [collectionId, setCollectionId] = useState(null);
   const [nftId, setNftId] = useState(null);
   
-  useEffect(()=>{
+  useEffect(() => {
     if (router.isReady) {
       setSlotId(router.asPath.split("/")[3]);
       setCollectionId(router.asPath.split("/")[5]);
@@ -44,7 +44,7 @@ const InventoryNftDetailPage = ()=>{
     }
   }, [slotId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (collectionId) {
       getCollection(collectionId, sort)
         .then((collection) => {
@@ -56,7 +56,7 @@ const InventoryNftDetailPage = ()=>{
     }
   }, [collectionId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (nftId) {
       getNft(nftId)
         .then((nft) => {
@@ -68,7 +68,7 @@ const InventoryNftDetailPage = ()=>{
     }
   }, [nftId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     getApp()
       .then((app) => {
         setApp(app);
@@ -133,37 +133,37 @@ const InventoryNftDetailPage = ()=>{
 }
 
 InventoryNftDetailPage.getLayout = (page) => (
-    <NewLayout>
-      {page}
-    </NewLayout>
-  );
+  <NewLayout>
+    { page }
+  </NewLayout>
+);
 
 export default InventoryNftDetailPage;
 
-const getApp = async()=>{
+const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', { }));
   return appObject.data.app;
 }
 
-const getSlot = async (slotId)=>{ // just used for testing
-  if(slotId.length>10){
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId}));
+const getSlot = async (slotId) => { // just used for testing
+  if (slotId.length > 10) {
+    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
     return slotsObject.data.slot;
   }
 }
 
 
-const getCollection = async(collection, sortFunction)=>{
-  if(collection.length>10){
+const getCollection = async (collection, sortFunction) => {
+  if (collection.length > 10) {
       const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
       return collectionsObject.data.collections[0];
   }
 }
 
-const getNft = async(nftId)=>{
-var nftObject;  
-if(nftId){
-      nftObject = (await axios.post('/api/nft/info', {nftId:nftId}));
-        } 
-      return nftObject.data.nfts[0];
+const getNft = async (nftId) => {
+  let nftObject;  
+  if (nftId) {
+    nftObject = (await axios.post('/api/nft/info', {nftId:nftId}));
+  } 
+  return nftObject.data.nfts[0];
 }

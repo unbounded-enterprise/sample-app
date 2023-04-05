@@ -34,7 +34,7 @@ const ExploreNftDetailPage = () => {
     }
   }, [router.isReady]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (slotId) {
       getSlot(slotId)
         .then((slot) => {
@@ -46,7 +46,7 @@ const ExploreNftDetailPage = () => {
     }
   }, [slotId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (collectionId) {
       getCollection(collectionId, sort)
         .then((collection) => {
@@ -58,7 +58,7 @@ const ExploreNftDetailPage = () => {
     }
   }, [collectionId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (nftId) {
       getNft(nftId)
         .then((nft) => {
@@ -70,7 +70,7 @@ const ExploreNftDetailPage = () => {
     }
   }, [nftId]);
 
-  useEffect(()=>{
+  useEffect(( )=> {
     getApp()
       .then((app) => {
         setApp(app);
@@ -105,14 +105,16 @@ const ExploreNftDetailPage = () => {
               <NextLink underline="hover" color="inherit" href={`/explorer/slot/${slotId}/collection/${collectionId}`}>
                 Collection
               </NextLink>
-              <Typography color="text.primary">NFT</Typography>
+              <Typography color="text.primary">
+                NFT
+              </Typography>
             </Breadcrumbs>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Typography variant="h3" sx={{ lineHeight:'40px'}}>
+            <Typography variant="h3" sx={{ lineHeight:'40px' }}>
               {chosenCollection.collectionName} #{chosenNft.serial}
             </Typography>
-            <Typography variant="h5" sx={{ lineHeight:{xs: '35px', lg:'80px' }}}>
+            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg:'80px' }}}>
               Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
             </Typography>
             <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
@@ -140,12 +142,12 @@ ExploreNftDetailPage.getLayout = (page) => (
 
 export default ExploreNftDetailPage;
 
-const getApp = async()=>{
+const getApp = async() => {
   const appObject = (await axios.post('/api/app/info', { }));
   return appObject.data.app;
 }
 
-const getSlot = async (slotId)=>{ // just used for testing
+const getSlot = async (slotId) => { // just used for testing
   if (slotId.length > 10) {
     const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
     return slotsObject.data.slot;
@@ -163,7 +165,7 @@ const getCollection = async (collection, sortFunction) => {
 const getNft = async (nftId) => {
   let nftObject;  
   if (nftId) {
-    nftObject = (await axios.post('/api/nft/info', {nftId:nftId}));
+    nftObject = (await axios.post('/api/nft/info', { nftId:nftId }));
   } 
   return nftObject.data.nfts[0];
 }

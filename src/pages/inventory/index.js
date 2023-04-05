@@ -12,108 +12,108 @@ const InventoryPage = () => {
   const [slots, setSlots] = useState([]);
   const [totalCollections, setTotalCollections] = useState(0);
   const [slotCounts, setSlotCounts] = useState({});
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    getSlots().then((slots) => {
-      setSlots(slots)
-    })
-      .catch(e => { console.log('setting error: ', e.message) });
+    getSlots()
+      .then((slots) => {
+        setSlots(slots);
+      })
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, []);
 
 
   useEffect(() => {
-    countCollections(slotCounts).then((count) => {
-      setTotalCollections(count)
-    })
-      .catch(e => { console.log('setting error: ', e.message) });
+    countCollections(slotCounts)
+      .then((count) => {
+        setTotalCollections(count);
+      })
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, [slotCounts]);
 
   useEffect(() => {
-    getSlotCounts(slots).then((counts) => {
-      setSlotCounts(counts)
-    })
-      .catch(e => { console.log('setting error: ', e.message) });
+    getSlotCounts(slots)
+      .then((counts) => {
+        setSlotCounts(counts);
+      })
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, [slots]);
 
 
   useEffect(() => {
-    getApp().then((app) => {
-      setApp(app)
-    })
-      .catch(e => { console.log('setting error: ', e.message) });
+    getApp()
+      .then((app) => {
+        setApp(app);
+      })
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, []);
 
+  if (!user) return <HomeHandcash />;
+
+  const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };
+  const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize };
+  const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize };
+
   return (
-    <>
-      {!user ? <>
-      <HomeHandcash></HomeHandcash> </> : <>
-      <Box
-        sx={{
-          backgroundColor: 'none',
-          py: 5
-        }}
-      >
-
-        <Box
-          sx={{
-            width: '85%',
-            alignSelf: 'stretch',
-            marginLeft: "auto",
-            marginRight: "auto",
-            py: 1,
-            px: 5,
-            backgroundColor: 'none'
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item>
-              {app && slots && slotCounts ? <>
-                <Typography variant="h2" sx={{ marginBottom: '5px' }}>
-                  My NFTs
-                </Typography>
-                <Typography variant="p2" sx={{ fontWeight: 'bold', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' } }}>
-                  App:&nbsp;
-                </Typography>
-                <Typography variant="p2" sx={{ font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16x', xl: '18px' } }}>
-                  {app.appName} <br></br>
-                </Typography>
-                <Typography variant="p2" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16x', xl: '18px' } }}>
-                  Total Slots:&nbsp;
-                </Typography>
-                <Typography variant="p2" sx={{ font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16x', xl: '18px' } }}>
-                  {slots.length} &emsp;
-                </Typography>
-                <Typography variant="p2" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16x', xl: '18px' } }}>
-                  Total Collections:&nbsp;
-                </Typography>
-                <Typography variant="p2" sx={{ font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16x', xl: '18px' } }}>
-                  {totalCollections} <br></br>
-                </Typography>
-                <Typography variant="h4" sx={{ font: 'nunito', lineHeight: '50px' }}>
-                  Select Slot:
-                </Typography></>
-                : <></>}</Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                {slots && slots.map((slot) => (
-
-                  <React.Fragment key={slot.slotId}>
-                    <SlotCard slot={slot} numCollections={slotCounts[slot.slotId]} />
-                  </React.Fragment>
-                ))}</Grid></Grid>
-
-
+    <Box sx={{ backgroundColor: 'none', py: 5 }}>
+      <Box sx={{
+        width: '85%',
+        alignSelf: 'stretch',
+        marginLeft: "auto",
+        marginRight: "auto",
+        py: 1,
+        px: 5,
+        backgroundColor: 'none'
+      }}>
+        <Grid container spacing={2}>
+          <Grid item>
+            { app && slots && slotCounts && <>
+              <Typography variant="h2" sx={{ marginBottom: '5px' }}>
+                My NFTs
+              </Typography>
+              <Typography variant="p2" sx={{ fontWeight: 'bold', lineHeight: '40px', fontSize }}>
+                App:&nbsp;
+              </Typography>
+              <Typography variant="p2" sx={sharedSx}>
+                { app.appName }
+                <br></br>
+              </Typography>
+              <Typography variant="p2" sx={sharedSxBold}>
+                Total Slots:&nbsp;
+              </Typography>
+              <Typography variant="p2" sx={sharedSx}>
+                {slots.length} &emsp;
+              </Typography>
+              <Typography variant="p2" sx={sharedSxBold}>
+                Total Collections:&nbsp;
+              </Typography>
+              <Typography variant="p2" sx={sharedSx}>
+                { totalCollections }
+                <br></br>
+              </Typography>
+              <Typography variant="h4" sx={{ font: 'nunito', lineHeight: '50px' }}>
+                Select Slot:
+              </Typography>
+            </> }
           </Grid>
-        </Box>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              { slots && slots.map((slot) => (
+                <React.Fragment key={slot.slotId}>
+                  <SlotCard slot={slot} numCollections={slotCounts[slot.slotId]} />
+                </React.Fragment>
+              )) }
+            </Grid>
+          </Grid>
+        </Grid>
       </Box>
-    </>}</>
+    </Box>
   )
 }
 
 InventoryPage.getLayout = (page) => (
   <NewLayout>
-    {page}
+    { page }
   </NewLayout>
 );
 
@@ -131,7 +131,7 @@ const getSlots = async () => {
 }
 
 const countCollections = async (slotCounts) => {
-  var collectionCount = 0;
+  let collectionCount = 0;
   for (const key in slotCounts) {
     if (slotCounts.hasOwnProperty(key)) {
       collectionCount += slotCounts[key];
@@ -141,9 +141,9 @@ const countCollections = async (slotCounts) => {
 }
 
 const getSlotCounts = async (slots) => {
-  var slotCounts = {};
+  let slotCounts = {};
   for (const element of slots) {
-    var slotCount = await axios.post('/api/nft/slots', { slotIds:[element.slotId], countsOnly: true });
+    let slotCount = await axios.post('/api/nft/slots', { slotIds:[element.slotId], countsOnly: true });
     slotCounts[element.slotId] = Object.keys(slotCount.data.nfts).length;
   }
   return slotCounts;

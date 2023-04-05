@@ -89,7 +89,7 @@ const ExploreSlotPage = () => {
   const router = useRouter();
   const [thisLink, setThisLink] = useState("");
   const [app, setApp] = useState(null);
-  const [collections, setCollections] =  useState(null);
+  const [collections, setCollections] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("maximum");

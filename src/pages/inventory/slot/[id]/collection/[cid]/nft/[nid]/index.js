@@ -14,7 +14,7 @@ const InventoryNftDetailPage = ()=>{
   const [app, setApp] = useState(null);
   const [sort, setSort] = useState("maximum");
   //const [nftSort, setNftSort] = useState("ascending");
-  const [chosenCollection, setChosenCollection]  =  useState(null);
+  const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [chosenNft, setChosenNft] = useState(null);
   const [properties, setProperties] = useState(null);

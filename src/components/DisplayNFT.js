@@ -56,6 +56,20 @@ export function playAnimation(animationName, spine, looped= true) {
     }
 }
 
+export function parseAnimations(spineData) {
+    try {
+        const parsedAnimations = [];
+        spineData.animations.forEach((animation)=>{
+            parsedAnimations.push(animation.name);
+        })
+        return parsedAnimations;
+    } catch(e) {
+        console.log('animation parsing error: ', + e.message)
+        return [];
+    }
+    
+}
+
 
 
 export default function DisplayNFT({ 
@@ -270,19 +284,6 @@ export default function DisplayNFT({
         };
     }
     
-    function parseAnimations(spineData) {
-        try {
-            const parsedAnimations = [];
-            spineData.animations.forEach((animation)=>{
-                parsedAnimations.push(animation.name);
-            })
-            return parsedAnimations;
-        } catch(e) {
-            console.log('animation parsing error: ', + e.message)
-            return [];
-        }
-        
-    }
 
     function resourcesLoaded (loader, resources) {
         const nftSpine = new PIXISPINE.Spine(resources[(assetlayerNFT.nftId + expression)].spineData);
@@ -358,7 +359,7 @@ export default function DisplayNFT({
                             src={imageExpression} 
                             alt='Menu View' 
                             style={{
-                                width: displayRatio && displayRatio < 1? undefined:'100', 
+                                width: displayRatio && displayRatio < 1? undefined:'100%', 
                                 height: displayRatio && displayRatio < 1? '100%':undefined}} />
                     </Stack>
                     :

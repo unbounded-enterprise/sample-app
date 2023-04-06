@@ -9,6 +9,15 @@ import { NftDetailDisplay, NftPropertyDisplay } from 'src/components/inventory/N
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
 
+const BoldVariable = ({ label, value }) => (
+  <>
+    {label}
+    <Box component="span" fontWeight="bold">
+      &nbsp;{value}&nbsp;
+    </Box>
+  </>
+);
+
 const InventoryNftDetailPage = ()=>{
   const router = useRouter();
   const [app, setApp] = useState(null);
@@ -108,20 +117,30 @@ const InventoryNftDetailPage = ()=>{
               </Typography>
             </Breadcrumbs>
           </Grid>
-          <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Typography variant="h3" sx={{ lineHeight:'40px' }}>
-              {chosenCollection.collectionName} #{chosenNft.serial}
+          <Grid item container xs={12} justifyContent='flex-start' sx={{ backgroundColor: "none"}}>
+            <Grid item xs={12}>
+              <Typography variant="h3" sx={{ lineHeight:'40px' }}>
+                {chosenCollection.collectionName} #{chosenNft.serial}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg: '80px' } }}>
+              <BoldVariable label="Creator:" value={chosenCollection.handle} />
+              <BoldVariable label="&emsp; App:" value={app.appName} />
+              <BoldVariable label="&emsp; Slot:" value={chosenSlot.slotName} />
             </Typography>
-            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg:'80px' } }}>
-              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
-            </Typography>
-            <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
-              Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
-            </Typography>
-            <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
-              Location
-            </Link>
-            <NftDetailDisplay nft={chosenNft} setCurrentExpression={setCurrentExpression} currentExpression={currentExpression} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
+                Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
+              </Typography>
+              <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
+                Location
+              </Link>
+            </Grid>
+            <Grid item container xs={12} sx={{my: '2rem'}}>
+              <NftDetailDisplay nft={chosenNft} setCurrentExpression={setCurrentExpression} currentExpression={currentExpression} />
+            </Grid>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
             <NftPropertyDisplay nft={chosenNft} properties={properties} setProperties={setProperties} />

@@ -13,7 +13,7 @@ export const SlotCard = ({ slot, numCollections }) => {
   const fontSize = (slot.slotName.length > 18) ? '10px' : { xs: '12px', sm: '12px', md: '14px', lg: '14px', xl: '14px' };
 
   return (
-    <Grid item lg={3} sm={4} xs={12} onClick={() => {  }}>
+    <Grid item xs={12} md={6} lg={4} xl={3} onClick={() => {  }}>
       <NextLink href={`/inventory/slot/${slot.slotId}`} passHref legacyBehavior>
         <Link component="a" color="textPrimary" underline="none" sx={{ alignItems: 'center', display: 'flex' }}>
           <Card variant="outlined" sx={{

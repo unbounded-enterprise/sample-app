@@ -14,7 +14,7 @@ export const NftCard = ({ search, collection, nft, slot }) => {
     
   if (searchTrue) {
     return (
-      <Grid item key={nft.nftId} xs={12} sm={6} lg={4} xl={3} onClick={()=>{}}>
+      <Grid item key={nft.nftId} xs={12} md={6} lg={4} xl={3} onClick={()=>{}}>
         <NextLink href={`/inventory/slot/${slot.slotId}/collection/${collection.collectionId}/nft/${nft.nftId}`} passHref legacyBehavior>
           <Card variant="outlined" sx={{
             display: 'flex',

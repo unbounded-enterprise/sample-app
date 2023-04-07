@@ -20,7 +20,7 @@ export const CollectionCard = ({ search, collection, slot, collectionCount }) =>
     const fontSizeP2 = (collection.collectionName.length > 50) ? '10px' : { xs: '10px', sm: '10px', md: '12px', lg: '12px', xl: '14px' };
 
     returnValue = (
-      <Grid item xs={12} sm={4} lg={3} onClick={()=>{}}>
+      <Grid item xs={12} md={6} lg={4} xl={3} onClick={()=>{}}>
         <NextLink href={`/inventory/slot/${slot.slotId}/collection/${collection.collectionId}`} passHref legacyBehavior>
           <Card variant="outlined" sx={{
             display: 'flex',

@@ -1,7 +1,9 @@
 import React, {useCallback, useEffect, useState, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import * as PIXISPINE from 'pixi-spine';
-import { Spine } from 'pixi-spine';
+import { BaseTexture } from '@pixi/core';
+import axios from 'axios';
+import { Spine, TextureAtlas } from 'pixi-spine';
 import { Button, Box, Grid, Stack, Typography } from '@mui/material';
 
 
@@ -95,6 +97,7 @@ export default function DisplayNFT({
     const [spineAtlas, setSpineAtlas]  = useState(null);
     const [spinePng, setSpinePng] = useState(null);
     const [imageExpression, setImageExpression] = useState(null);
+    const [resources, setResources] = useState({});
 
     const [spine, setSpine] = useState(null);
 
@@ -148,7 +151,7 @@ export default function DisplayNFT({
         }
         if (!app) {
             setNftLoaded(false);
-            setApp(new PIXI.Application({ forceCanvas: true, backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
+            setApp(new PIXI.Application({ backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
         }
     }, [imageExpression])
 
@@ -285,7 +288,9 @@ export default function DisplayNFT({
     }
     
 
-    function resourcesLoaded (loader, resources) {
+    function resourcesLoaded (resources) {
+        console.log('loaded, ', resources);
+        setResources(resources);
         const nftSpine = new PIXISPINE.Spine(resources[(assetlayerNFT.nftId + expression)].spineData);
         if (nftSpine) {
             adjustSizeOfSpine(nftSpine);
@@ -297,21 +302,44 @@ export default function DisplayNFT({
         }
         }
 
+    async function getTextureAtlas(url, imageUrl) {
+        const rawAtlas = (await axios.get(url)).data;
+        return new Promise((res, rej)=>{
+            
+            const textureLoader = (path, loaderFunction) => {
+                PIXI.Assets.load(imageUrl).then((texLoaded)=>{
+                    loaderFunction(texLoaded);
+                    return texLoaded;
+                })
+            };
+    
+            const atlasLoadedCallback = (createdAtlas) => {
+                res(createdAtlas);
+            };
+            new TextureAtlas(rawAtlas, textureLoader, atlasLoadedCallback);
+        });
+        
+    }
+
     async function loadPixiNFT() {
         if (!app || !spinePng) {
             return;
         }
         clearStage();
-        const texture = await PIXI.Texture.fromURL(spinePng);
-        let spineLoaderOptions = { metadata: { 
-                    spineAtlasFile: spineAtlas,
-                    image: texture }}; 
+
         // now load json skeleton
-        if(!app.loader.resources[(assetlayerNFT.nftId + expression)]) {
-            app.loader.add((assetlayerNFT.nftId + expression), spineJson , spineLoaderOptions);
-            app.loader.load(resourcesLoaded);
+        if(!resources || !resources[(assetlayerNFT.nftId + expression)]) {
+            const atlas = await getTextureAtlas(spineAtlas, spinePng);
+
+            if (!resources) {
+                setResources({});
+            }
+            resources[assetlayerNFT.nftId + expression] = await PIXI.Assets.load({ src: spineJson, data: { spineAtlas: atlas }}); 
+            resourcesLoaded(resources);
+            // app.loader.add((assetlayerNFT.nftId + expression), spineJson , spineLoaderOptions);
+            // app.loader.load(resourcesLoaded);
         } else {
-            resourcesLoaded(app.loader, app.loader.resources);
+            resourcesLoaded(resources);
         }
     
   

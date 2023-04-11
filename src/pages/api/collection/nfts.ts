@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GetCollectionNftsProps } from "src/types/collection";
 import { BasicError } from "src/types/error";
-import { isPosNum } from "src/utils/basic/basic-numbers";
+import { isPosNum, toPosNumStrFlr } from "src/utils/basic/basic-numbers";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
 
@@ -15,8 +15,9 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
             const { from, to, ...bod } = req.body;
 
             if (!bod.collectionId) throw new BasicError('missing collectionId', 409);
-            if (!bod.serials && isPosNum(from) && isPosNum(to) && (from <= to)) {
-                bod.serials = `${from}-${to}`;
+            if (!bod.serials) {
+                const [f, t] = [toPosNumStrFlr(from), toPosNumStrFlr(to)];
+                if (f && t && (f <= t)) bod.serials = `${f}-${t}`;
             }
             
             getCollectionNFTs(bod)

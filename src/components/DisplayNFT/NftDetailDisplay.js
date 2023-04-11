@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, Stack, MenuItem, 
-  TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { getExpressionValue, parseAnimations, playAnimation } from '../DisplayNFT/DisplayNFT';
-import AudioDisplay from '../DisplayNFT/MediaTypes/AudioDisplay';
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody, appBarClasses } from '@mui/material';
+import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
+import AudioDisplay from './MediaTypes/AudioDisplay';
 
 const DisplayNFTWithNoSSR = dynamic(
   () => import('src/components//DisplayNFT/DisplayNFT'),
@@ -12,6 +12,12 @@ const DisplayNFTWithNoSSR = dynamic(
 
 const DropdownMenu = ({ optionsArray, onChange, defaultValue }) => {
   const [value, setValue] = useState(defaultValue || 'Menu View');
+
+  useEffect(()=>{
+    if (defaultValue) {
+      setValue(defaultValue);
+    }
+  }, [defaultValue])
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -43,7 +49,7 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
   const handleClick = (text) => {
     onChange(text);
   };
-  console.log('buttons: ', buttonTexts);
+  
   return (
     <Grid container spacing={2}>
       {buttonTexts && buttonTexts.map((text, index) => (
@@ -72,54 +78,56 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
   );
 };
 
+export const NftPropertyDisplay = ({ nft }) => {
+  const [allProperties, setAllProperties] = useState(null); 
+  const [appProperties, setAppProperties] = useState(null); 
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [apps, setApps] = useState([]);
 
-var apps;
-var select;
-
-export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
-  apps = [""];
-  select = (e) => {
-    if (nft.properties[e.target.value]) {
-      setProperties(Object.entries(nft.properties[e.target.value]));
-    } else {
-      setProperties(null);
+  useEffect(()=>{
+    if (nft && nft.properties) {
+      setAllProperties(nft.properties);
     }
-  }
+  }, [nft])
 
-  if (nft.properties) {
-    apps = apps.concat(Object.keys(nft.properties));
-  } else {
-    apps = ["none found"];
-  }
-    
-  if (!nft) {
-    nft = { nftId: 1 };
-  }
+  useEffect(()=>{
+    if (allProperties && selectedApp && allProperties[selectedApp]) {
+      setAppProperties(Object.entries(allProperties[selectedApp]))
+    }
+  }, [allProperties, selectedApp])
+
+  useEffect(()=>{
+    if (allProperties) {
+      setApps(Object.keys(allProperties));
+    }
+  }, [allProperties])
+
+  useEffect(()=>{
+    if (apps && apps.length > 0) {
+      setSelectedApp(apps[0] || null)
+    } else {
+      setSelectedApp('No Apps found')
+    }
+  }, [apps])
+
+  const handleDropdownChange = (value) => {
+    setSelectedApp(value);
+  };
     
   return (
+    <>
+    {nft?
     <Grid item key={nft.nftId} xs={12}>
       <Typography variant="p2" sx={{ alignSelf:"end", fontWeight:'bold', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' }}}>
         Properties &emsp;
       </Typography>
-      <FormControl sx={{ width: "20%", right: 0, p: 1 }}>
-        <InputLabel id="demo-simple-select-label">
-          Select App
-        </InputLabel>
-        <Select
-          defaultValue={apps[0]}
-          value={apps[0]}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Select App"
-          onChange={select}
-        >
-          { apps.map((app) => (
-            <MenuItem key={app} value={app}>
-              { app }
-            </MenuItem>  
-          )) }
-        </Select>
-      </FormControl>
+      <Box sx={{width: '18rem'}}>
+        <DropdownMenu
+        optionsArray={apps}
+        onChange={handleDropdownChange}
+        defaultValue={selectedApp}
+        />
+      </Box>
       <Box sx={{  }}>
         <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -130,7 +138,7 @@ export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              { properties && properties.map((property) => (
+              { appProperties && appProperties.map((property) => (
                 <TableRow
                   key={property[0]}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -146,20 +154,36 @@ export const NftPropertyDisplay = ({ nft, properties, setProperties }) => {
         </TableContainer>
       </Box>          
     </Grid>
+    :<Typography>No Nft Selected</Typography>}
+    </>
   )
 }
 
 var slotButtonStyle;
-var propertyString;
-var expressionNames;
 
-export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression }) => {
+export function parseExpressionNames(nft) {
+  const expressionNames = [];
+  if (nft.expressionValues) {
+    nft.expressionValues.forEach((element) => {
+      if (!expressionNames.includes(element.expression.expressionName)) {
+        expressionNames.push(element.expression.expressionName);
+      }
+    });
+  }
+  return expressionNames;
+}
+
+export const NftDetailDisplay = ({ nft }) => {
   slotButtonStyle = { color: 'white', border: '1px solid white', fontSize: '4vw' };
-  propertyString = "No Properties Set";
-  expressionNames = [];
+  const [expressionNames, setExpressionNames] = useState([]);
   const [spine, setSpine] = useState(null);
   const [audioFile, setAudioFile] = useState(null); 
   const [animationNames, setAnimationNames] = useState(null);
+  const [currentExpression, setCurrentExpression] = useState('Menu View');
+
+  useEffect(()=>{
+    setExpressionNames(parseExpressionNames(nft));
+  }, [nft])
 
   function onLoaded(loadedSpine) {
     setSpine(loadedSpine);
@@ -180,20 +204,11 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
     }
   }
 
-  if (nft.properties) {
-    propertyString = JSON.stringify(nft.properties, 2, null);
-  }
 
-  if (nft.expressionValues) {
-    nft.expressionValues.forEach((element) => {
-      if (!expressionNames.includes(element.expression.expressionName)) {
-        expressionNames.push(element.expression.expressionName);
-      }
-    });
-  }
 
   return (
-    <Grid item container key={nft.nftId} xs={12}  onClick={() => { /*setChosenNFT(nft);*/ }}>
+    <>
+    {nft ? <Grid item container key={nft.nftId} xs={12}>
       <Grid item>
         <Card variant="outlined" sx={{
         boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
@@ -223,6 +238,10 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
           </>}
         </Stack>
       </Grid>
-    </Grid>
+      <Grid item xs={12} sx={{ backgroundColor: "none" }}>
+            <NftPropertyDisplay nft={nft}/>
+      </Grid>
+    </Grid>:<Grid item><Typography>No Nft Loaded</Typography></Grid>}
+    </>
   )
 }

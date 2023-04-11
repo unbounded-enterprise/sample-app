@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import { NewLayout } from 'src/components/new-layout';
 import axios from 'axios';
-import { NftDetailDisplay, NftPropertyDisplay } from 'src/components/inventory/NftDetailDisplay';
+import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
@@ -26,8 +26,6 @@ const InventoryNftDetailPage = ()=>{
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [chosenNft, setChosenNft] = useState(null);
-  const [properties, setProperties] = useState(null);
-  const [currentExpression, setCurrentExpression] = useState("Menu View");
 
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
@@ -139,11 +137,8 @@ const InventoryNftDetailPage = ()=>{
               </Link>
             </Grid>
             <Grid item container xs={12} sx={{my: '2rem'}}>
-              <NftDetailDisplay nft={chosenNft} setCurrentExpression={setCurrentExpression} currentExpression={currentExpression} />
+              <NftDetailDisplay nft={chosenNft}/>
             </Grid>
-          </Grid>
-          <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <NftPropertyDisplay nft={chosenNft} properties={properties} setProperties={setProperties} />
           </Grid>
         </Grid>
       </Box>

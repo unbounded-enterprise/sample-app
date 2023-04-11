@@ -49,7 +49,7 @@ const ExplorerPage = () => {
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
       <Box sx={{
-        width: '85%',
+        width: '95%',
         alignSelf: 'stretch',
         marginLeft: "auto",
         marginRight: "auto",

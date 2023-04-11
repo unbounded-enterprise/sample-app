@@ -30,7 +30,7 @@ const Page = () => {
           </title>
         </Head>
         <main>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} mb={"1em"}>
             <Grid item sm={12} md={7} lg={6} sx={{
             }}>
               <HomeHero app={app} />

@@ -13,7 +13,7 @@ export const SlotCard = ({ slot, setChosenSlot }) => {
   const fontSize = (slot.slotName.length > 18) ? '10px' : { xs: '12px', sm: '12px', md: '14px', lg: '14px', xl: '14px' };
 
   return (
-    <Grid item xs={12} sm={4} lg={3} onClick={() => { setChosenSlot(slot) }}>
+    <Grid item xs={12} md={6} lg={4} xl={3} onClick={() => { setChosenSlot(slot) }}>
       <NextLink href={`/explorer/slot/${slot.slotId}`} passHref legacyBehavior>
         <Link
           color="textPrimary"

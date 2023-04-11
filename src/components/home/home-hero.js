@@ -28,7 +28,7 @@ export const HomeHero = (props) => {
         maxWidth="md"
         sx={{
           mt:{ xs: '1em', md: '6em' },
-          ml:{ xs: '.5em', md: '6em' },
+          ml:{ xs: '.5em', md: '3em' },
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -36,14 +36,20 @@ export const HomeHero = (props) => {
         <Typography
           align="left"
           variant="h4"
-          sx={{ mb: ".5em" }}
+          sx={{ 
+            mb: ".5em",
+            mr:{ xs: '1em', md: '3em' } 
+          }}
         >
           Welcome to {app.appName}
         </Typography>
         <Typography
           align="left"
           variant="h5"
-          sx={{ mb: '1em', mr:'5em' }}
+          sx={{ 
+            mb: '1em', 
+            mr:{ xs: '1em', md: '3em' } 
+          }}
         >
           { app.description }
         </Typography>
@@ -72,7 +78,10 @@ export const HomeHero = (props) => {
           <Typography
             align="left"
             variant="h5"
-            sx={{ mb: { xs: '.5em', md: '2em' }, mr: { xs: '0em', md: '5em' } }}
+            sx={{ 
+              mb: { xs: '.5em', md: '2em' }, 
+              mr: { xs: '1em', md: '3em' } 
+            }}
           >
             Greetings ${user.handle}!
           </Typography>

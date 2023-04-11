@@ -5,7 +5,7 @@ import { Box, Breadcrumbs, Button, Typography, Grid, Link } from '@mui/material'
 import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import React from 'react';
-import { NftDetailDisplay, NftPropertyDisplay } from 'src/components/explorer/NftDetailDisplay';
+import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
@@ -18,8 +18,6 @@ const ExploreNftDetailPage = () => {
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [chosenNft, setChosenNft] = useState(null);
-  const [properties, setProperties] = useState(null);
-  const [currentExpression, setCurrentExpression] = useState("Menu View");
 
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
@@ -123,10 +121,7 @@ const ExploreNftDetailPage = () => {
             <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
               Location
             </Link>
-            <NftDetailDisplay nft={chosenNft} setCurrentExpression={setCurrentExpression} currentExpression={currentExpression} />
-          </Grid>
-          <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <NftPropertyDisplay nft={chosenNft} properties={properties} setProperties={setProperties} />
+            <NftDetailDisplay nft={chosenNft} />
           </Grid>
         </Grid>
       </Box>

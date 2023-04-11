@@ -36,8 +36,8 @@ export const MenuPopover = (props) => {
     >
       { items.map((item) => (
         (item.href) ? (
-          <NextLink href={item.href} passHref legacyBehavior>
-            <MenuItem key={item.value}>
+          <NextLink key={item.value} href={item.href} passHref legacyBehavior>
+            <MenuItem>
               { item.label }
             </MenuItem>
           </NextLink>

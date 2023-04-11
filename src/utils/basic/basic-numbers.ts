@@ -2,8 +2,19 @@ import { BasicError } from "src/types/error";
 import { NumberResult } from "src/types/result";
 
 export type SecurityTypes = 'strict' | 'relaxed' | 'loose';
+interface NumberCoercionProps {
+    security: SecurityTypes;
+    round: boolean;
+    negative: boolean;
+}
 
-const defaultSecurity = 'relaxed';
+const defaultNumberErrorResponse = { error: new BasicError('NaN', 412) };
+const defaultCoercionProps = {
+    security: 'relaxed',
+    round: true, // floor numbers
+    negative: false, // reject negative numbers
+} as NumberCoercionProps;
+
 
 const numberChecks = {
     // valid if value is a number
@@ -28,12 +39,21 @@ const numberChecks = {
     }
 }
 
-export function isNumber(value: any, security: SecurityTypes = defaultSecurity) {
+export function isNumber(value: any, security: SecurityTypes = defaultCoercionProps.security) {
     if (Array.isArray(value)) return false;
     
     const valid = numberChecks[security](value);
 
     return valid;
+}
+
+// ~twice the speed of isNumber but less flexible
+// only supports exact numbers
+export function isPosNum(value: any): boolean {
+    value = String(value);
+    if (!value) return false;
+    else if (value >= 0) return true;
+    else return false;
 }
 
 const toNumberTypes = {
@@ -59,12 +79,24 @@ const toNumberTypes = {
     }
 }
 
-export function toNumber(value: any, security: SecurityTypes = defaultSecurity): NumberResult {
-    if (Array.isArray(value)) return { error: new BasicError('NaN', 412) };
+export function toNumber(value: any, props:Partial<NumberCoercionProps> = defaultCoercionProps): NumberResult {
+    if (Array.isArray(value)) return defaultNumberErrorResponse;
+    else if (value === 0) return { result: value };
     
+    const { security, round, negative } = { ...defaultCoercionProps, ...props };
     const valid = toNumberTypes[security](value);
 
-    if (valid === false) return { error: new BasicError('NaN', 412) };
+    if (valid === false) return defaultNumberErrorResponse;
+    else if (negative === false && valid < 0) return defaultNumberErrorResponse;
 
-    return { result: valid as number };
+    return { result: valid };
+}
+
+// Returns '' || positive number string
+// Only numbers / number strings are valid
+// An array with a single item as above is also valid
+export function toPosNumStr(value: any): string {
+    value = String(value);
+    if (value >= 0) return value;
+    else return '';
 }

@@ -2,7 +2,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Box, Breadcrumbs, Grid, Link, Typography } from '@mui/material';
-import { NewLayout } from 'src/components/new-layout';
+import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import { NftDetailDisplay, NftPropertyDisplay } from 'src/components/inventory/NftDetailDisplay';
 
@@ -133,9 +133,9 @@ const InventoryNftDetailPage = ()=>{
 }
 
 InventoryNftDetailPage.getLayout = (page) => (
-  <NewLayout>
+  <MainLayout>
     { page }
-  </NewLayout>
+  </MainLayout>
 );
 
 export default InventoryNftDetailPage;

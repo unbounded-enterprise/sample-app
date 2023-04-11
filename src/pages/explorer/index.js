@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
-import { NewLayout } from '../../components/new-layout';
+import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import { SlotCard } from 'src/components/explorer/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
@@ -104,9 +104,9 @@ const ExplorerPage = () => {
 }
 
 ExplorerPage.getLayout = (page) => (
-  <NewLayout>
+  <MainLayout>
     { page }
-  </NewLayout>
+  </MainLayout>
 );
 
 export default ExplorerPage;

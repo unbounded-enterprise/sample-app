@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
-import { NewLayout } from '../../components/new-layout';
+import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import React from 'react';
 import { SlotCard } from 'src/components/inventory/SlotCard';
@@ -112,9 +112,9 @@ const InventoryPage = () => {
 }
 
 InventoryPage.getLayout = (page) => (
-  <NewLayout>
+  <MainLayout>
     { page }
-  </NewLayout>
+  </MainLayout>
 );
 
 export default InventoryPage;

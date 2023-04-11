@@ -2,8 +2,8 @@ import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
 import { Box, Breadcrumbs, Button, Typography, Grid, Link, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic-searchbar';
-import { NewLayout } from 'src/components/new-layout';
+import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { MainLayout } from 'src/components/main-layout';
 import { CollectionCard } from 'src/components/explorer/CollectionCard';
 import axios from 'axios';
 import React from 'react';
@@ -251,9 +251,9 @@ const ExploreSlotPage = () => {
 }
 
 ExploreSlotPage.getLayout = (page) => (
-  <NewLayout>
+  <MainLayout>
     { page }
-  </NewLayout>
+  </MainLayout>
 );
 
 const getApp = async () => {

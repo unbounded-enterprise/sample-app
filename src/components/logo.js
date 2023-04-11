@@ -1,16 +1,8 @@
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import { Box, Container } from '@mui/material';
-
-const LogoStyle = styled('div')(() => ({
-  height: '10',
-  paddingTop: 2
-}));
+import { Box } from '@mui/material';
 
 export const Logo = styled((props) => {
-  const { variant, ...other } = props;
-
-  const color = variant === 'light' ? '#C1C4D6' : '#5048E5';
 
   return (
     <Box

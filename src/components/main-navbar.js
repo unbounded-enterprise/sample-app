@@ -1,33 +1,68 @@
-import { Fragment, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
-import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, Avatar, ButtonBase } from '@mui/material';
 import NextLink from 'next/link';
+import { useRef, useState } from 'react';
+import { AppBar, Avatar, Box, Button, ButtonBase, Container, IconButton, Toolbar, Typography, Popover, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Logo } from './logo';
+import { Logo } from '../icons/asset-layer-logo';
 import { UserCircle as UserCircleIcon } from '../icons/user-circle';
-import { Users as UsersIcon } from '../icons/users';
 import { AccountPopover } from './account-popover';
 import { useAuth } from 'src/hooks/use-auth';
 
-const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  boxShadow: theme.shadows[3]
-}));
+const menuItems = [
+  { label: 'NFT Explorer', value: 'explorerMenuItem', href: '/explorer' },
+  { label: 'My NFTs', value: 'nftsMenuItem', href: '/inventory' },
+  { label: 'Marketplace', value: 'marketMenuItem', href: '/' },
+  { label: 'Store', value: 'storeMenuItem', href: '/' },
+  { label: 'Docs', value: 'docsMenuItem', href: 'https://docs.assetlayer.com' },
+];
+
+export const MenuPopover = (props) => {
+  const { anchorEl, close, open, items, ...other } = props;
+
+  return (
+    <Popover
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        horizontal: 'left',
+        vertical: 'bottom'
+      }}
+      keepMounted
+      onClick={close}
+      onClose={close}
+      open={!!open}
+      PaperProps={{ sx: { width: 180 } }}
+      transitionDuration={0}
+      sx={{ display: (!!open) ? 'inherit' : 'none' }}
+      {...other}
+    >
+      { items.map((item) => (
+        (item.href) ? (
+          <NextLink href={item.href} passHref legacyBehavior>
+            <MenuItem key={item.value}>
+              { item.label }
+            </MenuItem>
+          </NextLink>
+        ) : (
+          <MenuItem key={item.value}>
+            { item.label }
+          </MenuItem>
+        )
+      )) }
+    </Popover>
+  );
+};
 
 export const MainNavbar = (props) => {
-  const anchorRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [accountPopoverOpen, setAccountPopoverOpen] = useState(false);
+  const menuRef = useRef(null);
+  const accountRef = useRef(null);
   const { user } = useAuth();
-  const [openPopover, setOpenPopover] = useState(false);
 
-  function handleOpenPopover() {
-    setOpenPopover(true);
-  }
+  const handleOpenMenu = () => { setMenuOpen(true); };
+  const handleCloseMenu = () => { setMenuOpen(false); };
+  const handleOpenAccountPopover = () => { setAccountPopoverOpen(true); };
+  const handleCloseAccountPopover = () => { setAccountPopoverOpen(false); };
   
-  function handleClosePopover() {
-    setOpenPopover(false);
-  }
-
   return (
     <AppBar
       elevation={0}
@@ -39,70 +74,78 @@ export const MainNavbar = (props) => {
         color: 'text.secondary'
       }}
     >
+      <MenuPopover
+        anchorEl={menuRef.current}
+        close={handleCloseMenu}
+        open={menuOpen}
+        items={menuItems}
+      />
+      <AccountPopover
+        anchorEl={accountRef.current}
+        onClose={handleCloseAccountPopover}
+        open={accountPopoverOpen}
+      />
       <Container maxWidth="lg">
-        <AccountPopover
-          anchorEl={anchorRef.current}
-          onClose={handleClosePopover}
-          open={openPopover}
-        />
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: 64 }}
-        >
-          <NextLink
-            href="/"
-            passHref
-          >
-            <Box
-            sx={{
-              width: 10
-            }}
-            >
-                <Logo  />
-            </Box>
+        <Toolbar disableGutters sx={{ minHeight: 64 }}>
+          <NextLink href="/" passHref>
+            <Logo sx={{ pt: 1, display: { md: 'inline', xs: 'none' } }}/>
           </NextLink>
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            color="inherit"
-            sx={{
-              display: {
-                md: 'none'
-              }
-            }}
-          >
-            <MenuIcon fontSize="small" />
-          </IconButton>
           <Box
+            onClick={handleOpenMenu}
+            ref={menuRef}
+            disabled={{ md: true }}
             sx={{
+              display: { xs: 'flex', md: 'none' },
+              justifyContent: 'center',
               alignItems: 'center',
-              display: {
-                md: 'flex',
-                xs: 'none'
-              }
+              cursor: 'pointer',
+              p: '1rem'
             }}
           >
-            <NextLink
-              href="https://www.assetlayer.com/docs/welcome"
-              passHref
-              legacyBehavior
-            >
-              <Link underline="none">
-                <Box sx={{ borderRadius: 1, py: '0.25em', px: '0.5em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
-                  <Typography color="textSecondary" variant="subtitle2">Docs</Typography>
-                </Box>
-              </Link>
+            <IconButton color="inherit">
+              <MenuIcon fontSize="small" />
+            </IconButton>
+          </Box>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
+            <NextLink href="/explorer" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">NFT Explorer</Typography>
+              </Button>
             </NextLink>
+            <NextLink href="/inventory" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">My NFTs</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Marketplace</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Store</Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="https://docs.assetlayer.com" passHref legacyBehavior>
+              <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
+                <Typography color="textSecondary" variant="subtitle2">Docs</Typography>
+              </Button>
+            </NextLink>
+          </Box>
+          { user && 
             <Box
               component={ButtonBase}
-              onClick={handleOpenPopover}
-              ref={anchorRef}
+              onClick={handleOpenAccountPopover}
+              ref={accountRef}
               sx={{
                 alignItems: 'center',
                 display: 'flex',
-                ml: 2
+                px: '1rem'
               }}
             >
-              { user && <Avatar
+              <Avatar
                 sx={{
                   height: 50,
                   width: 50,
@@ -110,15 +153,11 @@ export const MainNavbar = (props) => {
                 src={user.avatarUrl}
               >
                 <UserCircleIcon fontSize="small" />
-              </Avatar> }
-            </Box>
-          </Box>
+              </Avatar>
+            </Box> 
+          }
         </Toolbar>
       </Container>
     </AppBar>
   );
-};
-
-MainNavbar.propTypes = {
-  onSidebarOpen: PropTypes.func
 };

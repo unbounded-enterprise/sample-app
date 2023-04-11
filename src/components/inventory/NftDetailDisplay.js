@@ -2,10 +2,11 @@ import dynamic from 'next/dynamic'
 import React, { useState } from 'react';
 import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, Stack, MenuItem, 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import { parseAnimations, playAnimation } from '../DisplayNFT';
+import { getExpressionValue, parseAnimations, playAnimation } from '../DisplayNFT/DisplayNFT';
+import AudioDisplay from '../DisplayNFT/MediaTypes/AudioDisplay';
 
 const DisplayNFTWithNoSSR = dynamic(
-  () => import('src/components/DisplayNFT'),
+  () => import('src/components//DisplayNFT/DisplayNFT'),
   { ssr: false }
 );
 
@@ -157,13 +158,20 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
   propertyString = "No Properties Set";
   expressionNames = [];
   const [spine, setSpine] = useState(null);
+  const [audioFile, setAudioFile] = useState(null); 
   const [animationNames, setAnimationNames] = useState(null);
 
   function onLoaded(loadedSpine) {
+    setSpine(loadedSpine);
     if (loadedSpine) {
-      setSpine(loadedSpine);
-      setAnimationNames(parseAnimations(loadedSpine.spineData));
+      setAnimationNames(parseAnimations(loadedSpine));
+    } else {
+      setAnimationNames(null);
     }
+  }
+
+  function onAudioLoaded(audioPath) {
+    setAudioFile(audioPath);
   }
 
   function animationChange(animationName) {
@@ -193,16 +201,14 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
         m: 1,
         width: '25vw', 
         height: '25vw',
+        position: 'relative',
       }}>
           <DisplayNFTWithNoSSR 
             assetlayerNFT={nft}
             expression={currentExpression}
-            // defaultAnimation={'durodog_idle_1'} // this would need to be abstracted. maybe look for idle or just go alphabetical?
-            // defaultAnimation={defaultAnimation}
-            showAnimations={false}
-            // animationAlign={ (isMobileDevice) ? 'top' : 'right' }
             nftSizePercentage={75}
-            onLoaded={onLoaded}
+            onSpineLoaded={onLoaded}
+            onAudioLoaded={onAudioLoaded}
             />
         </Card>
       </Grid>
@@ -210,8 +216,11 @@ export const NftDetailDisplay = ({ nft, setCurrentExpression, currentExpression 
         <Stack spacing={3}>
           <Typography variant='h5'>Expressions</Typography>
           <Box sx={{maxWidth: '15rem'}}><DropdownMenu optionsArray={expressionNames} onChange={setCurrentExpression} /></Box>
-          <Typography variant='h5'>Animations</Typography>
-          <Box sx={{width: '50%', maxHeight: '40vh', overflow: 'auto'}}><ButtonGrid buttonTexts={animationNames} onChange={animationChange} /></Box>
+          {animationNames && animationNames.length > 0 && <><Typography variant='h5'>Animations</Typography>
+          <Box sx={{width: '50%', maxHeight: '40vh', overflow: 'auto'}}><ButtonGrid buttonTexts={animationNames} onChange={animationChange} /></Box></>}
+          {audioFile && <>
+            <Stack alignItems='flex-start' justifyContent='flex-start' ><Box sx={{width: '20rem'}}><AudioDisplay src={audioFile} backgroundImage={null} playIcon={null} displayAudioControls={true} /></Box></Stack>
+          </>}
         </Stack>
       </Grid>
     </Grid>

@@ -232,7 +232,7 @@ export const theme = createTheme({
     button: {
       fontWeight: 600
     },
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    fontFamily: 'Nunito, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
     body1: {
       fontSize: '1rem',
       fontWeight: 400,
@@ -295,5 +295,9 @@ export const theme = createTheme({
       fontSize: '1.125rem',
       lineHeight: 1.375
     }
+  },
+  zIndex: {
+    appBar: 1200,
+    drawer: 1100
   }
 });

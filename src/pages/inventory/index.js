@@ -1,36 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
-import { SlotCard } from 'src/components/explorer/SlotCard';
+import React from 'react';
+import { SlotCard } from 'src/components/inventory/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
 
-const ExplorerPage = () => {
+const InventoryPage = () => {
   const [app, setApp] = useState(null);
   const [slots, setSlots] = useState([]);
   const [totalCollections, setTotalCollections] = useState(0);
-
-  const [chosenSlot, setChosenSlot] = useState(null);
-
+  const [slotCounts, setSlotCounts] = useState({});
   const { user } = useAuth();
 
   useEffect(() => {
     getSlots()
-      .then((slots) => { 
+      .then((slots) => {
         setSlots(slots);
       })
-      .catch(e => { console.log('setting error: ', e.message); });
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, []);
 
 
   useEffect(() => {
-    sumCollections(slots)
+    countCollections(slotCounts)
       .then((count) => {
         setTotalCollections(count);
       })
       .catch((e) => { console.log('setting error: ', e.message); });
+  }, [slotCounts]);
+
+  useEffect(() => {
+    getSlotCounts(slots)
+      .then((counts) => {
+        setSlotCounts(counts);
+      })
+      .catch((e) => { console.log('setting error: ', e.message); });
   }, [slots]);
+
 
   useEffect(() => {
     getApp()
@@ -40,7 +48,7 @@ const ExplorerPage = () => {
       .catch((e) => { console.log('setting error: ', e.message); });
   }, []);
 
-  if (!user) return <HomeHandcash/>;
+  if (!user) return <HomeHandcash />;
 
   const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize };
@@ -59,9 +67,9 @@ const ExplorerPage = () => {
       }}>
         <Grid container spacing={2}>
           <Grid item>
-            { app && !chosenSlot && <>
+            { app && slots && slotCounts && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
-                NFT Explorer
+                My NFTs
               </Typography>
               <Typography variant="p2" sx={{ fontWeight: 'bold', lineHeight: '40px', fontSize }}>
                 App:&nbsp;
@@ -88,11 +96,11 @@ const ExplorerPage = () => {
               </Typography>
             </> }
           </Grid>
-          <Grid item>
+          <Grid item xs={12}>
             <Grid container spacing={2}>
               { slots && slots.map((slot) => (
                 <React.Fragment key={slot.slotId}>
-                  <SlotCard slot={slot} setChosenSlot={setChosenSlot} />
+                  <SlotCard slot={slot} numCollections={slotCounts[slot.slotId]} />
                 </React.Fragment>
               )) }
             </Grid>
@@ -103,13 +111,13 @@ const ExplorerPage = () => {
   )
 }
 
-ExplorerPage.getLayout = (page) => (
+InventoryPage.getLayout = (page) => (
   <MainLayout>
     { page }
   </MainLayout>
 );
 
-export default ExplorerPage;
+export default InventoryPage;
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', {}));
@@ -122,10 +130,22 @@ const getSlots = async () => {
   return slotsObject.data.app.slots;
 }
 
-const sumCollections = async (slots) => {
-  let collections = 0;
-  slots.forEach((element) => {
-    collections = collections + element.collections.length
-  });
-  return collections;
+const countCollections = async (slotCounts) => {
+  let collectionCount = 0;
+  for (const key in slotCounts) {
+    if (slotCounts.hasOwnProperty(key)) {
+      collectionCount += slotCounts[key];
+    }
+  }
+  return collectionCount;
 }
+
+const getSlotCounts = async (slots) => {
+  let slotCounts = {};
+  for (const element of slots) {
+    let slotCount = await axios.post('/api/nft/slots', { slotIds:[element.slotId], countsOnly: true });
+    slotCounts[element.slotId] = Object.keys(slotCount.data.nfts).length;
+  }
+  return slotCounts;
+}
+

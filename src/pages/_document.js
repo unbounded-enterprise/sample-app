@@ -24,6 +24,10 @@ class CustomDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700&display=optional"
           />
+          <link 
+            rel="stylesheet" 
+            href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&display=swap"
+          />
           <link
             rel="apple-touch-icon"
             sizes="180x180"

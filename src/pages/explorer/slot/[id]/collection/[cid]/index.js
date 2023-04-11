@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Button, Breadcrumbs, Typography, Grid } from '@mui/material';
+import { Box, Button, Breadcrumbs, Typography, Grid, LinearProgress } from '@mui/material';
 import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { NftCard } from 'src/components/explorer/NftCard';
@@ -21,9 +21,23 @@ const ExploreCollectionPage = () => {
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(20);
   const [nftSearch, setNftSearch] = useState(null);
-
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
+
+  function nextPage() {
+    setFrom(from+20); 
+    setTo(to+20);
+    setNFTs(null);
+    scroll(0,0)
+  }
+  function lastPage() {
+    if (from > 0) { 
+      setFrom(from-20); 
+      setTo(to-20);
+      setNFTs(null);
+      scroll(0,0)
+    }
+  }
 
   const handleNftSearch = (e) => {
     if(e.key === "Enter") {
@@ -72,7 +86,7 @@ const ExploreCollectionPage = () => {
           console.log('setting error: ', e.message);
         });
     }
-  }, [chosenCollection]);
+  }, [chosenCollection, from, to]);
 
   useEffect(() => {
     getApp()
@@ -84,7 +98,7 @@ const ExploreCollectionPage = () => {
       });
   }, []);
 
-  if (!(chosenCollection && chosenSlot && nfts)) return emptyNode;
+  if (!(chosenCollection && chosenSlot)) return emptyNode;
     
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
@@ -160,17 +174,17 @@ const ExploreCollectionPage = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
-              { nfts && nfts.map((nft) => (
+              { (!!nfts) ? nfts.map((nft) => (
                 <React.Fragment key={nft.nftId}>
                   <NftCard search={nftSearch} collection={chosenCollection} nft={nft} slot={chosenSlot} />
                 </React.Fragment>
-              )) }
+              )) : <LinearProgress/> }
             </Grid>
             <Grid item xs={12}>
-              <Button sx={slotButtonStyle} onClick={() => { if (from > 0) { setFrom(from-20); setTo(to-20); } }}>
+              <Button sx={slotButtonStyle} onClick={lastPage}>
                 Previous 20
               </Button>
-              <Button sx={slotButtonStyle} onClick={()=>{ setFrom(from+20); setTo(to+20); }}>
+              <Button sx={slotButtonStyle} onClick={nextPage}>
                 Next 20
               </Button>
             </Grid>

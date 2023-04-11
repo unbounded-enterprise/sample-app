@@ -1,8 +1,7 @@
 import axios from "axios";
 import { GetCollectionNftsProps } from "src/types/collection";
 import { BasicError } from "src/types/error";
-import { isPosNum, toPosNumStrFlr } from "src/utils/basic/basic-numbers";
-import { getSessionUser } from "../auth/[...nextauth]";
+import { checkFromTo } from "src/utils/basic/basic-numbers";
 import { errorHandling } from "../validate";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
@@ -16,8 +15,8 @@ export default function getCollectionNFTsHandler(req:any, res:any) {
 
             if (!bod.collectionId) throw new BasicError('missing collectionId', 409);
             if (!bod.serials) {
-                const [f, t] = [toPosNumStrFlr(from), toPosNumStrFlr(to)];
-                if (f && t && (f <= t)) bod.serials = `${f}-${t}`;
+                const [f, t] = checkFromTo(from, to);
+                if (f && t) bod.serials = `${f}-${t}`;
             }
             
             getCollectionNFTs(bod)

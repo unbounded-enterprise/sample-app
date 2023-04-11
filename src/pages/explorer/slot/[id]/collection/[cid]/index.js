@@ -220,8 +220,8 @@ const getSlot = async (slotId)=>{
 
 const getCollection = async (collection, sortFunction) => {
   if (collection.length > 10) {
-      const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
-      return collectionsObject.data.collections[0];
+    const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
+    return collectionsObject.data.collections[0];
   }
 }
 

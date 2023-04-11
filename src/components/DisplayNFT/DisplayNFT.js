@@ -1,14 +1,12 @@
 import React, {useCallback, useEffect, useState, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import * as PIXISPINE from 'pixi-spine';
-import { BaseTexture } from '@pixi/core';
 import axios from 'axios';
-import { Spine, TextureAtlas } from 'pixi-spine';
-import { Button, Box, Grid, Stack, Typography } from '@mui/material';
+import { TextureAtlas } from 'pixi-spine';
+import { Box, Stack } from '@mui/material';
 import SpineDisplay from "./MediaTypes/SpineDisplay";
 import DisplayImage from "./MediaTypes/ImageDisplay";
 import AudioDisplay from "./MediaTypes/AudioDisplay";
-import { onSpaceOrEnter } from "@mui/x-date-pickers/internals";
 
 
 // Helper Functions
@@ -220,13 +218,11 @@ export default function DisplayNFT({
             
             <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
                 {(imageExpression) ?
-                    <Stack alignItems='center'>
-                            <DisplayImage src={imageExpression} />
-                    </Stack>
+                        <DisplayImage src={imageExpression}/>
                     :
                     <>
                     {spine && <>
-                        <SpineDisplay spines={[spine]} nftSizePercentage={75} />
+                        <SpineDisplay spines={[spine]} nftSizePercentage={nftSizePercentage} />
                     </>}
                     </>
              }

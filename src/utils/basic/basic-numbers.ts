@@ -113,5 +113,5 @@ export function checkFromTo(from: any, to: any): string[] {
         if (from <= to) return [from.toString(), to.toString()];
     }
     
-    return ['',''];
+    return ['', ''];
 }

@@ -49,6 +49,7 @@ export function isNumber(value: any, security: SecurityTypes = defaultCoercionPr
 
 // ~twice the speed of isNumber but less flexible
 // only supports exact numbers
+// decimals are valid
 export function isPosNum(value: any): boolean {
     value = String(value);
     if (!value) return false;
@@ -94,9 +95,23 @@ export function toNumber(value: any, props:Partial<NumberCoercionProps> = defaul
 
 // Returns '' || positive number string
 // Only numbers / number strings are valid
-// An array with a single item as above is also valid
-export function toPosNumStr(value: any): string {
+// Decimals get floored
+// An array with a single item gets cast
+export function toPosNumStrFlr(value: any): string {
     value = String(value);
-    if (value >= 0) return value;
+    if (value >= 0) {
+        if (value.includes('.')) return Math.floor(value).toString();
+        else return value;
+    }
     else return '';
+}
+
+export function checkFromTo(from: any, to: any): string[] {
+    [from, to] = [String(from), String(to)];
+    if (from >= 0 && to >= 0) {
+        [from, to] = [Math.floor(from), Math.floor(to)];
+        if (from <= to) return [from.toString(), to.toString()];
+    }
+    
+    return ['', ''];
 }

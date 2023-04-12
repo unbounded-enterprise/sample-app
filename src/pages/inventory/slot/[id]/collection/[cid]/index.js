@@ -84,7 +84,7 @@ const InventoryCollectionPage = () => {
       });
   }, []);
     
-  if (!(chosenCollection && chosenSlot && nfts)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && nfts && app)) return emptyNode;
 
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>

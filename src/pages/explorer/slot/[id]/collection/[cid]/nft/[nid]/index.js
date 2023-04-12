@@ -78,7 +78,7 @@ const ExploreNftDetailPage = () => {
       });
   }, []);
 
-  if (!(chosenCollection && chosenSlot && chosenNft)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && chosenNft && app)) return emptyNode;
   
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>

@@ -9,6 +9,7 @@ import axios from 'axios';
 import React from 'react';
 import { sortCollections, collectionSortMethods } from 'src/pages/explorer/slot/[id]/index';
 import DropdownMenu from '../../../../components/widgets/DropdownMenu';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
@@ -46,7 +47,8 @@ const InventorySlotPage = ()=>{
           setChosenSlot(slot);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [thisLink]);
@@ -58,19 +60,21 @@ const InventorySlotPage = ()=>{
           setActiveCollections(collections);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [chosenSlot])
 
   useEffect(() => {
-    if (activeCollections) {
+    if (activeCollections && activeCollections.length > 0) {
       getCollections(activeCollections)
         .then((collections) => {
           setCollections(collections);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [activeCollections]);
@@ -82,7 +86,8 @@ const InventorySlotPage = ()=>{
           setCollections(newCollections);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [sort]);
@@ -93,7 +98,8 @@ const InventorySlotPage = ()=>{
         setApp(app);
       })
       .catch((e) => {
-        console.log('setting error: ', e.message);
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
       });
   }, []);
 
@@ -102,14 +108,21 @@ const InventorySlotPage = ()=>{
       .then((count) => {
         setTotalNfts(count);
       })
-      .catch(e => { console.log('setting error: ', e.message) });
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, [activeCollections]);
 
   /*useEffect(() => {
-    getNftCounts(collections).then((counts) => {
-      setCollectionCounts(counts)
-    })
-      .catch(e => { console.log('setting error: ', e.message) });
+    getNftCounts(collections)
+      .then((counts) => {
+        setCollectionCounts(counts)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, [collections]);*/
 
   if (!(app && chosenSlot && collections && collectionCounts)) return emptyNode;

@@ -6,6 +6,7 @@ import React from 'react';
 import { SlotCard } from 'src/components/inventory/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const InventoryPage = () => {
   const [app, setApp] = useState(null);
@@ -19,7 +20,10 @@ const InventoryPage = () => {
       .then((slots) => {
         setSlots(slots);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, []);
 
 
@@ -28,7 +32,10 @@ const InventoryPage = () => {
       .then((count) => {
         setTotalCollections(count);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, [slotCounts]);
 
   useEffect(() => {
@@ -36,7 +43,10 @@ const InventoryPage = () => {
       .then((counts) => {
         setSlotCounts(counts);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, [slots]);
 
 
@@ -45,7 +55,10 @@ const InventoryPage = () => {
       .then((app) => {
         setApp(app);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, []);
 
   if (!user) return <HomeHandcash />;

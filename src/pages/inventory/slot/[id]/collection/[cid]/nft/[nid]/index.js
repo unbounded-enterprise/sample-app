@@ -5,6 +5,7 @@ import { Box, Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
@@ -46,7 +47,8 @@ const InventoryNftDetailPage = ()=>{
           setChosenSlot(slot);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [slotId]);
@@ -58,7 +60,8 @@ const InventoryNftDetailPage = ()=>{
           setChosenCollection(collection);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [collectionId]);
@@ -70,7 +73,8 @@ const InventoryNftDetailPage = ()=>{
           setChosenNft(nft);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [nftId]);
@@ -81,7 +85,8 @@ const InventoryNftDetailPage = ()=>{
         setApp(app);
       })
       .catch((e) => {
-        console.log('setting error: ', e.message);
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
       });
   }, []);
   

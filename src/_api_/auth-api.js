@@ -1,6 +1,16 @@
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import { parseError } from 'src/pages/api/validate';
+import { BasicError } from "src/types/error";
+
+export function parseBasicErrorClient(error, fallbackCode = 500) {
+  if (!error) return new BasicError('Unknown Error', fallbackCode);
+  
+  const message = error.response?.data?.error || error.data?.error || error.data?.errorMessage || error.data || error.message || 'Unknown Error';
+  const status = error.data?.status || error.status || fallbackCode;
+  
+  return new BasicError(message, status);
+}
 
 class AuthApi {
   getRedirectionURL(){

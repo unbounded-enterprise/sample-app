@@ -7,6 +7,7 @@ import { MainLayout } from 'src/components/main-layout';
 import { NftCard } from 'src/components/explorer/NftCard';
 import axios from 'axios';
 import React from 'react';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const emptyNode = <></>;
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
@@ -62,7 +63,8 @@ const ExploreCollectionPage = () => {
           setChosenSlot(slot);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [slotId]);
@@ -74,7 +76,8 @@ const ExploreCollectionPage = () => {
           setChosenCollection(collection);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [collectionId]);
@@ -86,7 +89,8 @@ const ExploreCollectionPage = () => {
           setNFTs(nfts);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [chosenCollection, from, to]);
@@ -97,7 +101,8 @@ const ExploreCollectionPage = () => {
         setApp(app);
       })
       .catch((e) => {
-        console.log('setting error: ', e.message);
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
       });
   }, []);
 

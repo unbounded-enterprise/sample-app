@@ -5,6 +5,7 @@ import axios from 'axios';
 import { SlotCard } from 'src/components/explorer/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const ExplorerPage = () => {
   const [app, setApp] = useState(null);
@@ -20,7 +21,10 @@ const ExplorerPage = () => {
       .then((slots) => { 
         setSlots(slots);
       })
-      .catch(e => { console.log('setting error: ', e.message); });
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, []);
 
 
@@ -29,7 +33,10 @@ const ExplorerPage = () => {
       .then((count) => {
         setTotalCollections(count);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, [slots]);
 
   useEffect(() => {
@@ -37,7 +44,10 @@ const ExplorerPage = () => {
       .then((app) => {
         setApp(app);
       })
-      .catch((e) => { console.log('setting error: ', e.message); });
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, []);
 
   if (!user) return <HomeHandcash/>;

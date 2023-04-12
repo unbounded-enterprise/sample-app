@@ -4,46 +4,14 @@ import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, S
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, useMediaQuery, appBarClasses } from '@mui/material';
 import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
 import AudioDisplay from './MediaTypes/AudioDisplay';
+import DropdownMenu from '../widgets/DropdownMenu';
 
 const DisplayNFTWithNoSSR = dynamic(
   () => import('src/components//DisplayNFT/DisplayNFT'),
   { ssr: false }
 );
 
-const DropdownMenu = ({ optionsArray, onChange, defaultValue }) => {
-  const [value, setValue] = useState(defaultValue || 'Menu View');
 
-  useEffect(()=>{
-    if (defaultValue) {
-      setValue(defaultValue);
-    }
-  }, [defaultValue])
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-    onChange(event.target.value);
-  };
-
-  const itemsArray = optionsArray;
-
-  return (
-    <FormControl fullWidth>
-      <Select
-        value={value}
-        onChange={handleChange}
-        sx={{color: '#3361AD' }}
-        displayEmpty
-        inputProps={{ 'aria-label': 'Dropdown menu' }}
-      >
-        {itemsArray.map((item, index) => (
-          <MenuItem key={index} value={item} sx={{color: '#3361AD' }}>
-            {item}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-};
 
 const ButtonGrid = ({ buttonTexts, onChange }) => {
   const handleClick = (text) => {
@@ -248,7 +216,7 @@ export const NftDetailDisplay = ({ nft }) => {
           <Stack spacing={3}>
               <Typography variant="h5">Expressions</Typography>
               <Box sx={{ maxWidth: '15rem' }}>
-                <DropdownMenu optionsArray={expressionNames} onChange={setCurrentExpression} />
+                <DropdownMenu optionsArray={expressionNames} onChange={setCurrentExpression} defaultValue={'Menu View'} />
               </Box>
               {animationNames && animationNames.length > 0 && (
                 <>

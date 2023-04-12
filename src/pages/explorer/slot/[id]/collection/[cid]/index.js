@@ -100,7 +100,7 @@ const ExploreCollectionPage = () => {
       });
   }, []);
 
-  if (!(chosenCollection && chosenSlot)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && app)) return emptyNode;
 
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>

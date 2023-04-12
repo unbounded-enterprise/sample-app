@@ -8,6 +8,7 @@ import { CollectionCard } from 'src/components/inventory/CollectionCard';
 import axios from 'axios';
 import React from 'react';
 import { sortCollections, collectionSortMethods } from 'src/pages/explorer/slot/[id]/index';
+import DropdownMenu from '../../../../components/widgets/DropdownMenu';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
@@ -29,8 +30,8 @@ const InventorySlotPage = ()=>{
     setSearch(e.target.value);
   }
 
-  const handleSelect = (e) => {
-    setSort(e.target.value);
+  const handleSelect = (value) => {
+    setSort(value);
   }
 
   useEffect(() => {
@@ -129,6 +130,18 @@ const InventorySlotPage = ()=>{
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
 
+  const sortOptions = [
+    { value: 'maximum', display: 'Maximum: High to Low' },
+    { value: 'maximumReverse', display: 'Maximum: Low to High' },
+    { value: 'minted', display: 'Minted: High to Low' },
+    { value: 'mintedReverse', display: 'Minted: Low to High' },
+    { value: 'newest', display: 'Newest' },
+    { value: 'oldest', display: 'Oldest' },
+    { value: 'aToZ', display: 'Alphabetical' },
+    { value: 'zToA', display: 'Reverse Alphabetical' },
+  ];
+  
+
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
       <Box sx={{
@@ -180,30 +193,11 @@ const InventorySlotPage = ()=>{
               <br></br>
             </Typography>
           </Grid>
-          <Grid item xs={12} sx={{ backgroundColor: "none" }}>
+          <Grid item xs={12} sx={{ backgroundColor: "none" }}>        
             <Box sx={{ left: 0, width: "100%" }}>
               <BasicSearchbar onChange={handleSearch} sx={{ left: 0, width: "80%", p: 1 }}/>
-              <FormControl sx={{ width: "20%", right: 0, p: 1 }}>
-                <InputLabel id="demo-simple-select-label">
-                  Sort
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Sort"
-                  onChange={handleSelect}
-                >
-                  <MenuItem value={"maximum"}>Maximum: High to Low</MenuItem>
-                  <MenuItem value={"maximumReverse"}>Maximum: Low to High</MenuItem>
-                  <MenuItem value={"minted"}>Minted: High to Low</MenuItem>
-                  <MenuItem value={"mintedReverse"}>Minted: Low to High</MenuItem>
-                  <MenuItem value={"newest"}>Newest</MenuItem>
-                  <MenuItem value={"oldest"}>Oldest</MenuItem>
-                  <MenuItem value={"aToZ"}>Alphabetical</MenuItem>
-                  <MenuItem value={"zToA"}>Reverse Alphabetical</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+              <DropdownMenu sx={{ width: '20%', p: 1, right: 0 }} optionsArray={sortOptions} onChange={handleSelect} label='Sort' defaultValue={'maximum'} />
+            </Box>        
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>

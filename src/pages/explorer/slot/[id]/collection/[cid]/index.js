@@ -10,8 +10,8 @@ import React from 'react';
 
 const emptyNode = <></>;
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const textStyle = { font:'nunito', lineHeight:'50px' };
-const boldTextStyle = { font:'nunito', fontWeight:'bold', lineHeight:'50px' };
+const textStyle = { font: 'nunito', lineHeight: '50px' };
+const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
 
 const ExploreCollectionPage = () => {
   const router = useRouter();
@@ -32,6 +32,7 @@ const ExploreCollectionPage = () => {
     setNFTs(null);
     scroll(0,0)
   }
+
   function lastPage() {
     if (from > 0) { 
       setFrom(from-20); 
@@ -42,7 +43,7 @@ const ExploreCollectionPage = () => {
   }
 
   const handleNftSearch = (e) => {
-    if(e.key === "Enter") {
+    if (e.key === "Enter") {
       setNftSearch(e.target.value);
     }
   }
@@ -128,7 +129,7 @@ const ExploreCollectionPage = () => {
             </Breadcrumbs>
           </Grid>
           <Grid item>
-            <Typography variant="h3" sx={{ font:'nunito', fontWeight:'bold', lineHeight:'40px' }}>
+            <Typography variant="h3" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px' }}>
               { chosenCollection.collectionName }
             </Typography> 
             <Typography variant="p2" sx={textStyle}>
@@ -163,8 +164,8 @@ const ExploreCollectionPage = () => {
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Box sx={{ left: 0, width:"100%" }}>
-              <BasicSearchbar onKeyPress={handleNftSearch} sx={{ left:0, width:"80%", p: 1 }}/>
+            <Box sx={{ left: 0, width: "100%" }}>
+              <BasicSearchbar onKeyPress={handleNftSearch} sx={{ left: 0, width: "80%", p: 1 }}/>
             </Box>
           </Grid>
           <Grid item>

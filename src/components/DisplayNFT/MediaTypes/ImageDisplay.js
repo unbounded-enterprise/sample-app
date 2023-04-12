@@ -10,6 +10,7 @@ const DisplayImage = ({ src, maxSize = { width: '100%', height: '100%' } }) => {
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
+        padding: '10%',
         width: maxSize.width,
         height: maxSize.height,
       }}
@@ -18,8 +19,9 @@ const DisplayImage = ({ src, maxSize = { width: '100%', height: '100%' } }) => {
         src={src}
         alt="NFT"
         style={{
-          maxWidth: '100%',
-          maxHeight: '100%',
+          width: '100%',
+          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+          height: '100%',
           objectFit: 'contain',
         }}
       />

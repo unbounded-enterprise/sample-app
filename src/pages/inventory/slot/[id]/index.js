@@ -67,7 +67,7 @@ const InventorySlotPage = ()=>{
   }, [chosenSlot])
 
   useEffect(() => {
-    if (activeCollections && activeCollections.length > 0) {
+    if (activeCollections) {
       getCollections(activeCollections)
         .then((collections) => {
           setCollections(collections);
@@ -257,6 +257,8 @@ const getSlot = async (slotId)=>{ // just used for testing
 const getCollections = async (activeCollections) => {
   if (activeCollections) {
     const collections = Object.keys(activeCollections);
+    if (!(collections.length >= 0)) return [];
+    
     const collectionsObject = (await axios.post('/api/collection/info', { collectionIds:collections, idOnly: false, includeDeactivated: false }));
     return collectionsObject.data.collections.sort(collectionSortMethods.maximum);
   }

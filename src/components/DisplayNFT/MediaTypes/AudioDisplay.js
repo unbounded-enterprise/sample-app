@@ -33,10 +33,12 @@ const AudioDisplay = ({
     <Box
       sx={{
         position: 'relative',
-        width: '100%',
-        height: '100%',
+        width: '80%',
+        height: '80%',
         display: 'flex',
         alignItems: 'flex-end',
+        margin: '10%',
+        borderRadius: '8px',
         justifyContent: 'center',
         cursor: 'default',
         paddingBottom: displayAudioControls ? '16px' : '0',

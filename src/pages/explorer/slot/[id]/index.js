@@ -7,6 +7,7 @@ import { MainLayout } from 'src/components/main-layout';
 import { CollectionCard } from 'src/components/explorer/CollectionCard';
 import axios from 'axios';
 import React from 'react';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const emptyNode = <></>;
@@ -115,7 +116,8 @@ const ExploreSlotPage = () => {
           setChosenSlot(slot);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [thisLink]);
@@ -127,7 +129,8 @@ const ExploreSlotPage = () => {
           setCollections(collections);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [thisLink]);
@@ -139,7 +142,8 @@ const ExploreSlotPage = () => {
           setCollections(newCollections);
         })
         .catch((e) => {
-          console.log('setting error: ', e.message);
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
         });
     }
   }, [sort]);
@@ -150,7 +154,8 @@ const ExploreSlotPage = () => {
         setApp(app);
       })
       .catch((e) => {
-        console.log('setting error: ', e.message);
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
       });
   }, []);
 

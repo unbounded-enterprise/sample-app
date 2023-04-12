@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardMedia, Grid } from '@mui/material';
 import { MainLayout } from '../components/main-layout';
 import { HomeHero } from '../components/home/home-hero';
+import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 // NOTE: must enable SSR for app here to enable SEO for page (unimplemented)
 
@@ -15,7 +16,10 @@ const Page = () => {
       .then((app) => {
         setApp(app)
       })
-      .catch(e => { console.log('setting error: ', e.message) });
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
   }, []);
 
   if (!app) return <></>;

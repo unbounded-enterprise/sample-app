@@ -29,8 +29,8 @@ export function parseError(error: any, fallbackCode: string = '500'):CustomError
 export function parseBasicError(error:any, fallbackCode:number = 500):BasicError {
     if (!error) return new BasicError('Unknown Error', fallbackCode);
     
-    const message = error.message || error.response?.data?.message || error.response?.data || 'Unknown Error';
-    const status = error.status || error.custom || error.response?.data?.statusCode || error.response?.status || fallbackCode;
+    const message = error.response?.data?.message || error.response?.data || error.data?.message || error.message || 'Unknown Error';
+    const status = error.response?.data?.statusCode || error.response?.status || error.status || error.custom || fallbackCode;
     
     return new BasicError(message, status);
 }

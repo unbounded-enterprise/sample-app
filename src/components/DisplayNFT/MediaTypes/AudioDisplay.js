@@ -97,7 +97,7 @@ const AudioDisplay = ({
             left: '50%',
             width: '100%',
             transform: 'translate(-50%, -50%)',
-            opacity: 0.7,
+            opacity: 0.5,
             cursor: 'pointer',
             zIndex: 1,
           }}

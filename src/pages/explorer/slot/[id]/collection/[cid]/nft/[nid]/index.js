@@ -6,6 +6,7 @@ import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import React from 'react';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
+import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
@@ -117,17 +118,17 @@ const ExploreNftDetailPage = () => {
             <Typography variant="h3" sx={{ lineHeight: '40px' }}>
               {chosenCollection.collectionName} #{chosenNft.serial}
             </Typography>
-            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg: '80px' }}}>
-              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
-            </Typography>
-            <Typography variant="p2" sx={{ lineHeight: '25px', marginBottom: "40px" }}>
-              Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
-            </Typography>
-            <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
-              Location
-            </Link>
-            <NftDetailDisplay nft={chosenNft} />
-          </Grid>
+            <CollectionDetailsInfos
+              creator={chosenCollection.handle}
+              appName={app.appName}
+              slotName={chosenSlot.slotName}
+              totalSupply={chosenCollection.maximum}
+              collectionName={chosenCollection.collectionName}
+              type={chosenCollection.type}
+              nftLocation={chosenNft.location}
+            />
+        <NftDetailDisplay nft={chosenNft} />
+      </Grid>
         </Grid>
       </Box>
     </Box> 

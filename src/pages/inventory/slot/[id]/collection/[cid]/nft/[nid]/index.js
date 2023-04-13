@@ -120,9 +120,9 @@ const InventoryNftDetailPage = ()=>{
               </Typography>
             </Breadcrumbs>
           </Grid>
-          <Grid item container xs={12} justifyContent='flex-start' sx={{ backgroundColor: "none"}}>
+          <Grid item container xs={12} justifyContent='flex-start' sx={{ backgroundColor: "none" }}>
             <Grid item xs={12}>
-              <Typography variant="h3" sx={{ lineHeight:'40px' }}>
+              <Typography variant="h3" sx={{ lineHeight: '40px' }}>
                 {chosenCollection.collectionName} #{chosenNft.serial}
               </Typography>
             </Grid>
@@ -134,14 +134,14 @@ const InventoryNftDetailPage = ()=>{
             </Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
+              <Typography variant="p2" sx={{ lineHeight: '25px', marginBottom: "40px" }}>
                 Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
               </Typography>
               <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
                 Location
               </Link>
             </Grid>
-            <Grid item container xs={12} sx={{my: '2rem'}}>
+            <Grid item container xs={12} sx={{ my: '2rem' }}>
               <NftDetailDisplay nft={chosenNft}/>
             </Grid>
           </Grid>
@@ -166,7 +166,7 @@ const getApp = async () => {
 
 const getSlot = async (slotId) => { // just used for testing
   if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
     return slotsObject.data.slot;
   }
 }
@@ -182,7 +182,7 @@ const getCollection = async (collection, sortFunction) => {
 const getNft = async (nftId) => {
   let nftObject;  
   if (nftId) {
-    nftObject = (await axios.post('/api/nft/info', {nftId:nftId}));
+    nftObject = (await axios.post('/api/nft/info', { nftId }));
   } 
   return nftObject.data.nfts[0];
 }

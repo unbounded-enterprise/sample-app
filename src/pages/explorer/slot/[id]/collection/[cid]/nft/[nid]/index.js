@@ -114,13 +114,13 @@ const ExploreNftDetailPage = () => {
             </Breadcrumbs>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Typography variant="h3" sx={{ lineHeight:'40px' }}>
+            <Typography variant="h3" sx={{ lineHeight: '40px' }}>
               {chosenCollection.collectionName} #{chosenNft.serial}
             </Typography>
-            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg:'80px' }}}>
+            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg: '80px' }}}>
               Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp;
             </Typography>
-            <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
+            <Typography variant="p2" sx={{ lineHeight: '25px', marginBottom: "40px" }}>
               Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
             </Typography>
             <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
@@ -149,7 +149,7 @@ const getApp = async() => {
 
 const getSlot = async (slotId) => { // just used for testing
   if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
     return slotsObject.data.slot;
   }
 }
@@ -165,7 +165,7 @@ const getCollection = async (collection, sortFunction) => {
 const getNft = async (nftId) => {
   let nftObject;  
   if (nftId) {
-    nftObject = (await axios.post('/api/nft/info', { nftId:nftId }));
+    nftObject = (await axios.post('/api/nft/info', { nftId }));
   } 
   return nftObject.data.nfts[0];
 }

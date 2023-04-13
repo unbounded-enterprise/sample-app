@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import { BasicError, CustomError } from "src/types/error";
 import { User } from "src/types/user";
 import jwt from 'jsonwebtoken';
@@ -6,7 +7,7 @@ import App from "src/types/app";
 import Slot from "src/types/slot";
 import Team from "src/types/team";
 
-export const errorHandling = (error:any, resolve:any, res:any)=>{
+export const errorHandling = (error:any, resolve:any, res:NextApiResponse)=>{
     const e = parseBasicError(error);
     console.log(e.message);
     return resolve(res.status(e.status).json({ error: e.message }));
@@ -102,7 +103,7 @@ export function validateExpressionId(slot:Slot, expressionId:string) {
     return expressionId;
 }
 
-export default function validationHandler(req:any, res:any) {
+export default function validationHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject)=>{
 		const errorHandling = (e:any)=>{
 			const err = parseError(e);
@@ -112,6 +113,9 @@ export default function validationHandler(req:any, res:any) {
 
         try {
             const token = req.headers.token;
+
+            if (!token) throw new BasicError('no token', 409);
+            else if (typeof token !== 'string') throw new BasicError('malformed token', 409);
 
             validateToken(token).then((user)=>{
                 if (!user) throw new CustomError('Invalid Token', '401');

@@ -105,13 +105,3 @@ export function toPosNumStrFlr(value: any): string {
     }
     else return '';
 }
-
-export function checkFromTo(from: any, to: any): string[] {
-    [from, to] = [String(from), String(to)];
-    if (from >= 0 && to >= 0) {
-        [from, to] = [Math.floor(from), Math.floor(to)];
-        if (from <= to) return [from.toString(), to.toString()];
-    }
-    
-    return ['', ''];
-}

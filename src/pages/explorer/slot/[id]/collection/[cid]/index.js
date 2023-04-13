@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import { Box, Button, Breadcrumbs, Typography, Grid, LinearProgress } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { NftCard } from 'src/components/explorer/NftCard';
 import axios from 'axios';
@@ -186,7 +186,7 @@ const ExploreCollectionPage = () => {
                 <React.Fragment key={nft.nftId}>
                   <NftCard search={nftSearch} collection={chosenCollection} nft={nft} slot={chosenSlot} />
                 </React.Fragment>
-              )) : <LinearProgress/> }
+              )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
             <Grid item xs={12}>
               <Button sx={slotButtonStyle} onClick={lastPage}>
@@ -218,7 +218,7 @@ const getApp = async () => {
 
 const getSlot = async (slotId)=>{ 
   if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
     return slotsObject.data.slot;
   }
 }

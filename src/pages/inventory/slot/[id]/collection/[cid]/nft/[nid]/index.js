@@ -5,6 +5,7 @@ import { Box, Breadcrumbs, Grid, Link, Typography } from '@mui/material';
 import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
+import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
@@ -127,19 +128,15 @@ const InventoryNftDetailPage = ()=>{
               </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography variant="h5" sx={{ lineHeight: { xs: '35px', lg: '80px' } }}>
-              <BoldVariable label="Creator:" value={chosenCollection.handle} />
-              <BoldVariable label="&emsp; App:" value={app.appName} />
-              <BoldVariable label="&emsp; Slot:" value={chosenSlot.slotName} />
-            </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="p2" sx={{ lineHeight:'25px', marginBottom:"40px" }}>
-                Total Supply: {chosenCollection.maximum} &emsp; Collection: {chosenCollection.collectionName} &emsp; Type: {chosenCollection.type} &emsp;
-              </Typography>
-              <Link href={"https://whatsonchain.com/tx/" + chosenNft.location.slice(0,-3)} variant="p2">
-                Location
-              </Link>
+              <CollectionDetailsInfos
+                creator={chosenCollection.handle}
+                appName={app.appName}
+                slotName={chosenSlot.slotName}
+                totalSupply={chosenCollection.maximum}
+                collectionName={chosenCollection.collectionName}
+                type={chosenCollection.type}
+                nftLocation={chosenNft.location}
+              />
             </Grid>
             <Grid item container xs={12} sx={{my: '2rem'}}>
               <NftDetailDisplay nft={chosenNft}/>

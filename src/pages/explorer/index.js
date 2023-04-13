@@ -68,7 +68,7 @@ const ExplorerPage = () => {
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2}>
-          <Grid item>
+          <Grid item xs={12}>
             { app && !chosenSlot && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
                 NFT Explorer
@@ -98,7 +98,7 @@ const ExplorerPage = () => {
               </Typography>
             </> }
           </Grid>
-          <Grid item>
+          <Grid item xs={12}>
             <Grid container spacing={2}>
               { slots && slots.map((slot) => (
                 <React.Fragment key={slot.slotId}>

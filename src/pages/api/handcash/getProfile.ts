@@ -1,25 +1,26 @@
-import { BasicError, CustomError } from 'src/types/error';
+import { NextApiRequest, NextApiResponse } from "next/types";
+import { BasicError } from 'src/types/error';
 import { User } from 'src/types/user';
 import { rk } from 'src/utils/random-key';
 import { errorHandling, parseError } from '../validate';
 
 const { HandCashConnect } = require('@handcash/handcash-connect');
-
-const handCashConnect = new HandCashConnect({
-  appId: String(process.env.ASSETLAYER_HANDCASH_APPID),
-  appSecret: String(process.env.ASSETLAYER_HANDCASH_SECRET),
+export const handCashConnect = new HandCashConnect({
+  appId: String(process.env.HANDCASH_APP_APPID),
+  appSecret: String(process.env.HANDCASH_APP_SECRET),
 });
 
-export default function getHandcashProfile(req:any, res:any) {
+export default function getHandcashProfile(req:NextApiRequest, res:NextApiResponse) {
   return new Promise((resolve, reject)=>{
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
     try {
-      const handcashToken = req.headers.handcashtoken;
+      const handcashtoken = req.headers.handcashtoken;
 
-      if (!handcashToken) throw new BasicError('no handcash token', 409);
+      if (!handcashtoken) throw new BasicError('no handcash token', 409);
+      else if (typeof handcashtoken !== 'string') throw new BasicError('malformed handcash token', 409);
       
-      getAccount(handcashToken)
+      getAccount(handcashtoken)
         .then(getProfile)
         .then((profile) => resolve(res.status(200).json(profile)))
         .catch(handleError);

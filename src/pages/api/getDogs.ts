@@ -1,11 +1,11 @@
-import axios from "axios";
+import { NextApiRequest, NextApiResponse } from "next/types";
 import { BasicError } from "src/types/error";
 import { getCollectionNFTs } from "./collection/nfts";
 import { errorHandling } from "./validate";
 
 const dogCollectionId = process.env.DOG_COLLECTION_ID;
 
-export default function getDogsHandler(req, res) {
+export default function getDogsHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject) => {
         const handleError = (e) => errorHandling(e, resolve, res);
 

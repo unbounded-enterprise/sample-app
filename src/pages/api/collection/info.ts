@@ -1,13 +1,12 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import axios from "axios";
 import { BasicError } from "src/types/error";
 import { GetCollectionProps } from "src/types/collection";
-import Collection from "src/types/collection";
 import { errorHandling } from "../validate";
-import { getSessionUser } from "../auth/[...nextauth]";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
-export default function getCollectionHandler(req:any, res:any) {
+export default function getCollectionHandler(req:NextApiRequest, res:NextApiResponse) {
 	return new Promise((resolve, reject) => {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 

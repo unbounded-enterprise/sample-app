@@ -1,12 +1,12 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import axios from "axios";
-import { BasicError } from "src/types/error";
 import { GetNFTUserProps } from "src/types/nft";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
 
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
-export default function getNFTsUserHandler(req:any, res:any) {
+export default function getNFTsUserHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject) => {
         const handleError = (e:any) => errorHandling(e, resolve, res);
 

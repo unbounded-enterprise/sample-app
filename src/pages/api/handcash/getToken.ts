@@ -1,7 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import { User } from "../../../types/user";
 import jwt from 'jsonwebtoken';
 import { getAccount, getProfile, getUser } from "./getProfile";
-import { errorHandling, parseError } from "../validate";
+import { errorHandling } from "../validate";
 import { BasicError } from "src/types/error";
 
 const crypto = require('crypto');
@@ -79,7 +80,7 @@ export function getTokenFromProfile(profile:any) {
   return token;
 }
 
-export function getTokenFromProfile2(profile:any, req:any) {
+export function getTokenFromProfile2(profile:any, req:NextApiRequest) {
   const { handcashtoken, cookie, pin, ['x-forwarded-for']:ip } = req.headers;
   const user = getUser(profile);
   
@@ -98,8 +99,12 @@ export async function getUserFromHandcash(handcashtoken:string) {
   return user;
 }
 
-export async function getTokenFromRequest(req:any) {
+export async function getTokenFromRequest(req:NextApiRequest) {
   const { handcashtoken, cookie, pin, ['x-forwarded-for']:ip } = req.headers;
+
+  if (!handcashtoken) throw new BasicError('no handcash token', 409);
+  else if (typeof handcashtoken !== 'string') throw new BasicError('malformed handcash token', 409);
+  
   const account = await getAccount(handcashtoken);
   const profile = await getProfile(account, false);
   const user = getUser(profile);
@@ -111,12 +116,12 @@ export async function getTokenFromRequest(req:any) {
   return token;
 }
 
-export default function getHandcashTokenHandler(req:any, res:any) {
+export default function getHandcashTokenHandler(req:NextApiRequest, res:NextApiResponse) {
   return new Promise((resolve, reject)=>{
 		const handleError = (e:any) => errorHandling(e, resolve, res);
     
     try {
-      if (!req.headers.handcashtoken) throw new BasicError('no handcash token', 409);
+      const handcashtoken = req.headers.handcashtoken;
       
       getTokenFromRequest(req)
         .then((token) => resolve(res.status(200).json(token)))

@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import NextAuth, { RequestInternal } from "next-auth";
 import { unstable_getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -11,13 +12,13 @@ import { BasicError } from "src/types/error";
 
 const authSecret = process.env.NEXTAUTH_SECRET;
 
-export async function getSession(req:any, res:any) {
+export async function getSession(req:NextApiRequest, res:NextApiResponse) {
     const session = await unstable_getServerSession(req, res, authOptions);
 
     return session;
 }
 
-export async function getSessionUser(req:any, res:any) {
+export async function getSessionUser(req:NextApiRequest, res:NextApiResponse) {
     const session = await unstable_getServerSession(req, res, authOptions);
 
     if (!(session?.user)) throw new BasicError('Unable to retrieve session', 409);

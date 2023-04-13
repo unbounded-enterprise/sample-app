@@ -115,7 +115,7 @@ const ExploreNftDetailPage = () => {
             </Breadcrumbs>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Typography variant="h3" sx={{ lineHeight:'40px' }}>
+            <Typography variant="h3" sx={{ lineHeight: '40px' }}>
               {chosenCollection.collectionName} #{chosenNft.serial}
             </Typography>
             <CollectionDetailsInfos
@@ -150,7 +150,7 @@ const getApp = async() => {
 
 const getSlot = async (slotId) => { // just used for testing
   if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
     return slotsObject.data.slot;
   }
 }
@@ -166,7 +166,7 @@ const getCollection = async (collection, sortFunction) => {
 const getNft = async (nftId) => {
   let nftObject;  
   if (nftId) {
-    nftObject = (await axios.post('/api/nft/info', { nftId:nftId }));
+    nftObject = (await axios.post('/api/nft/info', { nftId }));
   } 
   return nftObject.data.nfts[0];
 }

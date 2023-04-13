@@ -1,14 +1,13 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import axios from "axios";
 import { BasicError } from "src/types/error";
-import App from "src/types/app";
 import { GetAppProps } from "src/types/app";
 import { errorHandling } from "../validate";
-import { getSessionUser } from "../auth/[...nextauth]";
 
 const defaultAppId = process.env.ASSETLAYER_APP_ID;
 const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
-export default function getAppHandler(req:any, res:any) {
+export default function getAppHandler(req:NextApiRequest, res:NextApiResponse) {
 	return new Promise((resolve, reject) => {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 

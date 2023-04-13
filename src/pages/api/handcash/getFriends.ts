@@ -1,17 +1,19 @@
+import { NextApiRequest, NextApiResponse } from "next/types";
 import { getAccount } from './getProfile';
 import { errorHandling, parseError } from '../validate';
 import { BasicError } from 'src/types/error';
 
-export default function getHandcashFriends(req:any, res:any) {
+export default function getHandcashFriends(req:NextApiRequest, res:NextApiResponse) {
   return new Promise((resolve, reject)=>{
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
     try {
-      const handcashToken = req.headers.handcashtoken;
+      const handcashtoken = req.headers.handcashtoken;
 
-      if (!handcashToken) throw new BasicError('no handcash token', 409);
+      if (!handcashtoken) throw new BasicError('no handcash token', 409);
+      else if (typeof handcashtoken !== 'string') throw new BasicError('malformed handcash token', 409);
       
-      getAccount(handcashToken)
+      getAccount(handcashtoken)
         .then(getFriends)
         .then((friends) => resolve(res.status(200).json(friends)))
         .catch(handleError);

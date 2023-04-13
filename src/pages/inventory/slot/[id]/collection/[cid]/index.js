@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
-import { Box, Breadcrumbs, Typography, Grid } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { Box, Breadcrumbs, LinearProgress, Typography, Grid } from '@mui/material';
+import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { NftCard } from 'src/components/inventory/NftCard';
 import axios from 'axios';
@@ -89,7 +89,7 @@ const InventoryCollectionPage = () => {
       });
   }, []);
     
-  if (!(chosenCollection && chosenSlot && nfts && app)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && app)) return emptyNode;
 
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
@@ -117,15 +117,15 @@ const InventoryCollectionPage = () => {
             </Breadcrumbs>
           </Grid>
           <Grid item>
-            <Typography variant="h3" sx={{ font:'nunito', fontWeight:'bold', lineHeight:'40px' }}>
+            <Typography variant="h3" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px' }}>
               {chosenCollection.collectionName}
             </Typography> 
-            <Typography variant="p2" sx={{ font:'nunito', fontWeight:'bold', lineHeight:'50px' }}>
-              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts.length} &emsp; Type: {chosenCollection.type}
+            <Typography variant="p2" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '50px' }}>
+              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts?.length || 0} &emsp; Type: {chosenCollection.type}
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
-            <Box sx={{ left:0, width:"100%" }}>
+            <Box sx={{ left: 0, width:"100%" }}>
               <BasicSearchbar onKeyPress={handleNftSearch} sx={{ left:0, width:"80%", p: 1 }}/>
             </Box>
           </Grid>
@@ -138,11 +138,11 @@ const InventoryCollectionPage = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
-              { nfts && nfts.map((nft) => (
+              { (!!nfts) ? nfts.map((nft) => (
                 <React.Fragment key={nft.nftId}>
                   <NftCard search={nftSearch} collection={chosenCollection} nft={nft} slot={chosenSlot} />
                 </React.Fragment>
-              )) }
+              )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
           </Grid>
         </Grid>
@@ -166,7 +166,7 @@ const getApp = async () => {
 
 const getSlot = async (slotId) => { 
   if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
     return slotsObject.data.slot;
   }
 }

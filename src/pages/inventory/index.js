@@ -156,7 +156,7 @@ const countCollections = async (slotCounts) => {
 const getSlotCounts = async (slots) => {
   let slotCounts = {};
   for (const element of slots) {
-    let slotCount = await axios.post('/api/nft/slots', { slotIds:[element.slotId], countsOnly: true });
+    let slotCount = await axios.post('/api/nft/slots', { slotIds: [element.slotId], countsOnly: true });
     slotCounts[element.slotId] = Object.keys(slotCount.data.nfts).length;
   }
   return slotCounts;

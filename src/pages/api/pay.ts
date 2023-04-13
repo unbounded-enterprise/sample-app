@@ -1,17 +1,8 @@
-import { CustomError } from "src/types/error";
-import { User } from "src/types/user";
-import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from "next/types";
 import { decryptAuthToken } from "./handcash/getToken";
-import { parseBasicError, parseError, validateTokenT } from "./validate";
-
-const { HandCashConnect } = require('@handcash/handcash-connect');
-
-const handCashConnect = new HandCashConnect({
-appId: String(process.env.ASSETLAYER_HANDCASH_APPID),
-appSecret: String(process.env.ASSETLAYER_HANDCASH_SECRET),
-});
-
-const crypto = require('crypto');
+import { parseBasicError, validateTokenT } from "./validate";
+import { handCashConnect } from "./handcash/getProfile";
+import { BasicError } from "src/types/error";
 
 interface Payment {
     destination: string;
@@ -32,7 +23,7 @@ async function pay(authToken:string, paymentProps:PaymentProps) {
     return paymentResult;
 }
 
-export default function payHandler(req:any, res:any) {
+export default function payHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject)=>{
 		const errorHandling = (error:any)=>{
 			const e = parseBasicError(error);
@@ -42,8 +33,10 @@ export default function payHandler(req:any, res:any) {
 
         try {
             const { accesstoken, cookie, pin, ['x-forwarded-for']:ip } = req.headers;
-
             let userHandle = '';
+
+            if (!accesstoken) throw new BasicError('no access token', 409);
+            else if (typeof accesstoken !== 'string') throw new BasicError('malformed access token', 409);
 
             validateTokenT(accesstoken)
                 .then(({ handle, pld }) => {

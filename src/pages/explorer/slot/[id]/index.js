@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
 import { Box, Breadcrumbs, Button, Typography, Grid, Link, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { CollectionCard } from 'src/components/explorer/CollectionCard';
 import DropdownMenu from '../../../../components/widgets/DropdownMenu';
@@ -231,7 +231,7 @@ const ExploreSlotPage = () => {
           </Grid>
           <Grid item xs={12} sx={{backgroundColor: "none"}}>
             <Box sx={{left:0, width:"100%"}}>
-              <BasicSearchbar onChange={handleSearch} sx={{ left:0, width:"80%", p: 1}}/>
+              <BasicSearchbar onChange={handleSearch} sx={{ left: 0, width: "80%", p: 1 }}/>
               <DropdownMenu sx={{ width: '20%', p: 1, right: 0 }} optionsArray={sortOptions} onChange={handleSelect} label='Sort' defaultValue={'maximum'} />
             </Box>
           </Grid>
@@ -262,7 +262,7 @@ const getApp = async () => {
 }
 
 const getSlot = async (slotId) => { // just used for testing
-  const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+  const slotsObject = (await axios.post('/api/slot/info', { slotId }));
   return slotsObject.data.slot;
 }
   

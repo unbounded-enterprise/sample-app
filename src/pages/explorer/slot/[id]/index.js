@@ -2,7 +2,7 @@ import { useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {useRouter} from 'next/router';
 import { Box, Breadcrumbs, Button, Typography, Grid, Link, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { BasicSearchbar } from 'src/components/basic/basic-searchbar';
+import { BasicSearchbar } from 'src/components/basic/widgets/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { CollectionCard } from 'src/components/explorer/CollectionCard';
 import DropdownMenu from '../../../../components/widgets/DropdownMenu';

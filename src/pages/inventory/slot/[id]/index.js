@@ -141,7 +141,6 @@ const InventorySlotPage = ()=>{
     { value: 'zToA', display: 'Reverse Alphabetical' },
   ];
   
-
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
       <Box sx={{
@@ -250,7 +249,7 @@ const getApp = async () => {
 }
 
 const getSlot = async (slotId)=>{ // just used for testing
-  const slotsObject = (await axios.post('/api/slot/info', { slotId: slotId }));
+  const slotsObject = (await axios.post('/api/slot/info', { slotId }));
   return slotsObject.data.slot;
 }
   
@@ -259,14 +258,14 @@ const getCollections = async (activeCollections) => {
     const collections = Object.keys(activeCollections);
     if (!(collections.length > 0)) return [];
 
-    const collectionsObject = (await axios.post('/api/collection/info', { collectionIds:collections, idOnly: false, includeDeactivated: false }));
+    const collectionsObject = (await axios.post('/api/collection/info', { collectionIds: collections, idOnly: false, includeDeactivated: false }));
     return collectionsObject.data.collections.sort(collectionSortMethods.maximum);
   }
 }
 
 const getActiveCollections = async (slot) => {
   if (slot) {
-    const activeCollectionsObject = await axios.post('/api/nft/slots', { slotIds:[slot], countsOnly: true });
+    const activeCollectionsObject = await axios.post('/api/nft/slots', { slotIds: [slot], countsOnly: true });
     //console.log(Object.keys(activeCollectionsObject.data.nfts));
     return activeCollectionsObject.data.nfts;
   }

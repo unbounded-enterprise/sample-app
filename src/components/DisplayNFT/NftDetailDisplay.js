@@ -5,6 +5,7 @@ import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, S
 import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
 import AudioDisplay from './MediaTypes/AudioDisplay';
 import DropdownMenu from '../widgets/DropdownMenu';
+import { NftPropertyDisplay } from './NftPropertyDisplay';
 
 const DisplayNFTWithNoSSR = dynamic(
   () => import('src/components//DisplayNFT/DisplayNFT'),
@@ -49,87 +50,6 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
     </Grid>
   );
 };
-
-export const NftPropertyDisplay = ({ nft }) => {
-  const [allProperties, setAllProperties] = useState(null); 
-  const [appProperties, setAppProperties] = useState(null); 
-  const [selectedApp, setSelectedApp] = useState(null);
-  const [apps, setApps] = useState([]);
-
-  useEffect(()=>{
-    if (nft && nft.properties) {
-      setAllProperties(nft.properties);
-    }
-  }, [nft])
-
-  useEffect(()=>{
-    if (allProperties && selectedApp && allProperties[selectedApp]) {
-      setAppProperties(Object.entries(allProperties[selectedApp]))
-    }
-  }, [allProperties, selectedApp])
-
-  useEffect(()=>{
-    if (allProperties) {
-      setApps(Object.keys(allProperties));
-    }
-  }, [allProperties])
-
-  useEffect(()=>{
-    if (apps && apps.length > 0) {
-      setSelectedApp(apps[0] || null)
-    } else {
-      setSelectedApp('No Apps found')
-    }
-  }, [apps])
-
-  const handleDropdownChange = (value) => {
-    setSelectedApp(value);
-  };
-    
-  return (
-    <>
-    {nft?
-    <Grid item key={nft.nftId} sx={{my: '1rem'}} xs={12}>
-      <Typography variant="p2" sx={{ alignSelf:"end", fontWeight:'bold', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' }}}>
-        Properties &emsp;
-      </Typography>
-      <Box sx={{my: '1rem', width: { xs: '12rem', sm: '16rem', md: '18rem', lg: '18rem', xl: '18rem' }}}>
-        <DropdownMenu
-        optionsArray={apps}
-        onChange={handleDropdownChange}
-        defaultValue={selectedApp}
-        />
-      </Box>
-      <Box sx={{  }}>
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Property</TableCell>
-                <TableCell align="left">Value</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              { appProperties && appProperties.map((property) => (
-                <TableRow
-                  key={property[0]}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    { property[0] }
-                  </TableCell>
-                  <TableCell align="left">{JSON.stringify(property[1])}</TableCell>
-                </TableRow>
-              )) }
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>          
-    </Grid>
-    :<Typography>No Nft Selected</Typography>}
-    </>
-  )
-}
 
 var slotButtonStyle;
 

@@ -6,7 +6,7 @@ import { errorHandling, parseError } from '../validate';
 
 const { HandCashConnect } = require('@handcash/handcash-connect');
 export const handCashConnect = new HandCashConnect({
-  appId: String(process.env.HANDCASH_APP_APPID),
+  appId: String(process.env.HANDCASH_APP_ID),
   appSecret: String(process.env.HANDCASH_APP_SECRET),
 });
 

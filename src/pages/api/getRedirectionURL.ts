@@ -4,9 +4,10 @@ import { handCashConnect } from "./handcash/getProfile";
 export default function getRedirectionURLHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject)=>{
         try {
-            getURL().then((url:any)=>{
-                resolve(res.status(200).json(url));
-            })
+            getURL()
+                .then((url:any) => {
+                    resolve(res.status(200).json(url));
+                })
         } catch(e:any) {
             resolve(res.status(200).json(`https://app.handcash.io/#/authorizeApp?appId=${String(process.env.HANDCASH_APP_ID)}`)); 
         }

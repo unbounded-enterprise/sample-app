@@ -10,6 +10,9 @@ import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
+const textStyle = { font: 'nunito', lineHeight: '50px' };
+const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
+
 const emptyNode = <></>;
 
 const InventoryCollectionPage = () => {
@@ -119,9 +122,48 @@ const InventoryCollectionPage = () => {
           <Grid item>
             <Typography variant="h3" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px' }}>
               {chosenCollection.collectionName}
-            </Typography> 
-            <Typography variant="p2" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '50px' }}>
-              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts?.length || 0} &emsp; Type: {chosenCollection.type}
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Creator:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.handle} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              App:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {app.appName} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Slot:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenSlot.slotName} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Minted:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.minted} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Max Supply:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              { (chosenCollection.maximum > 900000000) ? '\u221e' : chosenCollection.maximum } &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              My Supply:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {nfts?.length || 0} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Type:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.type} &emsp;
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>

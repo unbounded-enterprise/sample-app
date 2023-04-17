@@ -156,6 +156,12 @@ const ExploreCollectionPage = () => {
               {chosenSlot.slotName} &emsp;
             </Typography>
             <Typography variant="p2" sx={textStyle}>
+              Minted:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.minted} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
               Max Supply:&nbsp;
             </Typography>
             <Typography variant="p2" sx={boldTextStyle}>

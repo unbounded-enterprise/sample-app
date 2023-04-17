@@ -7,6 +7,12 @@ import { SlotCard } from 'src/components/inventory/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const InventoryPage = () => {
   const [app, setApp] = useState(null);
@@ -62,6 +68,7 @@ const InventoryPage = () => {
   }, []);
 
   if (!user) return <HomeHandcash />;
+  if (!app) return loading;
 
   const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize };

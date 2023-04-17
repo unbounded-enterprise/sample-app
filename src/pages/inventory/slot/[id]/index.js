@@ -10,9 +10,13 @@ import React from 'react';
 import { sortCollections, collectionSortMethods } from 'src/pages/explorer/slot/[id]/index';
 import DropdownMenu from '../../../../components/widgets/DropdownMenu';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
 
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const InventorySlotPage = ()=>{
   const router = useRouter();
@@ -125,7 +129,7 @@ const InventorySlotPage = ()=>{
       });
   }, [collections]);*/
 
-  if (!(app && chosenSlot && collections && collectionCounts)) return emptyNode;
+  if (!(app && chosenSlot && collections && collectionCounts)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};

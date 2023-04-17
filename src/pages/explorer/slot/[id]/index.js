@@ -9,9 +9,13 @@ import DropdownMenu from '../../../../components/widgets/DropdownMenu';
 import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
 
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
+
 export const collectionSortMethods = {
   maximum: maximumSort,
   maximumReverse: maximumSortReverse,
@@ -160,7 +164,7 @@ const ExploreSlotPage = () => {
       });
   }, []);
 
-  if (!(app && chosenSlot && collections)) return emptyNode;
+  if (!(app && chosenSlot && collections)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' } };
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' } };

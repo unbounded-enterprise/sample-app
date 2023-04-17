@@ -8,11 +8,15 @@ import { NftCard } from 'src/components/explorer/NftCard';
 import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
 
-const emptyNode = <></>;
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 const textStyle = { font: 'nunito', lineHeight: '50px' };
 const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const ExploreCollectionPage = () => {
   const router = useRouter();
@@ -106,7 +110,7 @@ const ExploreCollectionPage = () => {
       });
   }, []);
 
-  if (!(chosenCollection && chosenSlot && app)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && app)) return loading;
 
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>

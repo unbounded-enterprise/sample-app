@@ -8,9 +8,13 @@ import React from 'react';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
 
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const ExploreNftDetailPage = () => {
   const router = useRouter();
@@ -84,7 +88,7 @@ const ExploreNftDetailPage = () => {
       });
   }, []);
 
-  if (!(chosenCollection && chosenSlot && chosenNft && app)) return emptyNode;
+  if (!(chosenCollection && chosenSlot && chosenNft && app)) return loading;
   
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>

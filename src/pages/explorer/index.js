@@ -6,6 +6,10 @@ import { SlotCard } from 'src/components/explorer/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const ExplorerPage = () => {
   const [app, setApp] = useState(null);
@@ -51,11 +55,12 @@ const ExplorerPage = () => {
   }, []);
 
   if (!user) return <HomeHandcash/>;
+  if (!app) return loading;
 
   const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize };
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize };
-
+  
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
       <Box sx={{
@@ -69,7 +74,7 @@ const ExplorerPage = () => {
       }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            { app && !chosenSlot && <>
+            { app && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
                 NFT Explorer
               </Typography>

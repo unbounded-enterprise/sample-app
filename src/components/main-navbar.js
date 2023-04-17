@@ -10,8 +10,8 @@ import { useAuth } from 'src/hooks/use-auth';
 const menuItems = [
   { label: 'NFT Explorer', value: 'explorerMenuItem', href: '/explorer' },
   { label: 'My NFTs', value: 'nftsMenuItem', href: '/inventory' },
-  { label: 'Marketplace', value: 'marketMenuItem', href: '/' },
-  { label: 'Store', value: 'storeMenuItem', href: '/' },
+  { label: 'Marketplace', value: 'marketMenuItem', href: '/marketplace' },
+  { label: 'Store', value: 'storeMenuItem', href: '/store' },
   { label: 'Docs', value: 'docsMenuItem', href: 'https://docs.assetlayer.com' },
 ];
 
@@ -118,12 +118,12 @@ export const MainNavbar = (props) => {
                 <Typography color="textSecondary" variant="subtitle2">My NFTs</Typography>
               </Button>
             </NextLink>
-            <NextLink href="/" passHref legacyBehavior>
+            <NextLink href="/marketplace" passHref legacyBehavior>
               <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
                 <Typography color="textSecondary" variant="subtitle2">Marketplace</Typography>
               </Button>
             </NextLink>
-            <NextLink href="/" passHref legacyBehavior>
+            <NextLink href="/store" passHref legacyBehavior>
               <Button sx={{ borderRadius: 1, py: '0.25em', '&:hover': { backgroundColor: 'rgba(155,155,155,0.1)' } }}>
                 <Typography color="textSecondary" variant="subtitle2">Store</Typography>
               </Button>

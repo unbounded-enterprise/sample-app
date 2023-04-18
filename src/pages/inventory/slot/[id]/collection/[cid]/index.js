@@ -9,10 +9,13 @@ import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
+import { useAuth } from 'src/hooks/use-auth';
+import { HomeHandcash } from 'src/components/home/home-handcash';
+
 
 
 const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
-const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
+const slotButtonStyle = { color: 'blue', border: '1px solid blue'};
 const textStyle = { font: 'nunito', lineHeight: '50px' };
 const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
 
@@ -31,6 +34,8 @@ const InventoryCollectionPage = () => {
 
   const [slotId, setSlotId] = useState(null)
   const [collectionId, setCollectionId] = useState(null)
+  const { user } = useAuth();
+
 
   const handleNftSearch = (e) => {
     if (e.key === "Enter") {
@@ -94,7 +99,8 @@ const InventoryCollectionPage = () => {
         console.log('setting error: ', error.message);
       });
   }, []);
-    
+  
+  if (!user) return <HomeHandcash />;
   if (!(chosenCollection && chosenSlot && app)) return loading;
 
   return (

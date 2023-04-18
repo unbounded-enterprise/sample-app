@@ -8,6 +8,9 @@ import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
+import { useAuth } from 'src/hooks/use-auth';
+import { HomeHandcash } from 'src/components/home/home-handcash';
+
 
 
 const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
@@ -27,6 +30,8 @@ const InventoryNftDetailPage = ()=>{
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
   const [nftId, setNftId] = useState(null);
+  const { user } = useAuth();
+
   
   useEffect(() => {
     if (router.isReady) {
@@ -86,6 +91,7 @@ const InventoryNftDetailPage = ()=>{
       });
   }, []);
   
+  if (!user) return <HomeHandcash />;
   if (!(chosenCollection && chosenSlot && chosenNft && app)) return loading;
     
   return (

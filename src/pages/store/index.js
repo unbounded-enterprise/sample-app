@@ -42,26 +42,27 @@ const Page = () => {
       </title>
     </Head>
     <main>
-    <Grid container direction="column" justifyContent="center" alignItems="center" spacing={3} mt={"2em"} mb={"2em"}>
-      <Grid item>
-        <Typography variant="h4" align="center">
-          Store (Coming Soon!)
-        </Typography>
-      </Grid>
-      <Grid item>
-        <Typography variant="body1" align="center" maxWidth="40em">
-          The store will enable you to sell NFTs to your users. Integrations with popular ecommerce platforms coming shortly after launch.
-        </Typography>
-      </Grid>
-      <Grid item>
-        <CenteredImage src="/static/marketplaceImage.png" alt="placeholder" />
-      </Grid>
-      <Grid item>
-      <NextLink href="/" passHref legacyBehavior>
-        <Button sx={slotButtonStyle} onClick={"/"}>
-          Back to Dashboard
-        </Button></NextLink>
-      </Grid>
+      <Grid container direction="column" justifyContent="center" alignItems="center" spacing={3} mt={"2em"} mb={"2em"}>
+        <Grid item>
+          <Typography variant="h4" align="center">
+            Store (Coming Soon!)
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="body1" align="center" maxWidth="40em">
+            The store will enable you to sell NFTs to your users. Integrations with popular ecommerce platforms coming shortly after launch.
+          </Typography>
+        </Grid>
+        <Grid item>
+          <CenteredImage src="/static/marketplaceImage.png" alt="placeholder" />
+        </Grid>
+        <Grid item>
+          <NextLink href="/" passHref legacyBehavior>
+            <Button sx={slotButtonStyle} onClick={"/"}>
+              Back to Dashboard
+            </Button>
+          </NextLink>
+        </Grid>
       </Grid>
     </main>
   </>);

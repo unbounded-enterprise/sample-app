@@ -57,11 +57,11 @@ const ExploreCollectionPage = () => {
   }
 
   const handlePageChange = (event) => {
+    setPage(event.target.value);
     const newValue = parseInt(event.target.value);
     if (!isNaN(newValue)) {
-      setPage(newValue);
-      setFrom(newValue*20);
-      setTo(newValue*20+19);
+      setFrom((newValue-1)*20);
+      setTo((newValue-1)*20+19);
     }
   };
 
@@ -116,6 +116,19 @@ const ExploreCollectionPage = () => {
         });
     }
   }, [chosenCollection, from, to]);
+
+  useEffect(() => {
+    if (collectionId) {
+      getNFTs({ collectionId: chosenCollection.collectionId, serials:nftSearch })
+        .then((nfts) => {
+          setNFTs(nfts);
+        })
+        .catch((e) => {
+          const error = parseBasicErrorClient(e);
+          console.log('setting error: ', error.message);
+        });
+    }
+  }, [nftSearch]);
 
   useEffect(() => {
     getApp()
@@ -213,7 +226,7 @@ const ExploreCollectionPage = () => {
             <Grid container spacing={1} sx={{ p: 1 }}>
               { (!!nfts) ? nfts.map((nft) => (
                 <React.Fragment key={nft.nftId}>
-                  <NftCard search={nftSearch} collection={chosenCollection} nft={nft} slot={chosenSlot} />
+                  <NftCard collection={chosenCollection} nft={nft} slot={chosenSlot} />
                 </React.Fragment>
               )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
@@ -271,8 +284,8 @@ const getCollection = async (collection, sortFunction) => {
   }
 }
 
-var nftsObject;  
 const getNFTs = async ({ collectionId, serials, from, to }) => {
+  let nftsObject;
   if (collectionId) {
     if (serials) {
       nftsObject = (await axios.post('/api/collection/nfts', { collectionId, idOnly: false, serials }));

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { Box, Button, Breadcrumbs, Typography, Grid, LinearProgress } from '@mui/material';
+import { Box, Button, Breadcrumbs, IconButton, Typography, Grid, LinearProgress, TextField } from '@mui/material';
 import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
 import { NftCard } from 'src/components/explorer/NftCard';
@@ -11,9 +11,11 @@ import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
 import { useAuth } from 'src/hooks/use-auth';
 import { HomeHandcash } from 'src/components/home/home-handcash';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 
-const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue'};
 const textStyle = { font: 'nunito', lineHeight: '50px' };
 const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
@@ -28,10 +30,11 @@ const ExploreCollectionPage = () => {
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(20);
+  const [to, setTo] = useState(19);
   const [nftSearch, setNftSearch] = useState(null);
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
+  const [page, setPage] = useState(1);
   const { user } = useAuth();
 
 
@@ -39,7 +42,8 @@ const ExploreCollectionPage = () => {
     setFrom(from+20); 
     setTo(to+20);
     setNFTs(null);
-    scroll(0,0)
+    setPage(page+1);
+    //scroll(0,0)
   }
 
   function lastPage() {
@@ -47,9 +51,19 @@ const ExploreCollectionPage = () => {
       setFrom(from-20); 
       setTo(to-20);
       setNFTs(null);
-      scroll(0,0)
+      setPage(page-1);
+      //scroll(0,0)
     }
   }
+
+  const handlePageChange = (event) => {
+    const newValue = parseInt(event.target.value);
+    if (!isNaN(newValue)) {
+      setPage(newValue);
+      setFrom(newValue*20);
+      setTo(newValue*20+19);
+    }
+  };
 
   const handleNftSearch = (e) => {
     if (e.key === "Enter") {
@@ -204,12 +218,23 @@ const ExploreCollectionPage = () => {
               )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
             <Grid item xs={12}>
-              <Button sx={slotButtonStyle} onClick={lastPage}>
-                Previous 20
-              </Button>
-              <Button sx={slotButtonStyle} onClick={nextPage}>
-                Next 20
-              </Button>
+              <Box display="flex" justifyContent="center">
+                <Typography variant="p2" alignSelf="center">
+                  {from}-{to} of {chosenCollection.minted} &emsp;
+                </Typography>
+                <IconButton onClick={lastPage}>
+                  <ArrowBackIosIcon/>
+                </IconButton>
+                <TextField
+                  type="number"
+                  label="Page"
+                  value={page}
+                  onChange={handlePageChange}
+                />
+                <IconButton onClick={nextPage}>
+                  <ArrowForwardIosIcon/>
+                </IconButton>
+              </Box>
             </Grid>
           </Grid>
         </Grid>

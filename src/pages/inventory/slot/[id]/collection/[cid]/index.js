@@ -14,7 +14,7 @@ import { HomeHandcash } from 'src/components/home/home-handcash';
 
 
 
-const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue'};
 const textStyle = { font: 'nunito', lineHeight: '50px' };
 const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };

@@ -8,7 +8,7 @@ import { useAuth } from 'src/hooks/use-auth';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
 
-const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const ExplorerPage = () => {

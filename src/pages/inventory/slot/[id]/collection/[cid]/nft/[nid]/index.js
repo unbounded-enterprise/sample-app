@@ -13,7 +13,7 @@ import { HomeHandcash } from 'src/components/home/home-handcash';
 
 
 
-const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto',marginRight: 'auto', width: '50%'});
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
 
 const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;

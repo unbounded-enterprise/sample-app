@@ -10,9 +10,15 @@ import React from 'react';
 import { sortCollections, collectionSortMethods } from 'src/pages/explorer/slot/[id]/index';
 import DropdownMenu from '../../../../components/widgets/DropdownMenu';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+import { useAuth } from 'src/hooks/use-auth';
+import { HomeHandcash } from 'src/components/home/home-handcash';
 
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const InventorySlotPage = ()=>{
   const router = useRouter();
@@ -25,6 +31,7 @@ const InventorySlotPage = ()=>{
   const [totalNfts, setTotalNfts] = useState(0);
   const [collectionCounts, setCollectionCounts] = useState({});
   const [activeCollections, setActiveCollections] = useState(null);
+  const { user } = useAuth();
   
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -125,7 +132,8 @@ const InventorySlotPage = ()=>{
       });
   }, [collections]);*/
 
-  if (!(app && chosenSlot && collections && collectionCounts)) return emptyNode;
+  if (!user) return <HomeHandcash />;
+  if (!(app && chosenSlot && collections && collectionCounts)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
@@ -149,7 +157,7 @@ const InventorySlotPage = ()=>{
         marginLeft: "auto",
         marginRight: "auto",
         py: 1,
-        px: 5,
+        px: {xs:2, sm:5},
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2}>

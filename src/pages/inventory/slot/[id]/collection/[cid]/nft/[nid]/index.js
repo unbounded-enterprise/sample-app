@@ -7,9 +7,16 @@ import axios from 'axios';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+import { useAuth } from 'src/hooks/use-auth';
+import { HomeHandcash } from 'src/components/home/home-handcash';
 
+
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
 const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const InventoryNftDetailPage = ()=>{
   const router = useRouter();
@@ -23,6 +30,8 @@ const InventoryNftDetailPage = ()=>{
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
   const [nftId, setNftId] = useState(null);
+  const { user } = useAuth();
+
   
   useEffect(() => {
     if (router.isReady) {
@@ -82,7 +91,8 @@ const InventoryNftDetailPage = ()=>{
       });
   }, []);
   
-  if (!(chosenCollection && chosenSlot && chosenNft && app)) return emptyNode;
+  if (!user) return <HomeHandcash />;
+  if (!(chosenCollection && chosenSlot && chosenNft && app)) return loading;
     
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
@@ -92,7 +102,7 @@ const InventoryNftDetailPage = ()=>{
         marginLeft: "auto",
         marginRight: "auto",
         py: 1,
-        px: 5,
+        px: {xs:2, sm:5},
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2} minWidth="320px">

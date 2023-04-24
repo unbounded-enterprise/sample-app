@@ -1,20 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
+import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import { SlotCard } from 'src/components/explorer/SlotCard';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 import { useAuth } from 'src/hooks/use-auth';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const ExplorerPage = () => {
   const [app, setApp] = useState(null);
   const [slots, setSlots] = useState([]);
   const [totalCollections, setTotalCollections] = useState(0);
-
+  const [search, setSearch] = useState("");
   const [chosenSlot, setChosenSlot] = useState(null);
 
   const { user } = useAuth();
+
+  const handleSearch = e =>{
+    setSearch(e.target.value);
+  }
 
   useEffect(() => {
     getSlots()
@@ -51,11 +60,12 @@ const ExplorerPage = () => {
   }, []);
 
   if (!user) return <HomeHandcash/>;
+  if (!app) return loading;
 
   const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize };
   const sharedSxBold = { fontWeight: 'bold', font: 'nunito', lineHeight: '40px', fontSize };
-
+  
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
       <Box sx={{
@@ -64,12 +74,12 @@ const ExplorerPage = () => {
         marginLeft: "auto",
         marginRight: "auto",
         py: 1,
-        px: 5,
+        px: {xs:2, sm:5},
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2}>
-          <Grid item>
-            { app && !chosenSlot && <>
+          <Grid item xs={12}>
+            { app && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
                 NFT Explorer
               </Typography>
@@ -98,11 +108,16 @@ const ExplorerPage = () => {
               </Typography>
             </> }
           </Grid>
-          <Grid item>
+          <Grid item xs={12} sx={{backgroundColor: "none"}}>
+            <Box sx={{left:0, width:"100%"}}>
+              <BasicSearchbar onChange={handleSearch} sx={{ left: 0, width: "90%", p: 1 }}/>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
             <Grid container spacing={2}>
               { slots && slots.map((slot) => (
                 <React.Fragment key={slot.slotId}>
-                  <SlotCard slot={slot} setChosenSlot={setChosenSlot} />
+                  <SlotCard search={search} slot={slot} setChosenSlot={setChosenSlot} />
                 </React.Fragment>
               )) }
             </Grid>

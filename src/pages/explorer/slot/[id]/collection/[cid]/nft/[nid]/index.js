@@ -103,7 +103,7 @@ const ExploreNftDetailPage = () => {
         marginLeft: "auto",
         marginRight: "auto",
         py: 1,
-        px: 5,
+        px: {xs:2, sm:5},
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2} minWidth="320px">

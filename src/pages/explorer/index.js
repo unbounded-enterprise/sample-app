@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
+import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from '../../components/main-layout';
 import axios from 'axios';
 import { SlotCard } from 'src/components/explorer/SlotCard';
@@ -15,10 +16,14 @@ const ExplorerPage = () => {
   const [app, setApp] = useState(null);
   const [slots, setSlots] = useState([]);
   const [totalCollections, setTotalCollections] = useState(0);
-
+  const [search, setSearch] = useState("");
   const [chosenSlot, setChosenSlot] = useState(null);
 
   const { user } = useAuth();
+
+  const handleSearch = e =>{
+    setSearch(e.target.value);
+  }
 
   useEffect(() => {
     getSlots()
@@ -103,11 +108,16 @@ const ExplorerPage = () => {
               </Typography>
             </> }
           </Grid>
+          <Grid item xs={12} sx={{backgroundColor: "none"}}>
+            <Box sx={{left:0, width:"100%"}}>
+              <BasicSearchbar onChange={handleSearch} sx={{ left: 0, width: "90%", p: 1 }}/>
+            </Box>
+          </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
               { slots && slots.map((slot) => (
                 <React.Fragment key={slot.slotId}>
-                  <SlotCard slot={slot} setChosenSlot={setChosenSlot} />
+                  <SlotCard search={search} slot={slot} setChosenSlot={setChosenSlot} />
                 </React.Fragment>
               )) }
             </Grid>

@@ -54,7 +54,7 @@ export const CollectionCard = ({ search, collection, slot }) =>{
                 Total Minted:&nbsp;
               </Typography>
               <Typography variant="p2" sx={{ lineHeight:"25px", fontSize: fontSizeP2 }}>
-                { collection.mintedAmt }
+                { collection.minted }
               </Typography>
             </Box>
             <Box>

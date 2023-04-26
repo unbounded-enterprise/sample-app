@@ -8,9 +8,18 @@ import { NftCard } from 'src/components/inventory/NftCard';
 import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
+import { styled } from '@mui/system';
+import { useAuth } from 'src/hooks/use-auth';
+import { HomeHandcash } from 'src/components/home/home-handcash';
 
-const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1vw' };
-const emptyNode = <></>;
+
+
+const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
+const slotButtonStyle = { color: 'blue', border: '1px solid blue'};
+const textStyle = { font: 'nunito', lineHeight: '50px' };
+const boldTextStyle = { font: 'nunito', fontWeight: 'bold', lineHeight: '50px' };
+
+const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
 const InventoryCollectionPage = () => {
   const router = useRouter();
@@ -25,6 +34,8 @@ const InventoryCollectionPage = () => {
 
   const [slotId, setSlotId] = useState(null)
   const [collectionId, setCollectionId] = useState(null)
+  const { user } = useAuth();
+
 
   const handleNftSearch = (e) => {
     if (e.key === "Enter") {
@@ -88,8 +99,9 @@ const InventoryCollectionPage = () => {
         console.log('setting error: ', error.message);
       });
   }, []);
-    
-  if (!(chosenCollection && chosenSlot && app)) return emptyNode;
+  
+  if (!user) return <HomeHandcash />;
+  if (!(chosenCollection && chosenSlot && app)) return loading;
 
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
@@ -99,7 +111,7 @@ const InventoryCollectionPage = () => {
         marginLeft: "auto",
         marginRight: "auto",
         py: 1,
-        px: 5,
+        px: {xs:2, sm:5},
         backgroundColor: 'none'
       }}>
         <Grid container spacing={2}>
@@ -119,9 +131,48 @@ const InventoryCollectionPage = () => {
           <Grid item>
             <Typography variant="h3" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '40px' }}>
               {chosenCollection.collectionName}
-            </Typography> 
-            <Typography variant="p2" sx={{ font: 'nunito', fontWeight: 'bold', lineHeight: '50px' }}>
-              Creator: {chosenCollection.handle} &emsp; App: {app.appName} &emsp; Slot: {chosenSlot.slotName} &emsp; Max Supply: {chosenCollection.maximum} &emsp; My Supply: {nfts?.length || 0} &emsp; Type: {chosenCollection.type}
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Creator:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.handle} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              App:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {app.appName} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Slot:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenSlot.slotName} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Minted:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.minted} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Max Supply:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              { (chosenCollection.maximum > 900000000) ? '\u221e' : chosenCollection.maximum } &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              My Supply:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {nfts?.length || 0} &emsp;
+            </Typography>
+            <Typography variant="p2" sx={textStyle}>
+              Type:&nbsp;
+            </Typography>
+            <Typography variant="p2" sx={boldTextStyle}>
+              {chosenCollection.type} &emsp;
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>

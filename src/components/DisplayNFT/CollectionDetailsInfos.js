@@ -9,7 +9,7 @@ const CollectionDetailsInfos = ({ creator, appName, slotName, totalSupply, colle
   return (
     <Box>
       {isMobile && (
-        <Button sx={{ color: '#6B7280' }} onClick={() => setShowDetails(!showDetails)}>
+        <Button size="large" sx={{ fontSize:20, color: '#6B7280' }} onClick={() => setShowDetails(!showDetails)}>
           Details {showDetails ? '▲' : '▼'}
         </Button>
       )}

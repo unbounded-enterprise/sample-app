@@ -110,7 +110,7 @@ const AudioDisplay = ({
         autoPlay={autoPlay}
         onLoadedMetadata={handleAudioLoad}
         style={{
-          position: (backgroundImage || playIcon)?'absolute':'relative',
+          position: (backgroundImage || playIcon) ? 'absolute' : 'relative',
           bottom: 0,
           zIndex: 1,
         }}

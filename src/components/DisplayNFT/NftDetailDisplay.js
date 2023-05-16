@@ -12,8 +12,6 @@ const DisplayNFTWithNoSSR = dynamic(
   { ssr: false }
 );
 
-
-
 const ButtonGrid = ({ buttonTexts, onChange }) => {
   const handleClick = (text) => {
     onChange(text);
@@ -110,13 +108,11 @@ export const NftDetailDisplay = ({ nft }) => {
     }
   }
 
-
-
   return (
     <>
       {nft ? (
         <Grid container item key={nft.nftId} xs={12}>
-        <Grid item xs={matches900 ? 12 : "auto"}>
+          <Grid item xs={matches900 ? 12 : "auto"}>
             <Box display="flex" justifyContent={matches900 ? "center" : "flex-start"}>
               <Card
                 variant="outlined"
@@ -143,8 +139,7 @@ export const NftDetailDisplay = ({ nft }) => {
             </Box>
           </Grid>
           <Grid item xs={matches900 ? 12 : 6} sx={{ padding: '1rem', paddingLeft: { xs: '1rem', sm: '3rem' } }}>
-           
-          <Stack spacing={3}>
+            <Stack spacing={3}>
               <Typography variant="h5">Expressions</Typography>
               <Box sx={{ maxWidth: '15rem' }}>
                 <DropdownMenu optionsArray={expressionNames} onChange={setCurrentExpression} defaultValue={'Menu View'} />
@@ -172,7 +167,7 @@ export const NftDetailDisplay = ({ nft }) => {
                 </>
               )}
             </Stack>
-            </Grid>
+          </Grid>
           {matches900 && (
             <Grid item xs={12} md={12} lg={12} xl={12} sx={{ backgroundColor: 'none' }}>
               <NftPropertyDisplay nft={nft} />

@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, Stack, MenuItem, 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, useMediaQuery, appBarClasses } from '@mui/material';
 import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
@@ -67,9 +67,11 @@ export function parseExpressionNames(nft) {
 
 export const NftDetailDisplay = ({ nft }) => {
   slotButtonStyle = { color: 'white', border: '1px solid white', fontSize: '4vw' };
-  const [expressionNames, setExpressionNames] = useState([]);
+  const [expressionNames, setExpressionNames] = useState(['Menu View']);
   const [spine, setSpine] = useState(null);
+  const [app, setApp] = useState(null);
   const [audioFile, setAudioFile] = useState(null); 
+  const [nfts, setNfts] = useState([]);
   const [animationNames, setAnimationNames] = useState(null);
   const [currentExpression, setCurrentExpression] = useState('Menu View');
 
@@ -78,21 +80,29 @@ export const NftDetailDisplay = ({ nft }) => {
   const matches1920 = useMediaQuery('(max-width:1920px)');
 
   useEffect(()=>{
-    setExpressionNames(parseExpressionNames(nft));
+    if (nft) {
+      setExpressionNames(parseExpressionNames(nft));
+      setNfts([nft]);
+    }
   }, [nft])
 
-  function onLoaded(loadedSpine) {
+  const onLoaded = useCallback((loadedSpine) => {
     setSpine(loadedSpine);
     if (loadedSpine) {
       setAnimationNames(parseAnimations(loadedSpine));
     } else {
       setAnimationNames(null);
     }
-  }
+  }, []);
 
-  function onAudioLoaded(audioPath) {
+  const onAudioLoaded = useCallback((audioPath) => {
     setAudioFile(audioPath);
-  }
+  }, []);
+
+  const onAppLoaded = useCallback((app) => {
+    setApp(app);
+    console.log('pixi app created: ', app);
+  }, [])
 
   function animationChange(animationName) {
     if (spine) {
@@ -105,7 +115,7 @@ export const NftDetailDisplay = ({ nft }) => {
   return (
     <>
       {nft ? (
-        <Grid container key={nft.nftId} xs={12}>
+        <Grid container item key={nft.nftId} xs={12}>
         <Grid item xs={matches900 ? 12 : "auto"}>
             <Box display="flex" justifyContent={matches900 ? "center" : "flex-start"}>
               <Card
@@ -122,11 +132,12 @@ export const NftDetailDisplay = ({ nft }) => {
                 }}
               >
                 <DisplayNFTWithNoSSR
-                  assetlayerNFT={nft}
+                  assetlayerNFTs={nfts}
                   expression={currentExpression}
                   nftSizePercentage={75}
                   onSpineLoaded={onLoaded}
                   onAudioLoaded={onAudioLoaded}
+                  onAppLoaded={onAppLoaded}
                 />
               </Card>
             </Box>

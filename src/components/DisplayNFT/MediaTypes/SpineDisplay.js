@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useState, useRef } from "react";
+import React, {useCallback, useEffect, useState, useMemo, useRef } from "react";
 import * as PIXI from 'pixi.js';
-import { Button, Box, Grid, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 /*
     utility functions
@@ -13,8 +13,6 @@ function debounce(fn, delay) {
       timer = setTimeout(() => fn.apply(this, args), delay);
     };
   }
-
-  
 
 /*
     Here's a high-level overview of what the component does:
@@ -30,48 +28,58 @@ export default function SpineDisplay({
     nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
     width = undefined, // if width is not set, it will be the width of the container
     height = undefined, // if height is not set, the canvas will have the size of the width and be squared
+    onAppLoaded = undefined, // callback as a way to access the created PIXI App
+    onResizeComplete = undefined, // callback that gets called once the spines received have been resized to the size they will get displayed
 }) { 
-
     const container = useRef();
     const containerParent = useRef();
+    const onResizeCompleteRef = useRef();
+    const canvasDimensionRef = useRef();
 
-    const [app, setApp] = useState(null);
+    const appRef = useRef();
+    const [canvasDimension, setCanvasDimension] = useState({ canvasWidth: 0, canvasHeight: 0 })
 
-    const [canvasWidth, setCanvasWidth] = useState(width?width:800);
-    const [canvasHeight, setCanvasHeight] = useState(height?height:(width?width:800));
+    useEffect(()=> {
+      onResizeCompleteRef.current = onResizeComplete;
+    }, [onResizeComplete])
 
-    const [displayRatio, setDisplayRatio] = useState(1);
-
-
-    useEffect(()=>{
-        if (!app) {
-            setApp(new PIXI.Application({ backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
+    useEffect(() => {
+      if (!spines || spines.length === 0) {
+        return;
+      }
+      if (!appRef.current) {
+        const newApp = new PIXI.Application({ backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  });
+        appRef.current = newApp;
+        if (onAppLoaded) {
+          onAppLoaded(appRef.current);
         }
-    }, [])
+      }
+      
+      
+    }, [onAppLoaded, spines]);
 
-    const handleResize = useCallback(() =>{
-        if (!app) {
+    const handleResize = useCallback(() =>{     
+        if (!appRef.current) {
             return;
           }
-          const { view } = app;
+          const { view } = appRef.current;
           if (!view) {
             return;
           }
-        if (width) {
+        if (width) { // user has chosen fixed size, not resizing. Sizing is done by with and height adjustment being appRef.currentlied on the container and during appRef.current creation.
             return;
         }
         const parent = containerParent.current;
         if (!parent) {
             return;
         }
-        parent.height = parent.width;
-        app.resizeTo = parent;
-        app.resize();
-        setCanvasWidth(app.view?.width); // will trigger resize of spine in useEffect
-        setCanvasHeight(app.view?.height);
-    }, [app, container.current, height, width]);
+        appRef.current.resizeTo = parent;
+        appRef.current.resize();
+        setCanvasDimension( { canvasWidth: appRef.current.view?.width , canvasHeight: appRef.current.view?.height }); 
+    }, [width]);
 
-    const debouncedHandleResize = debounce(handleResize, 200);
+    const debouncedHandleResize = useMemo(() => debounce(handleResize, 200), [handleResize]);
+
 
     useEffect(() => {
         window.addEventListener("resize", debouncedHandleResize);
@@ -81,9 +89,10 @@ export default function SpineDisplay({
       }, [debouncedHandleResize]);
 
     useEffect(()=>{
-        handleResize();
+     
+      debouncedHandleResize();
 
-      }, [handleResize]);
+      }, [debouncedHandleResize]);
 
 
     function clearContainer(container) {
@@ -98,79 +107,91 @@ export default function SpineDisplay({
     }
 
     useEffect(()=>{
-        if (!app) {
+        if (!appRef.current) {
             clearContainer(container?.current);
             return;
           }
-          const { view } = app;
+          const { view } = appRef.current;
           if (!view) {
             return;
           }
         if (container.current) {
-            container.current.appendChild(app.view);
+            container.current.appendChild(appRef.current.view);
             handleResize();
         }
-    }, [app, container.current])
+    }, [handleResize])
 
 
     const adjustSizeOfSpine = useCallback(
-        (externalSpine, index) => {
-          const spineToAdjust = externalSpine ? externalSpine : spine; // passing an external spine is optional
-          if (!spineToAdjust || !canvasHeight || !canvasWidth) {
-            return;
-          }
-      
-          const ratio = spineToAdjust.width / spineToAdjust.height;
-          const canvasRatio = canvasWidth / canvasHeight;
-      
-          const availableWidth = (canvasWidth * (nftSizePercentage || 75) * 0.01) / spines.length;
-          const spacing = availableWidth / (spines.length + 1);
-      
-          if (ratio < canvasRatio) {
-            spineToAdjust.height = canvasHeight * (nftSizePercentage || 75) * 0.01;
-            spineToAdjust.width = ratio * spineToAdjust.height;
-          } else {
-            spineToAdjust.width = availableWidth;
-            spineToAdjust.height = spineToAdjust.width / ratio;
-          }
-      
-          if (spines.length === 1) {
-            spineToAdjust.x = canvasWidth / 2;
-          } else {
-            spineToAdjust.x = spacing * (index + 1) + spineToAdjust.width * index + spineToAdjust.width / 2;
-          }
-          
-          spineToAdjust.y = (canvasHeight / 2) + spineToAdjust.height / 2;
-        },
-        [spines, canvasHeight, canvasWidth]
-      );
-      
+      (spines, externalSpine, index) => {
+        const spineToAdjust = externalSpine;
+        if (!spineToAdjust || !canvasDimension.canvasHeight || !canvasDimension.canvasWidth) {
+          return;
+        }
+    
+        const availableWidth = (canvasDimension.canvasWidth * (nftSizePercentage || 100) * 0.01) / spines.length;
+        const ratioFull = (spineToAdjust.width * spines.length) / spineToAdjust.height;
+        const ratio = spineToAdjust.width / spineToAdjust.height;
+        const canvasRatio = canvasDimension.canvasWidth / canvasDimension.canvasHeight;
+    
+        if (ratioFull < canvasRatio) {
+          spineToAdjust.height = canvasDimension.canvasHeight * nftSizePercentage * 0.01;
+          spineToAdjust.width = ratio * spineToAdjust.height;
+        } else {
+          spineToAdjust.width = availableWidth;
+          spineToAdjust.height = spineToAdjust.width / ratio;
+        }
+    
+        // Calculate the total width of spines
+        const totalWidthOfSpines = spineToAdjust.width * spines.length;
+        // Calculate the remaining canvas width after placing all spines
+        const remainingCanvasWidth = canvasDimension.canvasWidth - totalWidthOfSpines;
+    
+        // Calculate the spacing based on the remaining canvas width and the number of gaps between spines
+        const spacing = remainingCanvasWidth / (spines.length + 1);
+    
+        // Adjust the starting x position and subtract half of the width of a single spine
+        const startX = spacing;
+    
+        if (spines.length === 1) {
+          spineToAdjust.x = canvasDimension.canvasWidth / 2;
+        } else {
+          spineToAdjust.x = startX + spacing * index + spineToAdjust.width * index + spineToAdjust.width / 2;
+        }
+    
+        spineToAdjust.y = (canvasDimension.canvasHeight / 2) + spineToAdjust.height / 2;
+      },
+      [canvasDimension.canvasHeight, canvasDimension.canvasWidth, nftSizePercentage]
+    );
+    
 
     useEffect(()=>{
-        if (!app || !app.stage || !spines || spines.length === 0) {
+      canvasDimensionRef.current = canvasDimension;
+    }, [canvasDimension])
+
+
+    useEffect(()=>{
+        if (!appRef.current || !appRef.current.stage || !spines || spines.length === 0 || !canvasDimensionRef.current.canvasWidth || !canvasDimensionRef.current.canvasHeight) {
             return;
+        }
+        function clearStage() {
+          for (let i = appRef.current.stage.children.length - 1; i >= 0; i--) {	
+              appRef.current.stage.removeChild(appRef.current.stage.children[i]);
+          };
         }
         clearStage();
         spines.forEach((spine, index)=>{
-            adjustSizeOfSpine(spine, index);
-            app.stage.addChild(spine); 
-        })
-        
-    }, [adjustSizeOfSpine])
-
-    function clearStage() {
-        for (let i = app.stage.children.length - 1; i >= 0; i--) {	
-            app.stage.removeChild(app.stage.children[i]);
-        };
-    }
-
-    useEffect(()=>{
-        if (containerParent?.current?.clientHeight && containerParent?.current?.clientWidth) {
-            setDisplayRatio(containerParent.current.clientWidth / containerParent.current.clientHeight);
-        } else {
-            setDisplayRatio(null); 
+            if(!spine) {
+              return;
+            }
+            adjustSizeOfSpine(spines, spine, index);
+            appRef.current.stage.addChild(spine); 
+        }); 
+        if (onResizeCompleteRef.current) {
+          onResizeCompleteRef.current();
         }
-    }, [containerParent.current?.clientWidth, container.current?.clientHeight])
+        
+    }, [spines, adjustSizeOfSpine])
 
 
         return (

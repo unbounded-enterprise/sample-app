@@ -1,13 +1,12 @@
-import React, {useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import * as PIXISPINE from 'pixi-spine';
 import axios from 'axios';
 import { TextureAtlas } from 'pixi-spine';
-import { Box, Stack } from '@mui/material';
+import { Box } from '@mui/material';
 import SpineDisplay from "./MediaTypes/SpineDisplay";
 import DisplayImage from "./MediaTypes/ImageDisplay";
 import AudioDisplay from "./MediaTypes/AudioDisplay";
-
 
 // Helper Functions
 
@@ -23,6 +22,23 @@ export function getExpressionValue(expressionValues, expressionName, expressionA
     return expressionValue;
 }
 
+export function getExpressionValuesForAllNFTs(nftArray, expressionName, expressionAttributeName) {
+    const expressionMap = new Map();
+
+    if (!nftArray) {
+        return expressionMap;
+    }
+
+    nftArray.forEach((nft) => {
+        const expressionValue = getExpressionValue(nft?.expressionValues, expressionName, expressionAttributeName);
+        expressionMap.set(nft.nftId, expressionValue);
+    });
+
+    return expressionMap;
+}
+
+
+
 /**
  * Parse the NFT and return the parsed JSON, Atlas, PNG, and Image Expression values.
  * @param {Object} nft The NFT object.
@@ -30,7 +46,6 @@ export function getExpressionValue(expressionValues, expressionName, expressionA
  * @returns {Object} An object containing the parsed JSON, Atlas, PNG, and Image Expression values or parsed Audio File.
  */
 export function parseNFT(nft, expression) {
-
     if (!nft) {
         return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression: null, parsedAudioExpression: null}
     }
@@ -71,6 +86,12 @@ export function setNewSlotImage(spine, slotName, texture) {
     }
   }
 
+  export function getSlotSize(spine, slotName) {
+    const slot = spine.slotContainers[spine.skeleton.findSlotIndex(slotName)];
+    const attachment = slot.children[0].attachment;
+    return {width: attachment.width, height: attachment.height};
+  }
+
   /**
  * Play the animation for the given spine.
  * @param {string} animationName The animation name.
@@ -88,6 +109,79 @@ export function playAnimation(animationName, spine, looped= true) {
         console.log('animation not found');
     }
 }
+
+/**
+ * Play a sequence of animations for the given spine.
+ * @param {Array<string>} animationSequence An array of animation names.
+ * @param {PIXISPINE.Spine} spine The spine object.
+ * @param {Array<function>} onStartCallbacks An optional array of callbacks to be called at the start of each animation.
+ * @param {Array<function>} onEndCallbacks An optional array of callbacks to be called at the end of each animation.
+ * @param {boolean} loopLastAnimation Whether the last animation should loop or not.
+ */
+export function playAnimationSequence(
+    animationSequence,
+    spine,
+    onStartCallbacks = [],
+    onEndCallbacks = [],
+    loopLastAnimation = false
+  ) {
+    if (!spine || !Array.isArray(animationSequence) || animationSequence.length === 0) {
+      return;
+    }
+  
+    let delay = 0.0;
+   
+    animationSequence.forEach((animationName, index) => {
+      const loop = loopLastAnimation && index === animationSequence.length - 1;
+  
+      if (spine.state?.hasAnimation(animationName)) {
+        const trackEntry = index===0?spine.state.setAnimation(0, animationName, loop):spine.state.addAnimation(0, animationName, loop, 0);
+  
+        if (onEndCallbacks[index]) {
+            trackEntry.listener = { 
+                end: ()=>{ if (onEndCallbacks[index]) onEndCallbacks[index]()},
+                start: ()=>{
+                    if (onStartCallbacks[index]) {
+                          onStartCallbacks[index]();
+                      }
+                }
+            }
+          trackEntry.onComplete = () => {
+            onEndCallbacks[index]();
+          };
+        }
+      } else {
+        console.log('animation not found');
+      }
+    });
+  }
+  
+
+export const drawSpineToCanvas = (ctx, spine, app, resizeCanvas = true) => {
+    if (!spine || !ctx || !app) {
+      return;
+    }
+  
+    const texture = app.renderer.generateTexture(spine);
+    const pixelData = app.renderer.plugins.extract.pixels(texture);
+  
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = texture.width;
+    tempCanvas.height = texture.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    const imageData = tempCtx.createImageData(texture.width, texture.height);
+    imageData.data.set(pixelData);
+  
+    if (resizeCanvas) {
+      ctx.canvas.width = texture.width < texture.height ? texture.width : texture.height;
+      ctx.canvas.height = texture.width < texture.height ? texture.width : texture.height;
+      ctx.putImageData(imageData, 0, -texture.height * 0.1);
+    } else {
+      ctx.putImageData(imageData, -38, -40);
+    }
+  };
+  
+
 
 /**
  * This function takes a Spine object as an input and extracts its animations.
@@ -110,54 +204,110 @@ export function parseAnimations(spine) {
 }
 
 
+DisplayNFT.defaultProps = {
+    expression: 'Menu View',
+    nftSizePercentage: 75,
+    onSpineLoaded: null,
+    onAudioLoaded: null,
+    onAppLoaded: null,
+    width: undefined,
+    height: undefined,
+    soundBackground: 'Menu View',
+  };
 
 export default function DisplayNFT({ 
-    assetlayerNFT,  // the nft you receive from assetlayer requests
-    expression = 'Menu View',  // choose the expression(Name) that should be displayed
-    nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
-    onSpineLoaded = (spine)=>{console.log('spine: ', spine)}, // (spine)=>void will be called once the spine is loaded and have the spine as parameter, use the spine i.e. to call animations manually
-    onAudioLoaded = (audioFile) => { console.log('audio file: ', audioFile)}, // will be called if the expression chosen is containing an audioFile
-    width = undefined, // if width is not set, it will be the width of the container
-    height = undefined, // if height is not set, the canvas will have the size of the width and be squared
-    soundBackground='Menu View' // you can choose a background to be displayed for the sound play button, by default it will be the menu view expression, set this to null to not have a background
+    assetlayerNFTs,
+    expression = 'Menu View',
+    nftSizePercentage = 75,
+    onSpineLoaded, // this function that gets called when the spine is ready should accept 2 parameters, spine and nftId.  Please make sure that the passed functions do not rerender (use useCallback i.e.)
+    onAudioLoaded, // please make sure that the passed functions do not rerender (use useCallback i.e.)
+    onAppLoaded,  // please make sure that the passed functions do not rerender (use useCallback i.e.)
+    width = undefined,
+    height = undefined,
+    soundBackground = 'Menu View',
 }) { 
-
     const containerParent = useRef();
+    const onSpineLoadedRef = useRef(onSpineLoaded);
 
-    const [spineJson, setSpineJson] = useState(null);
-    const [spineAtlas, setSpineAtlas]  = useState(null);
-    const [spinePng, setSpinePng] = useState(null);
-    const [imageExpression, setImageExpression] = useState(null);
-    const [audioFile, setAudioFile] = useState(null);
-    const [resources, setResources] = useState({});
+    const [nftData, setNftData] = useState({
+        spineJsonMap: new Map(),
+        spineAtlasMap: new Map(),
+        spinePngMap: new Map(),
+        imageExpressionsMap: new Map(),
+        audioFilesMap: new Map(),
+      });
 
-    const [spine, setSpine] = useState(null);
+    const [nftSpines, setNftSpines] = useState({ assetlayerNFTs: [], spines: [] }); // combined state to prevent onSpineLoaded to be called twice on assetlayerNFTs change.
+    const [audioFilesArray, setAudioFilesArray] = useState([]);
+    const [imageExpressionsArray, setImageExpressionsArray] = useState([]);
+    const [backgroundImages, setBackgroundImages] = useState(new Map());
 
 
+    const [resizeComplete, setResizeComplete] = useState(false);
 
-    
+    const assetlayerNFTsRef = useRef(assetlayerNFTs);
 
     useEffect(()=>{
-        const { parsedJson, parsedAtlas, parsedPng, parsedImageExpression, parsedAudioExpression } = parseNFT(assetlayerNFT, expression);
-
-            setSpineJson(parsedJson); 
-            setSpineAtlas(parsedAtlas);
-            setSpinePng(parsedPng); 
-            setImageExpression(parsedImageExpression); 
-            setAudioFile( parsedAudioExpression);
-        
-    }, [assetlayerNFT, expression])
-
-    function resourcesLoaded (resources) {
-        console.log('loaded, ', resources);
-        setResources(resources);
-        const nftSpine = new PIXISPINE.Spine(resources[(assetlayerNFT.nftId + expression)].spineData);
-        if (nftSpine) {
-            setSpine(nftSpine);
+        if (assetlayerNFTs) {
+            assetlayerNFTsRef.current = assetlayerNFTs;
         }
+      }, [assetlayerNFTs])
+
+    useEffect(()=>{
+        onSpineLoadedRef.current = onSpineLoaded;
+    }, [onSpineLoaded])
+    
+    const loadPixiNFT = useCallback(async (spineAtlas, spinePng, spineJson) => {
+        if (!spineAtlas || !spinePng || !spineJson) {
+            return;
         }
+        const atlas = await getTextureAtlas(spineAtlas, spinePng);
+        const spineData = (await PIXI.Assets.load({ src: spineJson, data: { spineAtlas: atlas }})).spineData;
+        const spine = new PIXISPINE.Spine(spineData);
+        return spine;
+    }, []);
+
+    const onResizeComplete = useCallback(()=>{
+        setResizeComplete(true);
+    }, [])
+
+    useEffect(() => {
+        if (Array.isArray(assetlayerNFTs) && assetlayerNFTs.length > 0 && assetlayerNFTs.every((nft) => nft !== null)) {
+            const newSpineJsonMap = new Map();
+            const newSpineAtlasMap = new Map();
+            const newSpinePngMap = new Map();
+            const newImageExpressionsMap = new Map();
+            const newAudioFilesMap = new Map();
+
+            assetlayerNFTs.forEach(nft => {
+                if (!nft) {
+                    return;
+                }
+                const { parsedJson, parsedAtlas, parsedPng, parsedImageExpression, parsedAudioExpression } = parseNFT(nft, expression);
+
+                newSpineJsonMap.set(nft.nftId, parsedJson);
+                newSpineAtlasMap.set(nft.nftId, parsedAtlas);
+                newSpinePngMap.set(nft.nftId, parsedPng);
+
+                newImageExpressionsMap.set(nft.nftId, parsedImageExpression);
+                newAudioFilesMap.set(nft.nftId, parsedAudioExpression);
+            });
+
+            setNftData({
+                spineJsonMap: newSpineJsonMap,
+                spineAtlasMap: newSpineAtlasMap,
+                spinePngMap: newSpinePngMap,
+                imageExpressionsMap: newImageExpressionsMap,
+                audioFilesMap: newAudioFilesMap,
+              })
+            setResizeComplete(false);
+        }
+    }, [assetlayerNFTs, expression]);
 
     async function getTextureAtlas(url, imageUrl) {
+        if (!url || url === '' || !imageUrl || imageUrl === '') {
+            return; 
+        }
         const rawAtlas = (await axios.get(url)).data;
         return new Promise((res, rej)=>{
             
@@ -173,61 +323,102 @@ export default function DisplayNFT({
             };
             new TextureAtlas(rawAtlas, textureLoader, atlasLoadedCallback);
         });
-        
     }
 
-    useEffect(()=>{
-        if (spinePng && spineAtlas && spineJson) {
-            loadPixiNFT();
-        } else {
-            onSpineLoaded(null);
+    useEffect(() => {
+        if (!assetlayerNFTsRef.current) {
+            return;
         }
-    },[spinePng, spineAtlas, spineJson])
+        async function loadPixiNfts() {
+            const newSpines = [];
+            for (const nft of assetlayerNFTsRef.current) {
+                if (!nft?.nftId) {
+                    continue;
+                }
+                const { nftId } = nft;
+                const spineAtlas = nftData.spineAtlasMap.get(nftId);
+                const spinePng = nftData.spinePngMap.get(nftId);
+                const spineJson = nftData.spineJsonMap.get(nftId);
+                if (spineAtlas && spinePng && spineJson) {
+                    newSpines.push((await loadPixiNFT(spineAtlas, spinePng, spineJson)));
+                }
 
-    useEffect(()=>{
-        if (onAudioLoaded) {
-            onAudioLoaded(audioFile);
-        }
-    }, [audioFile])
-
-    async function loadPixiNFT() {
-        // now load json skeleton
-        if(!resources || !resources[(assetlayerNFT.nftId + expression)]) {
-            const atlas = await getTextureAtlas(spineAtlas, spinePng);
-
-            if (!resources) {
-                setResources({});
             }
-            resources[assetlayerNFT.nftId + expression] = await PIXI.Assets.load({ src: spineJson, data: { spineAtlas: atlas }}); 
-            resourcesLoaded(resources);
+            setNftSpines({ assetlayerNFTs: assetlayerNFTsRef.current, spines: newSpines });
+        }
+        if (nftData?.spinePngMap.size > 0 && nftData?.spineAtlasMap.size > 0 && nftData?.spineJsonMap.size > 0) {
+            loadPixiNfts();
         } else {
-            resourcesLoaded(resources);
+            if (onSpineLoadedRef.current) {
+                onSpineLoadedRef.current(null);
+            }
         }
+    }, [nftData, loadPixiNFT]);
+
+    useEffect(() => {
+        if (nftData.audioFilesMap.size > 0 && onAudioLoaded) {
+            setAudioFilesArray(Array.from(nftData?.audioFilesMap));
+            const backgroundImages = getExpressionValuesForAllNFTs(assetlayerNFTsRef.current, 'Menu View', 'Image');
+            setBackgroundImages(backgroundImages);
+            nftData.audioFilesMap.forEach((audioFile, nftId) => {
+                onAudioLoaded(audioFile, nftId);
+            });
+        }
+    }, [nftData?.audioFilesMap, onAudioLoaded]);
+
+    useEffect(() => {
+        setImageExpressionsArray(Array.from(nftData?.imageExpressionsMap || []));
+    }, [nftData]);
     
-  
-    }
-
-    useEffect(()=>{
-        if (spine && onSpineLoaded) {
-            onSpineLoaded(spine);
+    
+    useEffect(() => {
+        if (resizeComplete && Array.isArray(nftSpines.spines) && nftSpines.spines.length > 0 &&  nftSpines.spines.length === nftSpines.assetlayerNFTs.length && onSpineLoadedRef.current) {
+            nftSpines.spines.forEach((spine, index) => {
+            });
+            nftSpines.spines.forEach((spine, index) => {
+                const nftId = nftSpines.assetlayerNFTs[index]?.nftId;
+            onSpineLoadedRef.current(spine, nftId);
+          });
+          setResizeComplete(false);
         }
-    } ,[spine]);
+      }, [nftSpines, resizeComplete]);
 
-        return (
-           <>
-            
-            <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
-                {(imageExpression) ?
-                        <DisplayImage src={imageExpression}/>
-                    :
+    return (
+        <>
+            <Box
+                ref={containerParent}
+                sx={{
+                    width: width ? width : '100%',
+                    height: height ? height : (width ? width : '100%'),
+                    position: 'relative',
+                }}
+            >
+                {nftSpines?.spines?.length > 0 && <SpineDisplay spines={nftSpines.spines} nftSizePercentage={nftSizePercentage} onAppLoaded={onAppLoaded} onResizeComplete={onResizeComplete} />}
+                {imageExpressionsArray.length > 0 && (
                     <>
-                    {spine && <>
-                        <SpineDisplay spines={[spine]} nftSizePercentage={nftSizePercentage} />
-                    </>}
+                        {imageExpressionsArray.map(([nftId, imgExpression]) => (
+                            imgExpression && <DisplayImage key={`display-image-${nftId}`} src={imgExpression} />
+                        ))}
                     </>
-             }
-             {audioFile && <AudioDisplay src={audioFile} backgroundImage={soundBackground==='Menu View'?getExpressionValue(assetlayerNFT.expressionValues, 'Menu View', 'Image'):soundBackground}/>}
+                )}
+
+                {audioFilesArray.map(([nftId, audioSrc]) => {
+                return (
+                    audioSrc && (
+                        <AudioDisplay
+                            key={`audio-display-${nftId}`}
+                            src={audioSrc}
+                            backgroundImage={
+                                soundBackground === 'Menu View'
+                                    ? backgroundImages.get(nftId)
+                                    : soundBackground
+                            }
+                        />
+                    )
+                );
+            })}
+
             </Box>
-           </>
-    )
+        </>
+    );
 }

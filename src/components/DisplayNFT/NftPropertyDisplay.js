@@ -74,7 +74,7 @@ export const NftPropertyDisplay = ({ nft }) => {
     if (apps && apps.length > 0) {
       setSelectedApp(apps[0] || null);
     } else {
-      setSelectedApp('No Apps found');
+      setSelectedApp('');
     }
   }, [apps]);
 

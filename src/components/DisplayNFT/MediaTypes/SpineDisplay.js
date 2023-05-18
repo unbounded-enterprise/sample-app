@@ -162,7 +162,7 @@ export default function SpineDisplay({
       return;
     }
     for (let i = 0; i < container.children.length; i++) {
-       container.removeChild(container.children[i]);
+      container.removeChild(container.children[i]);
     }
   }
 

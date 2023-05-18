@@ -366,8 +366,6 @@ export default function DisplayNFT({
     useEffect(() => {
         if (resizeComplete && Array.isArray(nftSpines.spines) && nftSpines.spines.length > 0 && nftSpines.spines.length === nftSpines.assetlayerNFTs.length && onSpineLoadedRef.current) {
             nftSpines.spines.forEach((spine, index) => {
-            });
-            nftSpines.spines.forEach((spine, index) => {
                 const nftId = nftSpines.assetlayerNFTs[index]?.nftId;
                 onSpineLoadedRef.current(spine, nftId);
             });

@@ -38,13 +38,14 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
                     fontSize: { xs: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' },
                   }}
                   onClick={() => handleClick(text)}
-                  >
+                >
                   {text}
                 </Button>
               </Box>
             </Grid>
           </React.Fragment>
-        ))}
+        ))
+      }
     </Grid>
   );
 };

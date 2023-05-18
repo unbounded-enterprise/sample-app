@@ -39,7 +39,8 @@ const PropertyRow = ({ property, depth }) => {
       {isObject &&
         Object.entries(value).map(subProperty => (
           <PropertyRow key={subProperty[0]} property={subProperty} depth={depth + 1} />
-        ))}
+        ))
+      }
     </>
   );
 };

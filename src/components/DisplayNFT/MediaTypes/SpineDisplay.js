@@ -48,7 +48,11 @@ export default function SpineDisplay({
       return;
     }
     if (!appRef.current) {
-      const newApp = new PIXI.Application({ backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  });
+      const RESOLUTION = window.devicePixelRatio > 1 ? 2 : 1;
+      const newView = document.createElement('canvas');
+      newView.width = containerParent?.current?.clientWidth || 800;
+      newView.height = containerParent?.current?.clientHeight || 800;
+      const newApp = new PIXI.Application({ view: newView, backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800, antialias: true, autoDensity: true, roundPixels: true,  resolution: RESOLUTION, resizeTo: containerParent.current });
       appRef.current = newApp;
       if (onAppLoaded) {
         onAppLoaded(appRef.current);
@@ -73,7 +77,7 @@ export default function SpineDisplay({
     }
     appRef.current.resizeTo = parent;
     appRef.current.resize();
-    setCanvasDimension( { canvasWidth: appRef.current.view?.width , canvasHeight: appRef.current.view?.height }); 
+    setCanvasDimension( { canvasWidth: appRef.current.view?.width / appRef.current.renderer.resolution , canvasHeight: appRef.current.view?.height / appRef.current.renderer.resolution }); 
   }, [width]);
 
   const debouncedHandleResize = useMemo(() => debounce(handleResize, 200), [handleResize]);

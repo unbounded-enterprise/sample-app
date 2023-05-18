@@ -1,189 +1,285 @@
-import React, {useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import * as PIXI from 'pixi.js';
-import { Button, Box, Grid, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
-/*
-    utility functions
+/**
+    Utility function 'debounce'
+    Delays function execution until after 'delay' milliseconds have elapsed since the last time it was invoked.
+    Used here to optimize performance during window resizing.
 */
-
 function debounce(fn, delay) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn.apply(this, args), delay);
-    };
-  }
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
 
-  
-
-/*
-    Here's a high-level overview of what the component does:
-
-        Initializes a new PIXI.Application with a transparent background when the component is mounted.
-        Adds a resize handler to adjust the canvas size according to its parent container and updates the state accordingly.
-        Clears the PIXI container and adds the PIXI view to it when necessary.
-        Adjusts the size and position of the spine animations in the canvas based on the available space and the number of spines provided.
-        Renders the spine animations in the PIXI canvas.
+/**
+ * SpineDisplay Component
+ * 
+ * This component is designed to handle and display a list of Spine animations using the PIXI.js library. It offers
+ * the following functionalities:
+ * 
+ * 1. Dynamic Resizing: The component can dynamically adjust the size of the canvas according to its parent container.
+ *    This means that it responds to changes in the size of the parent container by adjusting the canvas size accordingly.
+ * 
+ * 2. Spine Animation Adjustment: The component takes into consideration the available space within the canvas and the
+ *    number of spine animations provided to calculate and adjust the size and position of each spine animation. 
+ * 
+ *    The size of each spine animation is determined by the 'nftSizePercentage' prop, which defines the percentage of the 
+ *    container space that the spine animation should occupy. The default value is 75%, meaning that the spine animation 
+ *    will take up 75% of the available container space. 
+ * 
+ *    The position of each spine animation in the canvas is calculated by evenly distributing them across the canvas width. 
+ *    If there is only one spine animation, it is positioned in the center of the canvas.
+ * 
+ * 3. Fallback to Container Size: If no 'width' or 'height' prop is provided, the component defaults to using the size 
+ *    of the parent container. This ensures that the canvas will always have an appropriate size, even if explicit dimensions
+ *    are not provided.
+ * 
+ * Callbacks:
+ * 
+ * 4. onAppLoaded: This is a callback function that is triggered after the PIXI Application is initialized. It allows the parent 
+ *    component to access and interact with the created PIXI Application directly. This could be used for extending the 
+ *    functionality of the SpineDisplay component, or for any operations that require direct access to the PIXI Application.
+ * 
+ * 5. onResizeComplete: This callback function is triggered once the spine animations have been resized and placed in the 
+ *    canvas accordingly. This callback could be used to execute additional operations after the resizing is done, such as 
+ *    performing other layout calculations or triggering animations. For example, it could be used to ensure that other 
+ *    UI elements are positioned correctly in relation to the resized spine animations.
+ *
+ * @param {object} props The properties object.
+ * @param {Array} props.spines The list of spine animations to be displayed.
+ * @param {number} [props.nftSizePercentage=75] The percentage of the container space that the spine animation should occupy.
+ * @param {string | number | undefined} [props.width] Width of the canvas. If not provided, the width of the parent container is used.
+ * @param {string | number | undefined} [props.height] Height of the canvas. If not provided, the height of the parent container is used.
+ * @param {function | undefined} [props.onAppLoaded] Callback function triggered after the PIXI Application is initialized. It receives the PIXI Application as an argument.
+ * @param {function | undefined} [props.onResizeComplete] Callback function triggered once the spine animations have been resized and placed in the canvas accordingly.
  */
 export default function SpineDisplay({ 
-    spines = [], // an array of spines which should be displayed
-    nftSizePercentage = 75, // value from 0-100 to choose how much of the container the nft spine should fill. It will be size of height or width depending on spine ratios and container ratios, default is 75 to leave some space for your animations to be inside of the canvas
-    width = undefined, // if width is not set, it will be the width of the container
-    height = undefined, // if height is not set, the canvas will have the size of the width and be squared
+  spines = [],
+  nftSizePercentage = 75,
+  width = undefined,
+  height = undefined,
+  onAppLoaded = undefined,
+  onResizeComplete = undefined,
 }) { 
+  // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
+  const container = useRef();
+  const containerParent = useRef();
+  const onResizeCompleteRef = useRef();
+  const canvasDimensionRef = useRef();
+  const appRef = useRef();
 
-    const container = useRef();
-    const containerParent = useRef();
+  // The canvas dimensions state is stored and managed using useState to work with the real size as well as trigger updates on change.
+  const [canvasDimension, setCanvasDimension] = useState({ canvasWidth: 0, canvasHeight: 0 });
 
-    const [app, setApp] = useState(null);
+  // Setup the onResizeComplete callback
+  useEffect(()=> {
+    onResizeCompleteRef.current = onResizeComplete;
+  }, [onResizeComplete]);
 
-    const [canvasWidth, setCanvasWidth] = useState(width?width:800);
-    const [canvasHeight, setCanvasHeight] = useState(height?height:(width?width:800));
+  // Setup the PIXI application when the component is mounted
+  useEffect(() => {
+    // If there are no spines, exit the function.
+    if (!spines || spines.length === 0) {
+      return;
+    }
+    // If there's no PIXI application yet, create a new one. Should only be done once.
+    if (!appRef.current) {
+      const RESOLUTION = window.devicePixelRatio > 1 ? 2 : 1;
+      const newView = document.createElement('canvas');
+      newView.width = containerParent?.current?.clientWidth || 800;
+      newView.height = containerParent?.current?.clientHeight || 800;
+      const newApp = new PIXI.Application({ 
+        view: newView, 
+        backgroundAlpha: 0, 
+        width: containerParent?.current?.clientWidth || 800, 
+        height: containerParent?.current?.clientHeight || 800, 
+        antialias: true, 
+        autoDensity: true, 
+        roundPixels: true,  
+        resolution: RESOLUTION, 
+        resizeTo: containerParent.current 
+      });
+      appRef.current = newApp;
+      if (onAppLoaded) {
+        onAppLoaded(appRef.current);
+      }
+    }
+  }, [onAppLoaded, spines]);
 
-    const [displayRatio, setDisplayRatio] = useState(1);
-
-
-    useEffect(()=>{
-        if (!app) {
-            setApp(new PIXI.Application({ backgroundAlpha: 0, width: containerParent?.current?.clientWidth || 800, height: containerParent?.current?.clientHeight || 800  }))  
-        }
-    }, [])
-
-    const handleResize = useCallback(() =>{
-        if (!app) {
-            return;
-          }
-          const { view } = app;
-          if (!view) {
-            return;
-          }
-        if (width) {
-            return;
-        }
-        const parent = containerParent.current;
-        if (!parent) {
-            return;
-        }
-        parent.height = parent.width;
-        app.resizeTo = parent;
-        app.resize();
-        setCanvasWidth(app.view?.width); // will trigger resize of spine in useEffect
-        setCanvasHeight(app.view?.height);
-    }, [app, container.current, height, width]);
-
-    const debouncedHandleResize = debounce(handleResize, 200);
-
-    useEffect(() => {
-        window.addEventListener("resize", debouncedHandleResize);
-        return () => {
-          window.removeEventListener("resize", debouncedHandleResize);
-        };
-      }, [debouncedHandleResize]);
-
-    useEffect(()=>{
-        handleResize();
-
-      }, [handleResize]);
-
-
-    function clearContainer(container) {
-        // removes all children from a container
-        if (!container) {
-            return;
-        }
-        for (let i = 0; i < container.children.length; i++) {
-            // remove the child element
-             container.removeChild(container.children[i]);
-         }
+  // Handle the resizing of the PIXI canvas
+  const handleResize = useCallback(() => {    
+    // Exit the function  early if needed parts are not ready yet. 
+    if (!appRef.current) {
+      return;
+    }
+    const { view } = appRef.current;
+    if (!view) {
+      return;
     }
 
-    useEffect(()=>{
-        if (!app) {
-            clearContainer(container?.current);
-            return;
-          }
-          const { view } = app;
-          if (!view) {
-            return;
-          }
-        if (container.current) {
-            container.current.appendChild(app.view);
-            handleResize();
-        }
-    }, [app, container.current])
+    // Exit the function if a fixed size has been defined by the user.
+    // Resizing in this case is handled by width and height adjustment applied on the container and during app creation.
+    if (width) {
+      return;
+    }
+    const parent = containerParent.current;
+    if (!parent) {
+      return;
+    }
+    // Set the app to resize according to the parent container and perform the resize
+    appRef.current.resizeTo = parent;
+    appRef.current.resize();
 
+    // Update the canvas dimensions based on the new size of the view, adjusted for the renderer's resolution. (with on mobile devices might be twice the size on screen)
+    setCanvasDimension({ 
+      canvasWidth: appRef.current.view?.width / appRef.current.renderer.resolution, 
+      canvasHeight: appRef.current.view?.height / appRef.current.renderer.resolution
+    }); 
+  }, [width]);
 
-    const adjustSizeOfSpine = useCallback(
-        (externalSpine, index) => {
-          const spineToAdjust = externalSpine ? externalSpine : spine; // passing an external spine is optional
-          if (!spineToAdjust || !canvasHeight || !canvasWidth) {
-            return;
-          }
-      
-          const ratio = spineToAdjust.width / spineToAdjust.height;
-          const canvasRatio = canvasWidth / canvasHeight;
-      
-          const availableWidth = (canvasWidth * (nftSizePercentage || 75) * 0.01) / spines.length;
-          const spacing = availableWidth / (spines.length + 1);
-      
-          if (ratio < canvasRatio) {
-            spineToAdjust.height = canvasHeight * (nftSizePercentage || 75) * 0.01;
-            spineToAdjust.width = ratio * spineToAdjust.height;
-          } else {
-            spineToAdjust.width = availableWidth;
-            spineToAdjust.height = spineToAdjust.width / ratio;
-          }
-      
-          if (spines.length === 1) {
-            spineToAdjust.x = canvasWidth / 2;
-          } else {
-            spineToAdjust.x = spacing * (index + 1) + spineToAdjust.width * index + spineToAdjust.width / 2;
-          }
-          
-          spineToAdjust.y = (canvasHeight / 2) + spineToAdjust.height / 2;
-        },
-        [spines, canvasHeight, canvasWidth]
-      );
-      
+  // Debounce the handleResize function to improve performance
+  const debouncedHandleResize = useMemo(() => debounce(handleResize, 200), [handleResize]);
 
-    useEffect(()=>{
-        if (!app || !app.stage || !spines || spines.length === 0) {
-            return;
-        }
-        clearStage();
-        spines.forEach((spine, index)=>{
-            adjustSizeOfSpine(spine, index);
-            app.stage.addChild(spine); 
-        })
-        
-    }, [adjustSizeOfSpine])
+  // Add event listeners for window resizing and cleanup on component unmount
+  useEffect(() => {
+    window.addEventListener("resize", debouncedHandleResize);
+    return () => {
+      window.removeEventListener("resize", debouncedHandleResize);
+    };
+  }, [debouncedHandleResize]);
 
+  useEffect(()=>{
+    debouncedHandleResize();
+  }, [debouncedHandleResize]);
+
+  // Helper function to clear all child nodes from a container
+  function clearContainer(container) {
+    if (!container) {
+      return;
+    }
+    for (let i = 0; i < container.children.length; i++) {
+      container.removeChild(container.children[i]);
+    }
+  }
+
+  // On changes to the PIXI application, clear the container and append the PIXI view
+  useEffect(()=>{
+    if (!appRef.current) {
+      clearContainer(container?.current);
+      return;
+    }
+    const { view } = appRef.current;
+    if (!view) {
+      return;
+    }
+    if (container.current) {
+      container.current.appendChild(appRef.current.view);
+      handleResize();
+    }
+  }, [handleResize]);
+
+  // The adjustSizeOfSpine function takes in an array of spines, a spine Object, and an index.
+  // This function is designed to adjust the size and position of each Spine in the canvas based on the available space and the number of spines.
+  const adjustSizeOfSpine = useCallback((spines, spineToAdjust, index) => {
+      if (!spineToAdjust || !canvasDimension.canvasHeight || !canvasDimension.canvasWidth) {
+        return;
+      }
+      // Calculate the width available for each spine based on the canvas width and the nftSizePercentage.
+      const availableWidth = (canvasDimension.canvasWidth * (nftSizePercentage || 100) * 0.01) / spines.length;
+
+      // Calculate the aspect ratios of the spine and the canvas.
+      const ratioFull = (spineToAdjust.width * spines.length) / spineToAdjust.height;
+      const ratio = spineToAdjust.width / spineToAdjust.height;
+      const canvasRatio = canvasDimension.canvasWidth / canvasDimension.canvasHeight;
+
+      // Adjust the width and height of the spine based on the comparison of ratios.
+      if (ratioFull < canvasRatio) {
+        spineToAdjust.height = canvasDimension.canvasHeight * nftSizePercentage * 0.01;
+        spineToAdjust.width = ratio * spineToAdjust.height;
+      } else {
+        spineToAdjust.width = availableWidth;
+        spineToAdjust.height = spineToAdjust.width / ratio;
+      }
+      
+      // Calculate the total width of all spines and the remaining canvas width after placing all spines.
+      const totalWidthOfSpines = spineToAdjust.width * spines.length;
+      const remainingCanvasWidth = canvasDimension.canvasWidth - totalWidthOfSpines;
+      
+      // Calculate the spacing based on the remaining canvas width and the number of gaps between spines.
+      const spacing = remainingCanvasWidth / (spines.length + 1);
+      
+      // Adjust the starting x position and subtract half of the width of a single spine to center the spine around this position.
+      const startX = spacing;
+
+      // If there's only one spine, center it in the canvas. Otherwise, distribute the spines evenly across the canvas.
+      if (spines.length === 1) {
+        spineToAdjust.x = canvasDimension.canvasWidth / 2;
+      } else {
+        spineToAdjust.x = startX + spacing * index + spineToAdjust.width * index + spineToAdjust.width / 2;
+      }
+
+      // Center the spine vertically in the canvas.
+      spineToAdjust.y = (canvasDimension.canvasHeight / 2) + spineToAdjust.height / 2;
+  }, [canvasDimension.canvasHeight, canvasDimension.canvasWidth, nftSizePercentage]);
+
+  // Sync the 'canvasDimension' state with its reference to avoid unnecessary reruns of useEffects.
+  useEffect(() => {
+    canvasDimensionRef.current = canvasDimension;
+  }, [canvasDimension]);
+
+  // This useEffect hook is responsible for the update of the spines. 
+  // It executes when there's a change in the 'spines' array or the 'adjustSizeOfSpine' function.
+  useEffect(() => {
+    // Only calculate once everything is ready
+    if (!appRef.current || !appRef.current.stage || !spines || spines.length === 0 || !canvasDimensionRef.current.canvasWidth || !canvasDimensionRef.current.canvasHeight) {
+      return;
+    }
+
+    // The clearStage function is used to remove all current children from the stage, preparing it for the new spines.
     function clearStage() {
-        for (let i = app.stage.children.length - 1; i >= 0; i--) {	
-            app.stage.removeChild(app.stage.children[i]);
-        };
+      for (let i = appRef.current.stage.children.length - 1; i >= 0; i--) {	
+        appRef.current.stage.removeChild(appRef.current.stage.children[i]);
+      };
     }
 
-    useEffect(()=>{
-        if (containerParent?.current?.clientHeight && containerParent?.current?.clientWidth) {
-            setDisplayRatio(containerParent.current.clientWidth / containerParent.current.clientHeight);
-        } else {
-            setDisplayRatio(null); 
-        }
-    }, [containerParent.current?.clientWidth, container.current?.clientHeight])
+    // The stage is cleared using the clearStage function.
+    clearStage();
 
+    // For each spine in the 'spines' array, the adjustSizeOfSpine function is executed and the spine is added to the stage.
+    spines.forEach((spine, index) => {
+      if (!spine) {
+        return;
+      }
 
-        return (
-           <>
-            <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
-                    <Box 
-                        sx={{
-                            width: width?width:'100%', 
-                            height: height?height:(width?width:containerParent.current?.clientHeight)
-                            }} 
-                            ref={container}>
-                    </Box>
-            </Box>
-           </>
-    )
+      // The adjustSizeOfSpine function is used to adjust the size and positioning of the spine.
+      adjustSizeOfSpine(spines, spine, index);
+
+      // The spine is then added to the stage of the PIXI application.
+      appRef.current.stage.addChild(spine); 
+    }); 
+
+    // If the onResizeCompleteRef function exists, it is executed. 
+    // This can be used to run additional operations once the resizing of the spines is done.
+    if (onResizeCompleteRef.current) {
+      onResizeCompleteRef.current();
+    }
+  }, [spines, adjustSizeOfSpine]);
+
+  return (
+    <>
+      <Box ref={containerParent} sx={{width: width?width:'100%', height: height?height:(width?width:'100%'), position: 'relative'}}>
+        <Box 
+          sx={{
+            width: width?width:'100%', 
+            height: height?height:(width?width:containerParent.current?.clientHeight)
+          }} 
+          ref={container}
+        />
+      </Box>
+    </>
+  );
 }

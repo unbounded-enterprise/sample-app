@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, Stack, MenuItem, 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, useMediaQuery, appBarClasses } from '@mui/material';
 import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
@@ -11,8 +11,6 @@ const DisplayNFTWithNoSSR = dynamic(
   () => import('src/components//DisplayNFT/DisplayNFT'),
   { ssr: false }
 );
-
-
 
 const ButtonGrid = ({ buttonTexts, onChange }) => {
   const handleClick = (text) => {
@@ -40,13 +38,14 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
                     fontSize: { xs: '10px', sm: '12px', md: '14px', lg: '16px', xl: '18px' },
                   }}
                   onClick={() => handleClick(text)}
-                  >
+                >
                   {text}
                 </Button>
               </Box>
             </Grid>
           </React.Fragment>
-        ))}
+        ))
+      }
     </Grid>
   );
 };
@@ -67,9 +66,11 @@ export function parseExpressionNames(nft) {
 
 export const NftDetailDisplay = ({ nft }) => {
   slotButtonStyle = { color: 'white', border: '1px solid white', fontSize: '4vw' };
-  const [expressionNames, setExpressionNames] = useState([]);
+  const [expressionNames, setExpressionNames] = useState(['Menu View']);
   const [spine, setSpine] = useState(null);
+  const [app, setApp] = useState(null);
   const [audioFile, setAudioFile] = useState(null); 
+  const [nfts, setNfts] = useState([]);
   const [animationNames, setAnimationNames] = useState(null);
   const [currentExpression, setCurrentExpression] = useState('Menu View');
 
@@ -78,21 +79,29 @@ export const NftDetailDisplay = ({ nft }) => {
   const matches1920 = useMediaQuery('(max-width:1920px)');
 
   useEffect(()=>{
-    setExpressionNames(parseExpressionNames(nft));
+    if (nft) {
+      setExpressionNames(parseExpressionNames(nft));
+      setNfts([nft]);
+    }
   }, [nft])
 
-  function onLoaded(loadedSpine) {
+  const onLoaded = useCallback((loadedSpine) => {
     setSpine(loadedSpine);
     if (loadedSpine) {
       setAnimationNames(parseAnimations(loadedSpine));
     } else {
       setAnimationNames(null);
     }
-  }
+  }, []);
 
-  function onAudioLoaded(audioPath) {
+  const onAudioLoaded = useCallback((audioPath) => {
     setAudioFile(audioPath);
-  }
+  }, []);
+
+  const onAppLoaded = useCallback((app) => {
+    setApp(app);
+    console.log('pixi app created: ', app);
+  }, [])
 
   function animationChange(animationName) {
     if (spine) {
@@ -100,13 +109,11 @@ export const NftDetailDisplay = ({ nft }) => {
     }
   }
 
-
-
   return (
     <>
       {nft ? (
-        <Grid container key={nft.nftId} xs={12}>
-        <Grid item xs={matches900 ? 12 : "auto"}>
+        <Grid container item key={nft.nftId} xs={12}>
+          <Grid item xs={matches900 ? 12 : "auto"}>
             <Box display="flex" justifyContent={matches900 ? "center" : "flex-start"}>
               <Card
                 variant="outlined"
@@ -122,18 +129,18 @@ export const NftDetailDisplay = ({ nft }) => {
                 }}
               >
                 <DisplayNFTWithNoSSR
-                  assetlayerNFT={nft}
+                  assetlayerNFTs={nfts}
                   expression={currentExpression}
                   nftSizePercentage={75}
                   onSpineLoaded={onLoaded}
                   onAudioLoaded={onAudioLoaded}
+                  onAppLoaded={onAppLoaded}
                 />
               </Card>
             </Box>
           </Grid>
           <Grid item xs={matches900 ? 12 : 6} sx={{ padding: '1rem', paddingLeft: { xs: '1rem', sm: '3rem' } }}>
-           
-          <Stack spacing={3}>
+            <Stack spacing={3}>
               <Typography variant="h5">Expressions</Typography>
               <Box sx={{ maxWidth: '15rem' }}>
                 <DropdownMenu optionsArray={expressionNames} onChange={setCurrentExpression} defaultValue={'Menu View'} />
@@ -161,7 +168,7 @@ export const NftDetailDisplay = ({ nft }) => {
                 </>
               )}
             </Stack>
-            </Grid>
+          </Grid>
           {matches900 && (
             <Grid item xs={12} md={12} lg={12} xl={12} sx={{ backgroundColor: 'none' }}>
               <NftPropertyDisplay nft={nft} />

@@ -68,17 +68,13 @@ export default function SpineDisplay({
   // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
   const container = useRef();
   const containerParent = useRef();
-  const onResizeCompleteRef = useRef();
-  const canvasDimensionRef = useRef();
+  const onResizeCompleteRef = useUpdatedRef();
+  const canvasDimensionRef = useUpdatedRef();
+  const onAppLoadedRef = useUpdatedRef();
   const appRef = useRef();
 
   // The canvas dimensions state is stored and managed using useState to work with the real size as well as trigger updates on change.
   const [canvasDimension, setCanvasDimension] = useState({ canvasWidth: 0, canvasHeight: 0 });
-
-  // Setup the onResizeComplete callback
-  useEffect(()=> {
-    onResizeCompleteRef.current = onResizeComplete;
-  }, [onResizeComplete]);
 
   // Setup the PIXI application when the component is mounted
   useEffect(() => {
@@ -104,11 +100,13 @@ export default function SpineDisplay({
         resizeTo: containerParent.current 
       });
       appRef.current = newApp;
-      if (onAppLoaded) {
-        onAppLoaded(appRef.current);
+      if (onAppLoadedRef.current) {
+        onAppLoadedRef.current(appRef.current);
       }
     }
-  }, [onAppLoaded, spines]);
+  // ESLint doesn't know that onAppLoadedRef is a ref object.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spines]);
 
   // Handle the resizing of the PIXI canvas
   const handleResize = useCallback(() => {    
@@ -226,11 +224,6 @@ export default function SpineDisplay({
       spineToAdjust.y = (canvasDimension.canvasHeight / 2) + spineToAdjust.height / 2;
   }, [canvasDimension.canvasHeight, canvasDimension.canvasWidth, nftSizePercentage]);
 
-  // Sync the 'canvasDimension' state with its reference to avoid unnecessary reruns of useEffects.
-  useEffect(() => {
-    canvasDimensionRef.current = canvasDimension;
-  }, [canvasDimension]);
-
   // This useEffect hook is responsible for the update of the spines. 
   // It executes when there's a change in the 'spines' array or the 'adjustSizeOfSpine' function.
   useEffect(() => {
@@ -267,6 +260,8 @@ export default function SpineDisplay({
     if (onResizeCompleteRef.current) {
       onResizeCompleteRef.current();
     }
+  // ESLint doesn't know that onResizeCompleteRef and canvasDimensionRef are ref objects.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spines, adjustSizeOfSpine]);
 
   return (

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import { Box } from '@mui/material';
+import useUpdatedRef from "../hooks/useUpdateRef";
 
 /**
     Utility function 'debounce'
@@ -65,16 +66,17 @@ export default function SpineDisplay({
   onAppLoaded = undefined,
   onResizeComplete = undefined,
 }) { 
-  // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
-  const container = useRef();
-  const containerParent = useRef();
-  const onResizeCompleteRef = useUpdatedRef();
-  const canvasDimensionRef = useUpdatedRef();
-  const onAppLoadedRef = useUpdatedRef();
-  const appRef = useRef();
 
   // The canvas dimensions state is stored and managed using useState to work with the real size as well as trigger updates on change.
   const [canvasDimension, setCanvasDimension] = useState({ canvasWidth: 0, canvasHeight: 0 });
+
+  // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
+  const container = useRef();
+  const containerParent = useRef();
+  const onResizeCompleteRef = useUpdatedRef(onResizeComplete);
+  const canvasDimensionRef = useUpdatedRef(canvasDimension);
+  const onAppLoadedRef = useUpdatedRef(onAppLoaded);
+  const appRef = useRef();
 
   // Setup the PIXI application when the component is mounted
   useEffect(() => {

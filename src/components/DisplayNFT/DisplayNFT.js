@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 import SpineDisplay from "./MediaTypes/SpineDisplay";
 import DisplayImage from "./MediaTypes/ImageDisplay";
 import AudioDisplay from "./MediaTypes/AudioDisplay";
-import useUpdatedRef from "../../hooks/useUpdateRef";
+import useUpdatedRef from "./hooks/useUpdateRef";
 
 DisplayNFT.defaultProps = {
     expression: 'Menu View',

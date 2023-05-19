@@ -26,13 +26,14 @@ import { css } from '@emotion/react';
  *    component to access and interact with the loaded audio element directly. This could be used for extending the
  *    functionality of the AudioDisplay component, or for any operations that require direct access to the audio element.
  *
- * @param {object} props The properties object.
- * @param {string} props.src The source of the audio file.
- * @param {boolean} [props.autoPlay=false] Whether the audio should start playing as soon as it's ready.
- * @param {function | undefined} [props.onLoaded] Callback function triggered after the audio metadata is loaded. It receives the loaded audio element as an argument.
- * @param {boolean} [props.displayAudioControls=false] Whether to display the audio controls.
- * @param {string | null} [props.backgroundImage=null] The background image of the audio player.
- * @param {string} [props.playIcon='/static/audioIcon.png'] The icon to display for the play button.
+ * Arguments:
+ * - props: The properties object.
+ *   - src: The source of the audio file.
+ *   - autoPlay (optional, default = false): Whether the audio should start playing as soon as it's ready.
+ *   - onLoaded (optional): Callback function triggered after the audio metadata is loaded. It receives the loaded audio element as an argument.
+ *   - displayAudioControls (optional, default = false): Whether to display the audio controls.
+ *   - backgroundImage (optional, default = null): The background image of the audio player.
+ *   - playIcon (optional, default = '/static/audioIcon.png'): The icon to display for the play button.
  */
 const AudioDisplay = ({
   src,

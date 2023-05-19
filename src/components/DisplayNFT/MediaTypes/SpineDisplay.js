@@ -50,13 +50,14 @@ function debounce(fn, delay) {
  *    performing other layout calculations or triggering animations. For example, it could be used to ensure that other 
  *    UI elements are positioned correctly in relation to the resized spine animations.
  *
- * @param {object} props The properties object.
- * @param {Array} props.spines The list of spine animations to be displayed.
- * @param {number} [props.nftSizePercentage=75] The percentage of the container space that the spine animation should occupy.
- * @param {string | number | undefined} [props.width] Width of the canvas. If not provided, the width of the parent container is used.
- * @param {string | number | undefined} [props.height] Height of the canvas. If not provided, the height of the parent container is used.
- * @param {function | undefined} [props.onAppLoaded] Callback function triggered after the PIXI Application is initialized. It receives the PIXI Application as an argument.
- * @param {function | undefined} [props.onResizeComplete] Callback function triggered once the spine animations have been resized and placed in the canvas accordingly.
+* Arguments:
+ * - props: The properties object.
+ *   - spines: The list of spine animations to be displayed.
+ *   - nftSizePercentage (optional, default = 75): The percentage of the container space that the spine animation should occupy.
+ *   - width (optional): Width of the canvas. If not provided, the width of the parent container is used.
+ *   - height (optional): Height of the canvas. If not provided, the height of the parent container is used.
+ *   - onAppLoaded (optional): Callback function triggered after the PIXI Application is initialized. It receives the PIXI Application as an argument.
+ *   - onResizeComplete (optional): Callback function triggered once the spine animations have been resized and placed in the canvas accordingly.
  */
 export default function SpineDisplay({ 
   spines = [],

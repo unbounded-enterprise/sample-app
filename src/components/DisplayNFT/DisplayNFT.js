@@ -21,18 +21,20 @@ DisplayNFT.defaultProps = {
 };
 
 /**
+ * DisplayNFT Component
+ * 
  * This component displays NFTs using Spine, Image, and Audio displays.
  * 
- * @param {Object[]} assetlayerNFTs - An array of NFT objects to be displayed (from Assetlayer API responses).
- * @param {string} [expression='Menu View'] - The expression to be parsed from the NFTs.
- * @param {number} [nftSizePercentage=75] - The size of the NFTs as a percentage of the parent container's size.
- * @param {function} [onSpineLoaded] - A callback function that is called when a Spine object is loaded. 
- *                                      This function should accept two parameters: the Spine object and the NFT ID. 
- * @param {function} [onAudioLoaded] - A callback function that is called when an audio file is loaded. 
- * @param {function} [onAppLoaded] - A callback function that is called when the PIXI application is loaded. 
- * @param {string|number} [width] - The width of the component. If not provided, the component will take up 100% of the parent's width.
- * @param {string|number} [height] - The height of the component. If not provided, the component will take up 100% of the parent's height.
- * @param {string} [soundBackground='Menu View'] - By default this loads the Menu View expression of each nft as the background for Sound Expressions, you can pass an image url here to be used instead
+ * Props:
+ * - assetlayerNFTs: An array of NFT objects to be displayed (from Assetlayer API responses).
+ * - expression: The expression to be parsed from the NFTs. Default is 'Menu View'.
+ * - nftSizePercentage: The size of the NFTs as a percentage of the parent container's size. Default is 75.
+ * - onSpineLoaded: A callback function that is called when a Spine object is loaded. This function should accept two parameters: the Spine object and the NFT ID.
+ * - onAudioLoaded: A callback function that is called when an audio file is loaded.
+ * - onAppLoaded: A callback function that is called when the PIXI application is loaded.
+ * - width: The width of the component. If not provided, the component will take up 100% of the parent's width.
+ * - height: The height of the component. If not provided, the component will take up 100% of the parent's height.
+ * - soundBackground: By default this loads the Menu View expression of each nft as the background for Sound Expressions, you can pass an image url here to be used instead. Default is 'Menu View'.
  */
 export default function DisplayNFT({
     assetlayerNFTs,
@@ -153,14 +155,16 @@ export default function DisplayNFT({
         }
     }, [assetlayerNFTs, expression]); 
 
-
     /**
      * This function is used to load a texture atlas from a given URL and image URL.
      * The callback function resolves the promise with the created TextureAtlas instance.
      * 
-     * @param {string} url - The URL of the atlas data.
-     * @param {string} imageUrl - The URL of the image texture.
-     * @returns {Promise<TextureAtlas>} A promise that resolves with the created TextureAtlas instance.
+     * Arguments:
+     * - url: The URL of the atlas data.
+     * - imageUrl: The URL of the image texture.
+     * 
+     * Returns:
+     * A promise that resolves with the created TextureAtlas instance.
      */
     async function getTextureAtlas(url, imageUrl) {
         // Check if the URLs are valid.
@@ -349,10 +353,13 @@ export default function DisplayNFT({
 
 /**
  * This function retrieves the value of a specific expression attribute from an array of expression values.
- * @param {Array} expressionValues - An array of expression values.
- * @param {string} expressionName - The name of the expression to find.
- * @param {string} expressionAttributeName - The name of the attribute to find.
- * @returns {*} The value of the expression attribute, or undefined if not found.
+ * 
+ * Arguments:
+ * - expressionValues: An array of expression values.
+ * - expressionName: The name of the expression to find.
+ * - expressionAttributeName: The name of the attribute to find.
+ * 
+ * Returns: The value of the expression attribute, or undefined if not found.
  */
 export function getExpressionValue(expressionValues, expressionName, expressionAttributeName) {
     const expressionValue = expressionValues?.find((expressionVal) => expressionVal?.expression?.expressionName === expressionName && expressionVal?.expressionAttribute?.expressionAttributeName === expressionAttributeName)?.value
@@ -361,10 +368,13 @@ export function getExpressionValue(expressionValues, expressionName, expressionA
 
 /**
  * This function retrieves the values of a specific expression attribute for all NFTs in an array.
- * @param {Array} nftArray - An array of NFTs.
- * @param {string} expressionName - The name of the expression to find.
- * @param {string} expressionAttributeName - The name of the attribute to find.
- * @returns {Map} A map where the keys are the NFT IDs and the values are the expression attribute values.
+ * 
+ * Arguments:
+ * - nftArray: An array of NFTs.
+ * - expressionName: The name of the expression to find.
+ * - expressionAttributeName: The name of the attribute to find.
+ * 
+ * Returns: A map where the keys are the NFT IDs and the values are the expression attribute values.
  */
 export function getExpressionValuesForAllNFTs(nftArray, expressionName, expressionAttributeName) {
     const expressionMap = new Map();
@@ -383,9 +393,12 @@ export function getExpressionValuesForAllNFTs(nftArray, expressionName, expressi
 
 /**
  * This function parses an NFT and retrieves the values of specific expression attributes.
- * @param {Object} nft - The NFT to parse.
- * @param {string} expression - The expression to parse.
- * @returns {Object} An object containing the parsed JSON, Atlas, PNG, Image, and Audio expression values.
+ * 
+ * Arguments:
+ * - nft: The NFT to parse.
+ * - expression: The expression to parse.
+ * 
+ * Returns: An object containing the parsed JSON, Atlas, PNG, Image, and Audio expression values.
  */
 export function parseNFT(nft, expression) {
     if (!nft) {
@@ -410,9 +423,11 @@ export function parseNFT(nft, expression) {
 
 /**
  * This function sets a new image for a specific slot in a Spine object.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @param {string} slotName - The name of the slot.
- * @param {PIXI.Texture} texture - The new texture to set.
+ * 
+ * Arguments:
+ * - spine: The Spine object.
+ * - slotName: The name of the slot.
+ * - texture: The new texture to set.
  */
 export function setNewSlotImage(spine, slotName, texture) {
     if (!texture) {
@@ -430,9 +445,13 @@ export function setNewSlotImage(spine, slotName, texture) {
 
 /**
  * This function retrieves the size of a specific slot in a Spine object.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @param {string} slotName - The name of the slot.
- * @returns {Object} An object containing the width and height of the slot.
+ * 
+ * Arguments:
+ * - spine: The Spine object.
+ * - slotName: The name of the slot.
+ * 
+ * Returns:
+ * An object containing the width and height of the slot.
  */
 export function getSlotSize(spine, slotName) {
     const slot = spine.slotContainers[spine.skeleton.findSlotIndex(slotName)];
@@ -442,9 +461,11 @@ export function getSlotSize(spine, slotName) {
 
 /**
  * This function plays a specific animation in a Spine object.
- * @param {string} animationName - The name of the animation to play.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @param {boolean} looped - Whether the animation should loop or not.
+ * 
+ * Arguments:
+ * - animationName: The name of the animation to play.
+ * - spine: The Spine object.
+ * - looped: Whether the animation should loop or not.
  */
 export function playAnimation(animationName, spine, looped = true) {
     if (!spine || !animationName) {
@@ -460,11 +481,13 @@ export function playAnimation(animationName, spine, looped = true) {
 
 /**
  * This function plays a sequence of animations in a Spine object.
- * @param {Array<string>} animationSequence - An array of animation names.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @param {Array<function>} onStartCallbacks - An array of callbacks to be called at the start of each animation.
- * @param {Array<function>} onEndCallbacks - An array of callbacks to be called at the end of each animation.
- * @param {boolean} loopLastAnimation - Whether the last animation should loop or not.
+ * 
+ * Arguments:
+ * - animationSequence: An array of animation names.
+ * - spine: The Spine object.
+ * - onStartCallbacks: An array of callbacks to be called at the start of each animation.
+ * - onEndCallbacks: An array of callbacks to be called at the end of each animation.
+ * - loopLastAnimation: Whether the last animation should loop or not.
  */
 export function playAnimationSequence(
     animationSequence,
@@ -476,9 +499,6 @@ export function playAnimationSequence(
     if (!spine || !Array.isArray(animationSequence) || animationSequence.length === 0) {
         return;
     }
-
-    let delay = 0.0;
-
     animationSequence.forEach((animationName, index) => {
         const loop = loopLastAnimation && index === animationSequence.length - 1;
 
@@ -506,10 +526,12 @@ export function playAnimationSequence(
 
 /**
  * This function draws a Spine object to a canvas.
- * @param {CanvasRenderingContext2D} ctx - The 2D rendering context for the drawing surface of a canvas.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @param {PIXI.Application} app - The PIXI application.
- * @param {boolean} resizeCanvas - Whether to resize the canvas to fit the Spine object.
+ * 
+ * Arguments:
+ * - ctx: The 2D rendering context for the drawing surface of a canvas.
+ * - spine: The Spine object.
+ * - app: The PIXI application.
+ * - resizeCanvas: Whether to resize the canvas to fit the Spine object.
  */
 export const drawSpineToCanvas = (ctx, spine, app, resizeCanvas = true) => {
     if (!spine || !ctx || !app) {
@@ -537,8 +559,12 @@ export const drawSpineToCanvas = (ctx, spine, app, resizeCanvas = true) => {
 
 /**
  * This function extracts the names of all animations in a Spine object.
- * @param {PIXISPINE.Spine} spine - The Spine object.
- * @returns {Array<string>} An array of animation names.
+ * 
+ * Arguments:
+ * - spine: The Spine object.
+ * 
+ * Returns:
+ * An array of animation names.
  */
 export function parseAnimations(spine) {
     try {

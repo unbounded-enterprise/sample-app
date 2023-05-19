@@ -4,6 +4,36 @@ import React, { useRef } from 'react';
 import { Box } from '@mui/material';
 import { css } from '@emotion/react';
 
+/**
+ * AudioDisplay Component
+ *
+ * This component is designed to handle and display an audio file using the HTML5 audio element. It offers
+ * the following functionalities:
+ *
+ * 1. Dynamic Audio Source: The component can dynamically load the audio source provided via the 'src' prop.
+ *
+ * 2. AutoPlay: The component can automatically start playing the audio as soon as it's ready, based on the 'autoPlay' prop.
+ *
+ * 3. Audio Controls: The component can optionally display the audio controls, based on the 'displayAudioControls' prop.
+ *
+ * 4. Background Image: The component can display a background image with a pan & zoom effect behind the audio player, provided via the 'backgroundImage' prop. 
+ * 
+ * 5. Play Icon: The component can display a custom play icon, provided via the 'playIcon' prop. This icon can be clicked to play or pause the audio.
+ *
+ * Callbacks:
+ *
+ * 6. onLoaded: This is a callback function that is triggered after the audio metadata is loaded. It allows the parent
+ *    component to access and interact with the loaded audio element directly. This could be used for extending the
+ *    functionality of the AudioDisplay component, or for any operations that require direct access to the audio element.
+ *
+ * @param {object} props The properties object.
+ * @param {string} props.src The source of the audio file.
+ * @param {boolean} [props.autoPlay=false] Whether the audio should start playing as soon as it's ready.
+ * @param {function | undefined} [props.onLoaded] Callback function triggered after the audio metadata is loaded. It receives the loaded audio element as an argument.
+ * @param {boolean} [props.displayAudioControls=false] Whether to display the audio controls.
+ * @param {string | null} [props.backgroundImage=null] The background image of the audio player.
+ * @param {string} [props.playIcon='/static/audioIcon.png'] The icon to display for the play button.
+ */
 const AudioDisplay = ({
   src,
   autoPlay = false,
@@ -12,14 +42,16 @@ const AudioDisplay = ({
   backgroundImage = null,
   playIcon = '/static/audioIcon.png',
 }) => {
-  const audioRef = useRef();
+  const audioRef = useRef(); // A reference to the audio element.
 
+  // This function is called when the audio metadata is loaded.
   const handleAudioLoad = (e) => {
     if (onLoaded) {
       onLoaded(e.target);
     }
   };
 
+  // This function is called when the play icon is clicked.
   const handlePlayIconClick = () => {
     const audio = audioRef.current;
     if (audio.paused) {

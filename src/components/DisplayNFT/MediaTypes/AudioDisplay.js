@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /** @jsxImportSource @emotion/react */
-import React, { useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Box } from '@mui/material';
 import { css } from '@emotion/react';
 
@@ -44,17 +44,64 @@ const AudioDisplay = ({
   playIcon = '/static/audioIcon.png',
 }) => {
   const audioRef = useRef(); // A reference to the audio element.
+  const [imageSize, setImageSize] = useState({width: '100%', height: '100%'});
+  const [boxWidth, setBoxWidth] = useState(0);
 
-  // This function is called when the audio metadata is loaded.
+  const boxRef = useRef();
+  const resizeObserver = useRef(null);
+
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+
+    // Create a new ResizeObserver instance that updates the state
+    // with the element's new width whenever it changes.
+    resizeObserver.current = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        setBoxWidth(entry.contentRect.width);
+      }
+    });
+
+    // start observing the box for resize changes
+    if (box) {
+      resizeObserver.current.observe(box);
+    }
+
+    // Clean up function to stop observing the box when the component is unmounted.
+    return () => {
+      if (box) {
+        resizeObserver.current.unobserve(box);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (backgroundImage) {
+      // Create a new Image instance and set its source.
+      // This is done to calculate the image's aspect ratio for sizing.
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.height / img.width;
+        setImageSize({ 
+          height: boxWidth * aspectRatio,
+          width: boxWidth,
+        });
+      };
+      img.src = backgroundImage;
+    }
+  }, [backgroundImage, boxWidth]);
+
+  // Callback function for the audio element's onLoadedMetadata event.
   const handleAudioLoad = (e) => {
     if (onLoaded) {
+      // Pass the audio element to the onLoaded callback.
       onLoaded(e.target);
     }
   };
 
-  // This function is called when the play icon is clicked.
+  // Event handler for the play icon's onClick event.
   const handlePlayIconClick = () => {
     const audio = audioRef.current;
+    // Toggle between play and pause states.
     if (audio.paused) {
       audio.play();
     } else {
@@ -64,16 +111,15 @@ const AudioDisplay = ({
 
   return (
     <Box
+      ref={boxRef}
       sx={{
-        position: 'relative',
         width: '80%',
-        height: '80%',
+        height: imageSize.height,
         display: 'flex',
-        alignItems: 'flex-end',
+        alignItems: 'center',
         margin: '10%',
         borderRadius: '8px',
         justifyContent: 'center',
-        cursor: 'default',
         paddingBottom: displayAudioControls ? '16px' : '0',
         overflow: 'hidden',
       }}
@@ -81,43 +127,51 @@ const AudioDisplay = ({
       {backgroundImage && (
         <Box
           sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
             width: '100%',
             height: '100%',
+            position: 'relative',
           }}
-          css={css`
-            background-image: url(${backgroundImage});
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            animation: zoomAndPan 20s linear infinite;
-            transform-origin: center;
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+            }}
+            css={css`
+              background-image: url(${backgroundImage});
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+              animation: zoomAndPan 20s linear infinite;
+              transform-origin: center;
 
-            &:after {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background-color: rgba(0, 0, 0, 0.4);
-            }
+              &:after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+              }
 
-            @keyframes zoomAndPan {
-              0% {
-                transform: scale(1) translateX(0);
+              @keyframes zoomAndPan {
+                0% {
+                  transform: scale(1) translateX(0);
+                }
+                50% {
+                  transform: scale(1.1) translateX(-5%);
+                }
+                100% {
+                  transform: scale(1) translateX(0);
+                }
               }
-              50% {
-                transform: scale(1.1) translateX(-5%);
-              }
-              100% {
-                transform: scale(1) translateX(0);
-              }
-            }
-          `}
-        />
+            `}
+          />
+        </Box>
       )}
       {playIcon && (
         <img
@@ -126,10 +180,8 @@ const AudioDisplay = ({
           onClick={handlePlayIconClick}
           style={{
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '100%',
-            transform: 'translate(-50%, -50%)',
+            width: imageSize.width*1, // Adjust this value to change the size of the icon.
+            maxHeight: imageSize.height*1,
             opacity: 0.5,
             cursor: 'pointer',
             zIndex: 1,
@@ -143,8 +195,8 @@ const AudioDisplay = ({
         autoPlay={autoPlay}
         onLoadedMetadata={handleAudioLoad}
         style={{
-          position: (backgroundImage || playIcon) ? 'absolute' : 'relative',
-          bottom: 0,
+          position: (backgroundImage || playIcon) ? 'relative' : 'relative',
+          bottom: 'auto',
           zIndex: 1,
         }}
       >

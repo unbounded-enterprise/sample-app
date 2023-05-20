@@ -8,12 +8,14 @@ import SpineDisplay from "./MediaTypes/SpineDisplay";
 import DisplayImage from "./MediaTypes/ImageDisplay";
 import AudioDisplay from "./MediaTypes/AudioDisplay";
 import useUpdatedRef from "./hooks/useUpdateRef";
+import VideoDisplay from "./MediaTypes/VideoDisplay";
 
 DisplayNFT.defaultProps = {
     expression: 'Menu View',
     nftSizePercentage: 75,
     onSpineLoaded: null,
     onAudioLoaded: null,
+    onVideoLoaded: null,
     onAppLoaded: null,
     width: undefined,
     height: undefined,
@@ -27,13 +29,16 @@ DisplayNFT.defaultProps = {
  * 
  * Props:
  * - assetlayerNFTs: An array of NFT objects to be displayed (from Assetlayer API responses).
+ *                   The possibility for more than one NFT here is mostly for not having a different canvas for several spines.
  * - expression: The expression to be parsed from the NFTs. Default is 'Menu View'.
  * - nftSizePercentage: The size of the NFTs as a percentage of the parent container's size. Default is 75.
  * - onSpineLoaded: A callback function that is called when a Spine object is loaded. This function should accept two parameters: the Spine object and the NFT ID.
- * - onAudioLoaded: A callback function that is called when an audio file is loaded.
+ * - onAudioLoaded: A callback function that is called when an audio file is loaded. The function should accept one parameter, the url the audio file.
+ * - onVideoLoaded: A callback function that is called when a video file is loaded. The function should accept one parameter, the url of the video file.
  * - onAppLoaded: A callback function that is called when the PIXI application is loaded.
  * - width: The width of the component. If not provided, the component will take up 100% of the parent's width.
  * - height: The height of the component. If not provided, the component will take up 100% of the parent's height.
+ *   (the height of video and audio expressions will be sized by the aspect ratio of the content (backgroundImage / videofile)
  * - soundBackground: By default this loads the Menu View expression of each nft as the background for Sound Expressions, you can pass an image url here to be used instead. Default is 'Menu View'.
  */
 export default function DisplayNFT({
@@ -42,6 +47,7 @@ export default function DisplayNFT({
     nftSizePercentage = 75,
     onSpineLoaded,
     onAudioLoaded,
+    onVideoLoaded,
     onAppLoaded,
     width = undefined,
     height = undefined,
@@ -53,6 +59,7 @@ export default function DisplayNFT({
     // useRef hooks to keep track of the callback functions and prevent unnecessary re-renders
     const onSpineLoadedRef = useUpdatedRef(onSpineLoaded);
     const onAudioLoadedRef = useUpdatedRef(onAudioLoaded);
+    const onVideoLoadedRef = useUpdatedRef(onVideoLoaded);
 
     // useRef hook to keep track of the assetlayerNFTs prop and prevent unnecessary re-renders
     const assetlayerNFTsRef = useUpdatedRef(assetlayerNFTs);
@@ -65,6 +72,7 @@ export default function DisplayNFT({
         spinePngMap: new Map(),
         imageExpressionsMap: new Map(),
         audioFilesMap: new Map(),
+        videoFilesMap: new Map(),
     });
 
     // combined state to prevent onSpineLoaded to be called twice on assetlayerNFTs change.
@@ -73,6 +81,7 @@ export default function DisplayNFT({
     // useState hooks to manage the state of the audio files and image expressions parsed from the NFT
     const [audioFilesArray, setAudioFilesArray] = useState([]);
     const [imageExpressionsArray, setImageExpressionsArray] = useState([]);
+    const [videoExpressionsArray, setVideoExpressionsArray] = useState([]);
 
     // This state keeps track of the backgroundImages that should be displayed on your sound expression nfts.
     // The backgroundImages state is a Map where the key is the NFT ID and the value is the URL of the background image for that NFT.
@@ -123,6 +132,7 @@ export default function DisplayNFT({
             const newSpinePngMap = new Map();
             const newImageExpressionsMap = new Map();
             const newAudioFilesMap = new Map();
+            const newVideoFilesMap = new Map();
 
             // It then loops over each NFT in assetlayerNFTs.
             assetlayerNFTs.forEach(nft => {
@@ -131,7 +141,7 @@ export default function DisplayNFT({
                     return;
                 }
                 // It parses the NFT receiving the values for the given expression.
-                const { parsedJson, parsedAtlas, parsedPng, parsedImageExpression, parsedAudioExpression } = parseNFT(nft, expression);
+                const { parsedJson, parsedAtlas, parsedPng, parsedImageExpression, parsedAudioExpression, parsedVideoExpression } = parseNFT(nft, expression);
 
                 // It adds the parsed data to the corresponding Maps, using the NFT ID as the key.
                 newSpineJsonMap.set(nft.nftId, parsedJson);
@@ -139,6 +149,7 @@ export default function DisplayNFT({
                 newSpinePngMap.set(nft.nftId, parsedPng);
                 newImageExpressionsMap.set(nft.nftId, parsedImageExpression);
                 newAudioFilesMap.set(nft.nftId, parsedAudioExpression);
+                newVideoFilesMap.set(nft.nftId, parsedVideoExpression);
             });
 
             // It updates the nftData state with the new Maps. Changing this will trigger further processing of the new AssetlayerNfts
@@ -148,6 +159,7 @@ export default function DisplayNFT({
                 spinePngMap: newSpinePngMap,
                 imageExpressionsMap: newImageExpressionsMap,
                 audioFilesMap: newAudioFilesMap,
+                videoFilesMap: newVideoFilesMap,
             })
 
             // It sets the resizeComplete state to false, indicating that the component needs to be resized.
@@ -274,6 +286,27 @@ export default function DisplayNFT({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nftData?.audioFilesMap]);
 
+    /**
+     * This useEffect hook is responsible for loading the video files for each NFT and storing them in the videoFilesArray state. 
+     */
+    useEffect(() => {
+        // If there are video files in the nftData state
+        if (nftData.videoFilesMap.size > 0) {
+            // Convert the videoFilesMap to an array and store it in the videoFilesArray state. (to .map them in the jsx part)
+            setVideoExpressionsArray(Array.from(nftData?.videoFilesMap));
+
+            if (onVideoLoadedRef.current) {
+                // For each video file in the videoFilesMap...
+                nftData.videoFilesMap.forEach((videoFile, nftId) => {
+                    // Call the onVideoLoaded callback with the audio file and the NFT ID.
+                    onVideoLoadedRef.current(videoFile, nftId);
+                });
+            }
+        }
+    // ESLint doesn't know that assetlayerNFTsRef and onVideoLoadedRef are ref objects.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [nftData?.videoFilesMap]);
+
 
     /**
      * This useEffect hook is responsible for updating the imageExpressionsArray state whenever the nftData state changes (and that is changed if you change the assetlayerNFTs)
@@ -343,6 +376,15 @@ export default function DisplayNFT({
                         )
                     );
                 })}
+                {videoExpressionsArray.map(([nftId, videoSrc]) => {
+                    return (
+                        videoSrc && 
+                            <VideoDisplay 
+                                key={`audio-display-${nftId}`} 
+                                url='https://asset-api-files-bucket.s3.amazonaws.com/3a1b20b0-95a3-4477-bdd0-297a311dbfaf.mp4' 
+                            />
+                    );
+                })}
           
             </Box>
         </>
@@ -402,7 +444,7 @@ export function getExpressionValuesForAllNFTs(nftArray, expressionName, expressi
  */
 export function parseNFT(nft, expression) {
     if (!nft) {
-        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression: null, parsedAudioExpression: null }
+        return { parsedJson: null, parsedAtlas: null, parsedPng: null, parsedImageExpression: null, parsedAudioExpression: null, parsedVideoExpression: null }
     }
     const expressionValues = nft.expressionValues || [];
 
@@ -411,6 +453,7 @@ export function parseNFT(nft, expression) {
     const parsedPng = getExpressionValue(expressionValues, expression, "PNG");
     const parsedImageExpression = getExpressionValue(expressionValues, expression, "Image");
     const parsedAudioExpression = getExpressionValue(expressionValues, expression, "Audio");
+    const parsedVideoExpression = getExpressionValue(expressionValues, expression, "Video");
 
     return {
         parsedJson: parsedJson || null,
@@ -418,6 +461,7 @@ export function parseNFT(nft, expression) {
         parsedPng: parsedPng || null,
         parsedImageExpression: parsedImageExpression || null,
         parsedAudioExpression: parsedAudioExpression || null,
+        parsedVideoExpression: parsedVideoExpression || null,
     };
 }
 

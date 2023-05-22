@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 
 const VideoDisplay = ({ url, autoplay = false }) => {
 
+  const videoRef = useRef();
+
   useEffect(() => {
     if (autoplay && videoRef.current) {
       videoRef.current.play();
@@ -12,6 +14,7 @@ const VideoDisplay = ({ url, autoplay = false }) => {
   return (
       <Box component="div" sx={{my: '5px', mx: '10px'}}>
         <video
+          ref={videoRef}
           src={url}
           controls
           style={{ 

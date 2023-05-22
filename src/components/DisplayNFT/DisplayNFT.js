@@ -549,19 +549,26 @@ export function playAnimationSequence(
         if (spine.state?.hasAnimation(animationName)) {
             const trackEntry = index === 0 ? spine.state.setAnimation(0, animationName, loop) : spine.state.addAnimation(0, animationName, loop, 0);
 
-            if (onEndCallbacks[index]) {
-                trackEntry.listener = {
-                    end: () => { if (onEndCallbacks[index]) onEndCallbacks[index]() },
-                    start: () => {
-                        if (onStartCallbacks[index]) {
-                            onStartCallbacks[index]();
-                        }
+            if (index === 0 && onStartCallbacks.length > 0 && onStartCallbacks[0]) {
+                onStartCallbacks[0]();
+            }
+
+            trackEntry.listener = {
+                end: () => {
+                    if (onEndCallbacks[index]) onEndCallbacks[index]();
+                },
+                start: () => {
+                    if (index > 0 && onStartCallbacks[index]) {
+                        onStartCallbacks[index]();
                     }
                 }
-                trackEntry.onComplete = () => {
-                    onEndCallbacks[index]();
-                };
             }
+
+            trackEntry.onComplete = () => {
+                if (onEndCallbacks[index]) {
+                    onEndCallbacks[index]();
+                }
+            };
         } else {
             console.log('animation not found');
         }

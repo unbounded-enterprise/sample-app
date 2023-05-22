@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 
 const VideoDisplay = ({ url, autoplay = false }) => {

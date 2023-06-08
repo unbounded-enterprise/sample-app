@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import * as PIXI from 'pixi.js';
 import { Box } from '@mui/material';
+import useUpdatedRef from "../hooks/useUpdateRef";
 
 /**
     Utility function 'debounce'
@@ -49,13 +50,14 @@ function debounce(fn, delay) {
  *    performing other layout calculations or triggering animations. For example, it could be used to ensure that other 
  *    UI elements are positioned correctly in relation to the resized spine animations.
  *
- * @param {object} props The properties object.
- * @param {Array} props.spines The list of spine animations to be displayed.
- * @param {number} [props.nftSizePercentage=75] The percentage of the container space that the spine animation should occupy.
- * @param {string | number | undefined} [props.width] Width of the canvas. If not provided, the width of the parent container is used.
- * @param {string | number | undefined} [props.height] Height of the canvas. If not provided, the height of the parent container is used.
- * @param {function | undefined} [props.onAppLoaded] Callback function triggered after the PIXI Application is initialized. It receives the PIXI Application as an argument.
- * @param {function | undefined} [props.onResizeComplete] Callback function triggered once the spine animations have been resized and placed in the canvas accordingly.
+* Arguments:
+ * - props: The properties object.
+ *   - spines: The list of spine animations to be displayed.
+ *   - nftSizePercentage (optional, default = 75): The percentage of the container space that the spine animation should occupy.
+ *   - width (optional): Width of the canvas. If not provided, the width of the parent container is used.
+ *   - height (optional): Height of the canvas. If not provided, the height of the parent container is used.
+ *   - onAppLoaded (optional): Callback function triggered after the PIXI Application is initialized. It receives the PIXI Application as an argument.
+ *   - onResizeComplete (optional): Callback function triggered once the spine animations have been resized and placed in the canvas accordingly.
  */
 export default function SpineDisplay({ 
   spines = [],
@@ -65,20 +67,17 @@ export default function SpineDisplay({
   onAppLoaded = undefined,
   onResizeComplete = undefined,
 }) { 
-  // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
-  const container = useRef();
-  const containerParent = useRef();
-  const onResizeCompleteRef = useRef();
-  const canvasDimensionRef = useRef();
-  const appRef = useRef();
 
   // The canvas dimensions state is stored and managed using useState to work with the real size as well as trigger updates on change.
   const [canvasDimension, setCanvasDimension] = useState({ canvasWidth: 0, canvasHeight: 0 });
 
-  // Setup the onResizeComplete callback
-  useEffect(()=> {
-    onResizeCompleteRef.current = onResizeComplete;
-  }, [onResizeComplete]);
+  // Refs are used to access the containers and callback functions within the component in an up to date state without triggering rerenders
+  const container = useRef();
+  const containerParent = useRef();
+  const onResizeCompleteRef = useUpdatedRef(onResizeComplete);
+  const canvasDimensionRef = useUpdatedRef(canvasDimension);
+  const onAppLoadedRef = useUpdatedRef(onAppLoaded);
+  const appRef = useRef();
 
   // Setup the PIXI application when the component is mounted
   useEffect(() => {
@@ -104,11 +103,13 @@ export default function SpineDisplay({
         resizeTo: containerParent.current 
       });
       appRef.current = newApp;
-      if (onAppLoaded) {
-        onAppLoaded(appRef.current);
+      if (onAppLoadedRef.current) {
+        onAppLoadedRef.current(appRef.current);
       }
     }
-  }, [onAppLoaded, spines]);
+  // ESLint doesn't know that onAppLoadedRef is a ref object.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spines]);
 
   // Handle the resizing of the PIXI canvas
   const handleResize = useCallback(() => {    
@@ -226,11 +227,6 @@ export default function SpineDisplay({
       spineToAdjust.y = (canvasDimension.canvasHeight / 2) + spineToAdjust.height / 2;
   }, [canvasDimension.canvasHeight, canvasDimension.canvasWidth, nftSizePercentage]);
 
-  // Sync the 'canvasDimension' state with its reference to avoid unnecessary reruns of useEffects.
-  useEffect(() => {
-    canvasDimensionRef.current = canvasDimension;
-  }, [canvasDimension]);
-
   // This useEffect hook is responsible for the update of the spines. 
   // It executes when there's a change in the 'spines' array or the 'adjustSizeOfSpine' function.
   useEffect(() => {
@@ -267,6 +263,8 @@ export default function SpineDisplay({
     if (onResizeCompleteRef.current) {
       onResizeCompleteRef.current();
     }
+  // ESLint doesn't know that onResizeCompleteRef and canvasDimensionRef are ref objects.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spines, adjustSizeOfSpine]);
 
   return (

@@ -70,13 +70,17 @@ export const NftDetailDisplay = ({ nft }) => {
   const [spine, setSpine] = useState(null);
   const [app, setApp] = useState(null);
   const [audioFile, setAudioFile] = useState(null); 
+  const [videoFile, setVideoFile] = useState(null);
   const [nfts, setNfts] = useState([]);
   const [animationNames, setAnimationNames] = useState(null);
   const [currentExpression, setCurrentExpression] = useState('Menu View');
+  
 
 
   const matches900 = useMediaQuery('(max-width:900px)');
   const matches1920 = useMediaQuery('(max-width:1920px)');
+
+  const [frameHeight, setFrameHeight] = useState(matches900 ? '90vw' : '35vw');
 
   useEffect(()=>{
     if (nft) {
@@ -97,6 +101,20 @@ export const NftDetailDisplay = ({ nft }) => {
   const onAudioLoaded = useCallback((audioPath) => {
     setAudioFile(audioPath);
   }, []);
+
+  const onVideoLoaded = useCallback((videoPath) => {
+    setVideoFile(videoPath);
+  }, [])
+
+  // this useEffect removes the fixed height if the content is video or audio files.
+  // the height will depend on the background image (menu view) or video file aspect ratio.
+  useEffect(() => {
+    if (!spine && (audioFile || videoFile)) {
+      setFrameHeight(undefined); 
+    } else {
+      setFrameHeight(matches900 ? '90vw' : '35vw');
+    }
+  }, [spine, matches900, audioFile, videoFile]);
 
   const onAppLoaded = useCallback((app) => {
     setApp(app);
@@ -122,7 +140,7 @@ export const NftDetailDisplay = ({ nft }) => {
                   p: 1,
                   m: 1,
                   width: matches900 ? '90vw' : '35vw',
-                  height: matches900 ? '90vw' : '35vw',
+                  height: frameHeight,
                   maxWidth: '40vh',
                   maxHeight: '40vh',
                   position: 'relative',
@@ -134,6 +152,7 @@ export const NftDetailDisplay = ({ nft }) => {
                   nftSizePercentage={75}
                   onSpineLoaded={onLoaded}
                   onAudioLoaded={onAudioLoaded}
+                  onVideoLoaded={onVideoLoaded}
                   onAppLoaded={onAppLoaded}
                 />
               </Card>

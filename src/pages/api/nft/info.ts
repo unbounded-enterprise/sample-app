@@ -10,8 +10,7 @@ export default function getNFTInfoHandler(req:NextApiRequest, res:NextApiRespons
     return new Promise((resolve, reject) => {
         const handleError = (e:any) => errorHandling(e, resolve, res);
         try {
-            getSessionUser(req, res)
-                .then((user) => getNFTInfo(req.body))
+            getNFTInfo(req.body)
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {

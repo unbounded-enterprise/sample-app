@@ -169,7 +169,7 @@ const ExploreSlotPage = () => {
       });
   }, []);
 
-  if (!user) return <HomeHandcash />;
+  //if (!user) return <HomeHandcash />;
   if (!(app && chosenSlot && collections)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' } };

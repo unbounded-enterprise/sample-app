@@ -92,7 +92,7 @@ const ExploreNftDetailPage = () => {
       });
   }, []);
 
-  if (!user) return <HomeHandcash />;
+  //if (!user) return <HomeHandcash />;
   if (!(chosenCollection && chosenSlot && chosenNft && app)) return loading;
   
   return (

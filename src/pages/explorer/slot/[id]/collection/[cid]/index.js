@@ -141,7 +141,7 @@ const ExploreCollectionPage = () => {
       });
   }, []);
 
-  if (!user) return <HomeHandcash />;
+  //if (!user) return <HomeHandcash />;
   if (!(chosenCollection && chosenSlot && app)) return loading;
 
   return (

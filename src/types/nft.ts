@@ -4,6 +4,12 @@ export interface GetNFTUserProps {
     countsOnly?: boolean;
 }
 
+export interface SendNFTProps {
+    handle: string;
+    nftId: string;
+    recipientHandle: string;
+}
+
 export interface GetNFTSlotsProps {
     handle: string;
     slotIds: string[];
@@ -20,6 +26,11 @@ export interface GetNFTCollectionsProps {
 
 export interface GetNFTInfoProps {
     nftId: string
+}
+
+export interface UpdateNFTProps {
+    nftId: string;
+    properties: object;
 }
 
 export interface ExpressionValue {

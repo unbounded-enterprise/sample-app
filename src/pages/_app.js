@@ -10,7 +10,7 @@ import { AuthConsumer, AuthProvider } from '../contexts/auth-context';
 import { createEmotionCache } from '../utils/create-emotion-cache';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import axios from 'axios';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import { theme } from '../theme';
 
 const clientSideEmotionCache = createEmotionCache();

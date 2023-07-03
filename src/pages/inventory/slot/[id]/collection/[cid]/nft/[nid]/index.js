@@ -46,7 +46,7 @@ const InventoryNftDetailPage = ()=>{
     };
 
     const handleClose = () => {
-      if (success){
+      if (success) {
         router.push(removeNftSubpath(router.asPath));
       } else {
         setOpen(false);
@@ -73,7 +73,7 @@ const InventoryNftDetailPage = ()=>{
           setError("Invalid handle. Please try again.");
         } else if (err.response.data.error === "permissions: denied"){
           setError("This app does not have permission to transfer this NFT.");
-        }else {
+        } else {
           setError("An unknown error occurred.");
         }
       }

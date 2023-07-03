@@ -11,7 +11,7 @@ export default function getNFTsUserHandler(req:NextApiRequest, res:NextApiRespon
         const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const  { recipientHandle, nftId } = req.body;
+            const { recipientHandle, nftId } = req.body;
 
             getSessionUser(req, res)
                 .then((user) => getNFTsUser({ handle: user.handle, recipientHandle: recipientHandle, nftId: nftId }))

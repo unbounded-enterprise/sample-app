@@ -11,7 +11,8 @@ export default function getNFTsUserHandler(req:NextApiRequest, res:NextApiRespon
         const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const  { nftId, properties} = req.body;
+            const { nftId, properties } = req.body;
+            
             getSessionUser(req, res)
                 .then((user) => updateNFT({properties:properties, nftId: nftId }))
                 .then((body) => resolve(res.status(200).json(body)))

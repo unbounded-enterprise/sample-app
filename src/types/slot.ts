@@ -13,7 +13,6 @@ export interface GetSlotProps {
 }
 
 export interface GetCollectionsProps {
-    handle: string;
     slotId: string;
     idOnly?: boolean;
     includeDeactivated?: boolean;

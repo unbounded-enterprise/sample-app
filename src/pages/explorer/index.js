@@ -59,7 +59,7 @@ const ExplorerPage = () => {
       });
   }, []);
 
-  if (!user) return <HomeHandcash/>;
+  //if (!user) return <HomeHandcash/>;
   if (!app) return loading;
 
   const fontSize = { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' };

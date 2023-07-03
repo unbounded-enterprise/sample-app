@@ -16,8 +16,7 @@ export default function getSlotHandler(req:NextApiRequest, res:NextApiResponse) 
 
 			if (!slotId) throw new BasicError('missing slotId', 409);
 
-			getSessionUser(req, res)
-				.then((user) => getSlot(req.body))
+			getSlot(req.body)
 				.then((body) => resolve(res.status(200).json(body)))
 				.catch(handleError)
 		} catch(e:any) {

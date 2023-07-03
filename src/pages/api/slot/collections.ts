@@ -16,8 +16,7 @@ export default function getCollectionsHandler(req:NextApiRequest, res:NextApiRes
 
             if (!slotId) throw new BasicError('missing slotId', 409);
 
-            getSessionUser(req, res)
-                .then((user) => getCollections({ handle: user.handle, slotId, idOnly, includeDeactivated }))
+            getCollections({ slotId, idOnly, includeDeactivated})
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {

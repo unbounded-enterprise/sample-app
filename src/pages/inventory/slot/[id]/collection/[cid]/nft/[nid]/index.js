@@ -1,13 +1,14 @@
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { Box, Breadcrumbs, Grid, Link, Typography } from '@mui/material';
+import { Button, Box, Breadcrumbs, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Link, TextField, Typography } from '@mui/material';
 import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
 import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
 import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
+import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from 'src/hooks/use-auth';
 import { HomeHandcash } from 'src/components/home/home-handcash';
 
@@ -32,6 +33,108 @@ const InventoryNftDetailPage = ()=>{
   const [nftId, setNftId] = useState(null);
   const { user } = useAuth();
 
+  function MyModal(props) {
+    const [open, setOpen] = useState(false);
+    const [input, setInput] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+
+    const handleClickOpen = () => {
+      setSuccess(false);
+      setError("");
+      setOpen(true);
+    };
+
+    const handleClose = () => {
+      if (success) {
+        router.push(removeNftSubpath(router.asPath));
+      } else {
+        setOpen(false);
+      }
+    };
+
+    const handleInputChange = (e) => {
+      setInput(e.target.value);
+    };
+
+    const handleSubmit = async () => {
+      try {
+        const response = await axios.post("/api/nft/send", {
+          nftId: props.nftId,
+          recipientHandle: input,
+        });
+        console.log(response);
+        console.log(response.status);
+        if (response.status === 200) {
+          setSuccess(true);
+        }
+      } catch (err) {
+        if (err.response.data.error === "invalid: recipientHandle") {
+          setError("Invalid handle. Please try again.");
+        } else if (err.response.data.error === "permissions: denied"){
+          setError("This app does not have permission to transfer this NFT.");
+        } else {
+          setError("An unknown error occurred.");
+        }
+      }
+    };
+
+    return (
+      <div>
+        <Button
+          sx={{ color: "blue", border: "1px solid blue", mt: "10px" }}
+          onClick={handleClickOpen}
+        >
+          Send as Gift
+        </Button>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={handleClose}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {success ? "Success!" : "Please enter recipient's handle."}
+            </DialogContentText>
+            {success ? (
+              <></>
+            ) : (
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Handle"
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleInputChange}
+                error={!!error}
+                helperText={error}
+              />
+            )}
+          </DialogContent>
+          {success ? (
+            <></>
+          ) : (
+            <DialogActions>
+              <Button
+                sx={{ color: "blue", border: "1px solid blue" }}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </DialogActions>
+          )}
+        </Dialog>
+      </div>
+    );
+  }
   
   useEffect(() => {
     if (router.isReady) {
@@ -127,6 +230,7 @@ const InventoryNftDetailPage = ()=>{
               <Typography variant="h3" sx={{ lineHeight: '40px' }}>
                 {chosenCollection.collectionName} #{chosenNft.serial}
               </Typography>
+              <MyModal nftId={chosenNft.nftId}/>
             </Grid>
             <Grid item xs={12}>
               <CollectionDetailsInfos
@@ -183,4 +287,9 @@ const getNft = async (nftId) => {
     nftObject = (await axios.post('/api/nft/info', { nftId }));
   } 
   return nftObject.data.nfts[0];
+}
+
+function removeNftSubpath(url) {
+  const regex = /\/nft\/[0-9a-fA-F]+/;
+  return url.replace(regex, '');
 }

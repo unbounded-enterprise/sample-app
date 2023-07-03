@@ -102,6 +102,7 @@ const ExploreSlotPage = () => {
   const [chosenSlot, setChosenSlot] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("maximum");
+  const [minted, setMinted] = useState(0);
   const { user } = useAuth();
 
 
@@ -169,7 +170,17 @@ const ExploreSlotPage = () => {
       });
   }, []);
 
-  if (!user) return <HomeHandcash />;
+  useEffect(() => {
+    if(collections){
+      let total = 0;
+      collections.forEach((collection) => {
+        total += collection.minted;
+      });
+      setMinted(total);
+    }
+  }, [collections]);
+
+  //if (!user) return <HomeHandcash />;
   if (!(app && chosenSlot && collections)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' } };
@@ -235,7 +246,7 @@ const ExploreSlotPage = () => {
               Total NFTs:&nbsp;
             </Typography>
             <Typography variant="p2" sx={sharedSx}>
-              TBD
+              {minted}
               <br></br>
             </Typography>
           </Grid>

@@ -13,6 +13,7 @@
     "create-env": "node ./src/utils/env-setup.js"
   },
   "dependencies": {
+    "@assetlayer/sdk-client": "^0.0.1-beta.2.6",
     "@emotion/cache": "11.10.3",
     "@emotion/react": "11.10.4",
     "@emotion/server": "11.10.0",
@@ -30,7 +31,6 @@
     "formik": "2.2.9",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
-    "magic-sdk": "^19.0.0",
     "next": "^13.1.2",
     "next-auth": "^4.18.8",
     "nprogress": "0.2.0",

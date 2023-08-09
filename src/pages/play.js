@@ -1,45 +1,35 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { BasicTextField } from "../components/widgets/basic/basic-textfield";
-import { Dialog } from "@mui/material";
+import { AssetLayer } from '@assetlayer/sdk-client';
+
+const assetlayer = (typeof window !== 'undefined') ? new AssetLayer({ baseUrl: '/api' }) : undefined;
 
 const Play = () => {
-  const [email, setEmail] = useState('');
-  const runOncePleaseRef = useRef(false);
-
-  function handleClickMagicLogin() {
-    console.log('click!')
-  }
-  function handleEmailChange(e) {
-    console.log('e!')
-    console.log(e.target.value)
-  }
+  const [initialized, setInitialized] = useState(false);
+  const runOnceRef = useRef(false);
 
   useEffect(() => {
-    if (runOncePleaseRef.current) return;
+    console.log('initialized!', initialized);
+    if (!initialized) return;
 
-    var iframe = document.createElement('iframe');
-    iframe.src = '/unity/index.html';
-    iframe.style.position = 'absolute';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    document.body.appendChild(iframe);
+    assetlayer.users.getUser().then(user => console.log('user!', user));
+  }, [initialized]);
+
+  useEffect(() => {
+    if (runOnceRef.current) return;
+
+    assetlayer.initialize(setInitialized);
+    // assetlayer.loginUser();
+    // assetlayer.logoutUser();
 
     return () => {
-      runOncePleaseRef.current = true;
+      runOnceRef.current = true;
     }
   }, []);
 
   return (<Fragment>
-    <input value={email} onChange={handleEmailChange}/>
-    <button onClick={handleClickMagicLogin}>
-        Login with Magic
-    </button>
+    <PlayUnity/>
   </Fragment>);
-}
-
-const UnityIFrame = () => {
-  return <iframe src="/unity/index.html" style="width: 800px; height: 600px;"></iframe>
 }
 
 const PlayUnity = () => {

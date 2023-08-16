@@ -8,6 +8,10 @@ const Play = () => {
   const [initialized, setInitialized] = useState(false);
   const runOnceRef = useRef(false);
 
+  function onInitialized() {
+    setInitialized(true);
+  }
+
   useEffect(() => {
     console.log('initialized!', initialized);
     if (!initialized) return;
@@ -18,9 +22,7 @@ const Play = () => {
   useEffect(() => {
     if (runOnceRef.current) return;
 
-    assetlayer.initialize(setInitialized);
-    // assetlayer.loginUser();
-    // assetlayer.logoutUser();
+    assetlayer.initialize(onInitialized);
 
     return () => {
       runOnceRef.current = true;

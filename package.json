@@ -13,7 +13,7 @@
     "create-env": "node ./src/utils/env-setup.js"
   },
   "dependencies": {
-    "@assetlayer/sdk-client": "^0.0.1-beta.2.6",
+    "@assetlayer/sdk-client": "^0.0.1-beta.5.5",
     "@emotion/cache": "11.10.3",
     "@emotion/react": "11.10.4",
     "@emotion/server": "11.10.0",
@@ -27,6 +27,7 @@
     "@zalter/identity-js": "1.2.1",
     "axios": "^1.2.1",
     "chart.js": "3.9.1",
+    "crypto-js": "^4.1.1",
     "date-fns": "2.29.3",
     "formik": "2.2.9",
     "jsonwebtoken": "^8.5.1",

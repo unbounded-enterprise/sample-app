@@ -1,11 +1,18 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { AssetLayer } from '@assetlayer/sdk-client';
+import {Button, CircularProgress, Stack} from '@mui/material';
+import CryptoJS from "crypto-js";
+
 
 const assetlayer = (typeof window !== 'undefined') ? new AssetLayer({ baseUrl: '/api' }) : undefined;
 
 const Play = () => {
   const [initialized, setInitialized] = useState(false);
+  const [sendMessage, setSendMessage] = useState(null);
+  const [unityLoaded, setUnityLoaded] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
+  const sendMessageRef = useRef(null);
   const runOnceRef = useRef(false);
 
   function onInitialized() {
@@ -13,47 +20,81 @@ const Play = () => {
   }
 
   useEffect(() => {
-    console.log('initialized!', initialized);
-    if (!initialized) return;
+    if (!initialized || !unityLoaded || !assetlayer.didToken ) return;
 
-    assetlayer.users.getUser().then(user => console.log('user!', user));
-  }, [initialized]);
+    assetlayer.users.getUser().then(user => {
+          sendMessageRef.current("LoginReceiver", "SetDIDToken", assetlayer.didToken);
+  })}, [initialized, unityLoaded]);
+
 
   useEffect(() => {
     if (runOnceRef.current) return;
 
-    assetlayer.initialize(onInitialized);
+    // assetlayer.initialize(onInitialized);
 
     return () => {
       runOnceRef.current = true;
     }
   }, []);
 
+  async function logoutCLicked() {
+    assetlayer.logoutUser();
+    setInitialized(false);  
+  }
+
+
+  async function loginClicked() {
+    setShowLoading(true);
+    const loggedInAlready = await assetlayer.isUserLoggedIn();
+    if (!loggedInAlready) {
+      console.log('not logged in yet');
+      assetlayer.loginUser({onSuccess: onInitialized});
+    } else {
+      console.log('logged in already');
+      assetlayer.initialize(onInitialized);
+    }
+  }
+
   return (<Fragment>
-    <PlayUnity/>
+    {!initialized ? 
+    <>
+      <Stack alignItems="center" justifyContent="center" sx={{height: '95vh'}}>
+      {showLoading? <CircularProgress /> 
+      :
+      <Button variant="contained" sx={{color: 'white', width: '40%'}} onClick={loginClicked}>Login</Button>
+      }
+      </Stack>
+    </>
+    : 
+    <>
+      <PlayUnity sendMessageRef={sendMessageRef} setUnityLoaded={setUnityLoaded}/>
+      <Button variant="contained" sx={{color: 'white'}} onClick={logoutCLicked}>Logout</Button>
+    </>
+    }
   </Fragment>);
 }
 
-const PlayUnity = () => {
+const PlayUnity = ({ sendMessageRef, setUnityLoaded }) => {
   const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext({
-    loaderUrl: "unity/Build/magic-test-build.loader.js",
-    dataUrl: "unity/Build/magic-test-build.data",
-    frameworkUrl: "unity/Build/magic-test-build.framework.js",
-    codeUrl: "unity/Build/magic-test-build.wasm",
+    loaderUrl: "unity/Build/WEBGL.loader.js",
+    dataUrl: "unity/Build/WEBGL.data",
+    frameworkUrl: "unity/Build/WEBGL.framework.js",
+    codeUrl: "unity/Build/WEBGL.wasm",
   });
-  // const [isGameOver, setIsGameOver] = useState(false);
-  // const [userName, setUserName] = useState();
-  // const [score, setScore] = useState();
 
   const handleGameOver = useCallback((userName, score) => {
-    // setIsGameOver(true);
-    // setUserName(userName);
-    // setScore(score);
   }, []);
 
-  function handleClickSpawnEnemies() {
-    // sendMessage("GameController", "SpawnEnemies", 100);
-  }
+
+  useEffect(()=>{
+    setUnityLoaded(isLoaded);
+  },[isLoaded, setUnityLoaded])
+
+  useEffect(()=>{
+    if (sendMessage) {
+      sendMessageRef.current = sendMessage;
+    }
+  }, [sendMessage, sendMessageRef])
 
   useEffect(() => {
     // addEventListener("GameOver", handleGameOver);

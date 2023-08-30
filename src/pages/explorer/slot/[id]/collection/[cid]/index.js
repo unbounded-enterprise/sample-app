@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Box, Button, Breadcrumbs, IconButton, Typography, Grid, LinearProgress, TextField } from '@mui/material';
 import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
-import { NftCard } from 'src/components/explorer/NftCard';
+import { AssetCard } from 'src/components/explorer/AssetCard';
 import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
@@ -26,12 +26,12 @@ const ExploreCollectionPage = () => {
   const router = useRouter();
   const [app, setApp] = useState(null);
   const [sort, setSort] = useState("maximum");
-  const [nfts, setNFTs] = useState(null);
+  const [assets, setAssets] = useState(null);
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(19);
-  const [nftSearch, setNftSearch] = useState(null);
+  const [assetSearch, setAssetSearch] = useState(null);
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
   const [page, setPage] = useState(1);
@@ -41,7 +41,7 @@ const ExploreCollectionPage = () => {
   function nextPage() {
     setFrom(from+20); 
     setTo(to+20);
-    setNFTs(null);
+    setAssets(null);
     setPage(page+1);
     //scroll(0,0)
   }
@@ -50,7 +50,7 @@ const ExploreCollectionPage = () => {
     if (from > 0) { 
       setFrom(from-20); 
       setTo(to-20);
-      setNFTs(null);
+      setAssets(null);
       setPage(page-1);
       //scroll(0,0)
     }
@@ -65,9 +65,9 @@ const ExploreCollectionPage = () => {
     }
   };
 
-  const handleNftSearch = (e) => {
+  const handleAssetSearch = (e) => {
     if (e.key === "Enter") {
-      setNftSearch(e.target.value);
+      setAssetSearch(e.target.value);
     }
   }
 
@@ -106,9 +106,9 @@ const ExploreCollectionPage = () => {
 
   useEffect(() => {
     if (chosenCollection) {
-      getNFTs({ collectionId: chosenCollection.collectionId, to, from })
-        .then((nfts) => {
-          setNFTs(nfts);
+      getAssets({ collectionId: chosenCollection.collectionId, to, from })
+        .then((assets) => {
+          setAssets(assets);
         })
         .catch((e) => {
           const error = parseBasicErrorClient(e);
@@ -119,16 +119,16 @@ const ExploreCollectionPage = () => {
 
   useEffect(() => {
     if (collectionId) {
-      getNFTs({ collectionId: chosenCollection.collectionId, serials:nftSearch })
-        .then((nfts) => {
-          setNFTs(nfts);
+      getAssets({ collectionId: chosenCollection.collectionId, serials:assetSearch })
+        .then((assets) => {
+          setAssets(assets);
         })
         .catch((e) => {
           const error = parseBasicErrorClient(e);
           console.log('setting error: ', error.message);
         });
     }
-  }, [nftSearch]);
+  }, [assetSearch]);
 
   useEffect(() => {
     getApp()
@@ -177,7 +177,7 @@ const ExploreCollectionPage = () => {
               Creator:&nbsp;
             </Typography>
             <Typography variant="p2" sx={boldTextStyle}>
-              {chosenCollection.handle} &emsp;
+              {chosenCollection.creator.handle} &emsp;
             </Typography>
             <Typography variant="p2" sx={textStyle}>
               App:&nbsp;
@@ -212,21 +212,21 @@ const ExploreCollectionPage = () => {
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
             <Box sx={{ left: 0, width: "100%" }}>
-              <BasicSearchbar onKeyPress={handleNftSearch} sx={{ left: 0, width: "80%", p: 1 }}/>
+              <BasicSearchbar onKeyPress={handleAssetSearch} sx={{ left: 0, width: "80%", p: 1 }}/>
             </Box>
           </Grid>
           <Grid item>
             <Box sx={{}}>
               <Typography variant="h3">
-                Select NFT to View Details
+                Select Asset to View Details
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
-              { (!!nfts) ? nfts.map((nft) => (
-                <React.Fragment key={nft.nftId}>
-                  <NftCard collection={chosenCollection} nft={nft} slot={chosenSlot} />
+              { (!!assets) ? assets.map((asset) => (
+                <React.Fragment key={asset.assetId}>
+                  <AssetCard collection={chosenCollection} asset={asset} slot={chosenSlot} />
                 </React.Fragment>
               )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
@@ -266,13 +266,13 @@ export default ExploreCollectionPage;
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
+  return appObject.data.body.app;
 }
 
 const getSlot = async (slotId)=>{ 
   if (slotId.length > 10) {
     const slotsObject = (await axios.post('/api/slot/info', { slotId }));
-    return slotsObject.data.slot;
+    return slotsObject.data.body.slot;
   }
 }
 
@@ -280,18 +280,19 @@ const getSlot = async (slotId)=>{
 const getCollection = async (collection, sortFunction) => {
   if (collection.length > 10) {
     const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
-    return collectionsObject.data.collections[0];
+    console.log(collectionsObject);
+    return collectionsObject.data.body.collections[0];
   }
 }
 
-const getNFTs = async ({ collectionId, serials, from, to }) => {
-  let nftsObject;
+const getAssets = async ({ collectionId, serials, from, to }) => {
+  let assetsObject;
   if (collectionId) {
     if (serials) {
-      nftsObject = (await axios.post('/api/collection/nfts', { collectionId, idOnly: false, serials }));
+      assetsObject = (await axios.post('/api/collection/assets', { collectionId, idOnly: false, serials }));
     } else {  
-      nftsObject = (await axios.post('/api/collection/nfts', { collectionId, idOnly: false, from, to }));
+      assetsObject = (await axios.post('/api/collection/assets', { collectionId, idOnly: false, from, to }));
     }
-    return nftsObject.data.collection.nfts;
+    return assetsObject.data.body.collection.assets;
   }
 }

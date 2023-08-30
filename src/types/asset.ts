@@ -24,8 +24,9 @@ export interface GetNFTCollectionsProps {
     countsOnly?: boolean;
 }
 
-export interface GetNFTInfoProps {
-    nftId: string
+export interface GetAssetInfoProps {
+    assetId?: string,
+    assetIds?: string[]
 }
 
 export interface UpdateNFTProps {
@@ -49,4 +50,20 @@ export interface NFTType {
     handle: string;
     expressionValues: ExpressionValue[];
 
+}
+
+export type GetUserSlotsAssetsProps = {
+    slotIds: string[];
+    walletUserId?: string;
+    includeDeactivated?: boolean;
+    idOnly?: boolean;
+    countsOnly?: boolean;
+}
+
+export type GetUserCollectionsAssetsProps = {
+    collectionIds: string[];
+    walletUserId?: string;
+    includeDeactivated?: boolean;
+    idOnly?: boolean;
+    countsOnly?: boolean;
 }

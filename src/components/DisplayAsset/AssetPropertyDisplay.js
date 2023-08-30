@@ -45,17 +45,17 @@ const PropertyRow = ({ property, depth }) => {
   );
 };
 
-export const NftPropertyDisplay = ({ nft }) => {
+export const AssetPropertyDisplay = ({ asset }) => {
   const [allProperties, setAllProperties] = useState(null);
   const [appProperties, setAppProperties] = useState(null);
   const [selectedApp, setSelectedApp] = useState(null);
   const [apps, setApps] = useState([]);
 
   useEffect(() => {
-    if (nft && nft.properties) {
-      setAllProperties(nft.properties);
+    if (asset && asset.properties) {
+      setAllProperties(asset.properties);
     }
-  }, [nft]);
+  }, [asset]);
 
   useEffect(() => {
     if (allProperties && selectedApp && allProperties[selectedApp]) {
@@ -83,8 +83,8 @@ export const NftPropertyDisplay = ({ nft }) => {
 
   return (
     <>
-      {nft ? (
-        <Grid item key={nft.nftId} sx={{ my: '1rem' }} xs={12}>
+      {asset ? (
+        <Grid item key={asset.assetId} sx={{ my: '1rem' }} xs={12}>
           <Typography variant="p2" sx={{ alignSelf: 'end', fontWeight: 'bold', fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '16px', xl: '18px' } }}>
             Properties &emsp;
           </Typography>
@@ -110,7 +110,7 @@ export const NftPropertyDisplay = ({ nft }) => {
           </Box>
         </Grid>
       ) : (
-        <Typography>No NFT Selected</Typography>
+        <Typography>No Asset Selected</Typography>
       )}
     </>
   );

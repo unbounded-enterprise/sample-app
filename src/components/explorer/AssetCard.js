@@ -3,16 +3,16 @@ import { Card, Grid, Typography } from '@mui/material';
 
 var menuViewExpressionValue;
 
-export const NftCard = ({ collection, nft, slot }) => {
-  nft.expressionValues.forEach((element) => {
+export const AssetCard = ({ collection, asset, slot }) => {
+  asset.expressionValues.forEach((element) => {
     if (element.expression.expressionName === "Menu View") {
       menuViewExpressionValue = element.value;
     }
   });
     
   return (
-    <Grid item key={nft.nftId} xs={12} md={6} lg={4} xl={3} onClick={()=>{}}>
-      <NextLink href={`/explorer/slot/${slot.slotId}/collection/${collection.collectionId}/nft/${nft.nftId}`} passHref legacyBehavior>
+    <Grid item key={asset.assetId} xs={12} md={6} lg={4} xl={3} onClick={()=>{}}>
+      <NextLink href={`/explorer/slot/${slot.slotId}/collection/${collection.collectionId}/asset/${asset.assetId}`} passHref legacyBehavior>
         <Card variant="outlined" sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -22,7 +22,7 @@ export const NftCard = ({ collection, nft, slot }) => {
         }}>
           <img src={menuViewExpressionValue} alt='Collection Image' style={{ maxHeight: '300px', maxWidth: '300px', placeSelf: 'center' }} />
           <Typography variant="p2" sx={{ padding: 1, fontWeight: "bold" }}>
-            {collection.collectionName} #{nft.serial}
+            {collection.collectionName} #{asset.serial}
           </Typography>
         </Card>
       </NextLink>

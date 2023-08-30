@@ -1,13 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
-import axios from "axios";
-import { GetCollectionNftsProps } from "src/types/collection";
+import { GetCollectionAssetsProps } from "src/types/collection";
 import { BasicError } from "src/types/error";
 import { toNumber } from "src/utils/basic/basic-numbers";
 import { errorHandling } from "../validate";
+import { assetlayer } from "../app/info";
 
-const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
-export default function getCollectionNFTsHandler(req:NextApiRequest, res:NextApiResponse) {
+export default function getCollectionAssetsHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject) => {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
@@ -22,8 +21,7 @@ export default function getCollectionNFTsHandler(req:NextApiRequest, res:NextApi
                     bod.serials = `${f}-${t}`;
                 }
             }
-            
-            getCollectionNFTs(bod)
+            assetlayer.collections.raw.getCollectionAssets(bod)
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {
@@ -32,11 +30,7 @@ export default function getCollectionNFTsHandler(req:NextApiRequest, res:NextApi
     })
 }
 
-export async function getCollectionNFTs(props:GetCollectionNftsProps) {
-    const response = await axios.get('https://api.assetlayer.com/api/v1/collection/nfts', { 
-        data: props, 
-        headers },
-    );
+export async function getCollectionAssets(props:GetCollectionAssetsProps) {
+    return await assetlayer.collections.getCollectionAssets(props);
 
-    return response.data.body;
 }

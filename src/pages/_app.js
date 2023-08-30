@@ -12,6 +12,8 @@ import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { theme } from '../theme';
+import { AssetLayerProvider } from '../contexts/assetlayer-context';
+
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -38,6 +40,7 @@ const App = (props) => {
    
   return (
     <SessionProvider session={pageProps.session}>
+    <AssetLayerProvider>
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
@@ -83,6 +86,7 @@ const App = (props) => {
         </ThemeProvider>
       </LocalizationProvider>
     </CacheProvider>
+    </AssetLayerProvider>
     </SessionProvider>
   );
             }
@@ -90,7 +94,7 @@ const App = (props) => {
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
+  return appObject.data.body.app;
 }
 
 export default App;

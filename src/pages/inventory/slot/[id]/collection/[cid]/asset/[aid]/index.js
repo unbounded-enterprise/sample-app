@@ -4,13 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Breadcrumbs, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Link, TextField, Typography } from '@mui/material';
 import { MainLayout } from 'src/components/main-layout';
 import axios from 'axios';
-import { NftDetailDisplay } from 'src/components/DisplayNFT/NftDetailDisplay';
-import CollectionDetailsInfos from 'src/components/DisplayNFT/CollectionDetailsInfos';
+import { AssetDetailDisplay } from 'src/components/DisplayAsset/AssetDetailDisplay';
+import CollectionDetailsInfos from 'src/components/DisplayAsset/CollectionDetailsInfos';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
 import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from 'src/hooks/use-auth';
-import { HomeHandcash } from 'src/components/home/home-handcash';
+import LoginButton from 'src/components/home/login-button';
+import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
+
+
+
 
 
 
@@ -19,19 +23,65 @@ const slotButtonStyle = { color: 'blue', border: '1px solid blue', fontSize: '1v
 
 const loading = <> <CenteredImage src="/static/loader.gif" alt="placeholder" /> </>;
 
-const InventoryNftDetailPage = ()=>{
+const InventoryAssetDetailPage = ()=>{
   const router = useRouter();
   const [app, setApp] = useState(null);
   const [sort, setSort] = useState("maximum");
-  //const [nftSort, setNftSort] = useState("ascending");
+  //const [assetSort, setAssetSort] = useState("ascending");
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
-  const [chosenNft, setChosenNft] = useState(null);
+  const [chosenAsset, setChosenAsset] = useState(null);
 
   const [slotId, setSlotId] = useState(null);
   const [collectionId, setCollectionId] = useState(null);
-  const [nftId, setNftId] = useState(null);
-  const { user } = useAuth();
+  const [assetId, setAssetId] = useState(null);
+  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const [user, setUser] = useState(null);
+
+  const getApp = async () => {
+    const appObject = (await axios.post('/api/app/info', { }));
+    return appObject.data.body.app;
+  }
+  
+  const getSlot = async (slotId) => { // just used for testing
+    if (slotId.length > 10) {
+      const slotsObject = (await axios.post('/api/slot/info', { slotId }));
+      return slotsObject.data.body.slot;
+    }
+  }
+  
+  
+  const getCollection = async (collection, sortFunction) => {
+    if (collection.length > 10) {
+      const {result: collectionsObject} = await assetlayerClient.collections.safe.getCollections({collectionIds: [collection]});
+      //const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
+      return collectionsObject[0];
+    }
+  }
+  
+  const getAsset = async (assetId) => {
+    if (assetId) {
+      const {result: assetObject} = await assetlayerClient.assets.safe.getAssets({assetIds: [assetId]});
+      console.log(assetObject);
+      return assetObject[0];
+    } 
+    
+  }
+  
+  function removeAssetSubpath(url) {
+    const regex = /\/asset\/[0-9a-fA-F]+/;
+    return url.replace(regex, '');
+  }
+  
+  const getUser = async () => {
+    const {result: user} = await assetlayerClient.users.safe.getUser();
+    return user;
+  }
+  
+  const getIsLoggedIn = async () => {
+    const loggedIn = await assetlayerClient.initialize();
+    return loggedIn;
+  }
 
   function MyModal(props) {
     const [open, setOpen] = useState(false);
@@ -47,7 +97,7 @@ const InventoryNftDetailPage = ()=>{
 
     const handleClose = () => {
       if (success) {
-        router.push(removeNftSubpath(router.asPath));
+        router.push(removeAssetSubpath(router.asPath));
       } else {
         setOpen(false);
       }
@@ -59,20 +109,18 @@ const InventoryNftDetailPage = ()=>{
 
     const handleSubmit = async () => {
       try {
-        const response = await axios.post("/api/nft/send", {
-          nftId: props.nftId,
-          recipientHandle: input,
-        });
+        const {result: response} = await assetlayerClient.assets.safe.sendAsset({assetId: props.assetId, receiver: input});
+        
         console.log(response);
-        console.log(response.status);
+        /*console.log(response.status);
         if (response.status === 200) {
           setSuccess(true);
-        }
+        }*/
       } catch (err) {
         if (err.response.data.error === "invalid: recipientHandle") {
           setError("Invalid handle. Please try again.");
         } else if (err.response.data.error === "permissions: denied"){
-          setError("This app does not have permission to transfer this NFT.");
+          setError("This app does not have permission to transfer this Asset.");
         } else {
           setError("An unknown error occurred.");
         }
@@ -140,7 +188,7 @@ const InventoryNftDetailPage = ()=>{
     if (router.isReady) {
       setSlotId(router.asPath.split("/")[3]);
       setCollectionId(router.asPath.split("/")[5]);
-      setNftId(router.asPath.split("/")[7]);
+      setAssetId(router.asPath.split("/")[7]);
     }
   }, [router.isReady]);
 
@@ -171,17 +219,17 @@ const InventoryNftDetailPage = ()=>{
   }, [collectionId]);
 
   useEffect(() => {
-    if (nftId) {
-      getNft(nftId)
-        .then((nft) => {
-          setChosenNft(nft);
+    if (assetId && loggedIn) {
+      getAsset(assetId)
+        .then((asset) => {
+          setChosenAsset(asset);
         })
         .catch((e) => {
           const error = parseBasicErrorClient(e);
           console.log('setting error: ', error.message);
         });
     }
-  }, [nftId]);
+  }, [assetId, loggedIn]);
 
   useEffect(() => {
     getApp()
@@ -193,9 +241,33 @@ const InventoryNftDetailPage = ()=>{
         console.log('setting error: ', error.message);
       });
   }, []);
+
+  useEffect(() => {
+    getIsLoggedIn()
+      .then((isLoggedIn) => {
+        setLoggedIn(isLoggedIn)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    if(loggedIn){
+      getUser()
+      .then((user) => {
+        setUser(user)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+    }
+  }, [loggedIn]);
   
-  if (!user) return <HomeHandcash />;
-  if (!(chosenCollection && chosenSlot && chosenNft && app)) return loading;
+  if (!loggedIn) return <LoginButton />;
+  if (!(chosenCollection && chosenSlot && chosenAsset && app)) return loading;
     
   return (
     <Box sx={{ backgroundColor: 'none', py: 5 }}>
@@ -221,16 +293,16 @@ const InventoryNftDetailPage = ()=>{
                 Collection
               </NextLink>
               <Typography color="text.primary">
-                NFT
+                Asset
               </Typography>
             </Breadcrumbs>
           </Grid>
           <Grid item container xs={12} justifyContent='flex-start' sx={{ backgroundColor: "none" }}>
             <Grid item xs={12}>
               <Typography variant="h3" sx={{ lineHeight: '40px' }}>
-                {chosenCollection.collectionName} #{chosenNft.serial}
+                {chosenCollection.collectionName} #{chosenAsset.serial}
               </Typography>
-              <MyModal nftId={chosenNft.nftId}/>
+              <MyModal assetId={chosenAsset.assetId}/>
             </Grid>
             <Grid item xs={12}>
               <CollectionDetailsInfos
@@ -240,11 +312,11 @@ const InventoryNftDetailPage = ()=>{
                 totalSupply={chosenCollection.maximum}
                 collectionName={chosenCollection.collectionName}
                 type={chosenCollection.type}
-                nftLocation={chosenNft.location}
+                assetLocation={chosenAsset.location}
               />
             </Grid>
             <Grid item container xs={12} sx={{ my: '2rem' }}>
-              <NftDetailDisplay nft={chosenNft}/>
+              <AssetDetailDisplay asset={chosenAsset}/>
             </Grid>
           </Grid>
         </Grid>
@@ -253,43 +325,55 @@ const InventoryNftDetailPage = ()=>{
   )
 }
 
-InventoryNftDetailPage.getLayout = (page) => (
+InventoryAssetDetailPage.getLayout = (page) => (
   <MainLayout>
     { page }
   </MainLayout>
 );
 
-export default InventoryNftDetailPage;
+export default InventoryAssetDetailPage;
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
+  return appObject.data.body.app;
 }
 
 const getSlot = async (slotId) => { // just used for testing
   if (slotId.length > 10) {
     const slotsObject = (await axios.post('/api/slot/info', { slotId }));
-    return slotsObject.data.slot;
+    return slotsObject.data.body.slot;
   }
 }
 
 
 const getCollection = async (collection, sortFunction) => {
   if (collection.length > 10) {
-      const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
-      return collectionsObject.data.collections[0];
+    const {result: collectionsObject} = await assetlayerClient.collections.safe.getCollections({collectionIds: [collection]});
+    //const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
+    return collectionsObject[0];
   }
 }
 
-const getNft = async (nftId) => {
-  let nftObject;  
-  if (nftId) {
-    nftObject = (await axios.post('/api/nft/info', { nftId }));
+const getAsset = async (assetId) => {
+  if (assetId) {
+    const {result: assetObject} = await assetlayerClient.assets.safe.getAssets({assetIds: [assetId]});
+    console.log(assetObject);
+    return assetObject[0];
   } 
-  return nftObject.data.nfts[0];
+  
 }
 
-function removeNftSubpath(url) {
-  const regex = /\/nft\/[0-9a-fA-F]+/;
+function removeAssetSubpath(url) {
+  const regex = /\/asset\/[0-9a-fA-F]+/;
   return url.replace(regex, '');
+}
+
+const getUser = async () => {
+  const {result: user} = await assetlayerClient.users.safe.getUser();
+  return user;
+}
+
+const getIsLoggedIn = async () => {
+  const loggedIn = await assetlayerClient.initialize();
+  return loggedIn;
 }

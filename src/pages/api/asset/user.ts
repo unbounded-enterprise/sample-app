@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import axios from "axios";
-import { UpdateNFTProps } from "src/types/nft";
+import { GetNFTUserProps } from "src/types/asset";
 import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
 
@@ -11,10 +11,10 @@ export default function getNFTsUserHandler(req:NextApiRequest, res:NextApiRespon
         const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const { nftId, properties } = req.body;
+            const  { idOnly, countsOnly } = req.body;
             
             getSessionUser(req, res)
-                .then((user) => updateNFT({properties:properties, nftId: nftId }))
+                .then((user) => getNFTsUser({ handle: user.handle, idOnly, countsOnly }))
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {
@@ -23,10 +23,10 @@ export default function getNFTsUserHandler(req:NextApiRequest, res:NextApiRespon
     })
 }
 
-export async function updateNFT(props:UpdateNFTProps) {
-    const response = await axios.put('https://api.assetlayer.com/api/v1/nft/update', 
-        props, 
-        {headers: headers}
+export async function getNFTsUser(props:GetNFTUserProps) {
+    const response = await axios.get('https://api.assetlayer.com/api/v1/nft/user', { 
+        data: props, 
+        headers },
     );
 
     return response.data.body;

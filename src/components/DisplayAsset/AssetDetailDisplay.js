@@ -2,13 +2,13 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState, useCallback } from 'react';
 import { Box, Button, Card, FormControl, Grid, InputLabel, Typography, Select, Stack, MenuItem, 
   TableContainer, Table, TableHead, TableRow, TableCell, TableBody, useMediaQuery, appBarClasses } from '@mui/material';
-import { getExpressionValue, parseAnimations, playAnimation } from './DisplayNFT';
+import { getExpressionValue, parseAnimations, playAnimation } from './DisplayAsset';
 import AudioDisplay from './MediaTypes/AudioDisplay';
 import DropdownMenu from '../widgets/DropdownMenu';
-import { NftPropertyDisplay } from './NftPropertyDisplay';
+import { AssetPropertyDisplay } from './AssetPropertyDisplay';
 
-const DisplayNFTWithNoSSR = dynamic(
-  () => import('src/components//DisplayNFT/DisplayNFT'),
+const DisplayAssetWithNoSSR = dynamic(
+  () => import('src/components//DisplayAsset/DisplayAsset'),
   { ssr: false }
 );
 
@@ -52,10 +52,10 @@ const ButtonGrid = ({ buttonTexts, onChange }) => {
 
 var slotButtonStyle;
 
-export function parseExpressionNames(nft) {
+export function parseExpressionNames(asset) {
   const expressionNames = [];
-  if (nft.expressionValues) {
-    nft.expressionValues.forEach((element) => {
+  if (asset.expressionValues) {
+    asset.expressionValues.forEach((element) => {
       if (!expressionNames.includes(element.expression.expressionName)) {
         expressionNames.push(element.expression.expressionName);
       }
@@ -64,14 +64,14 @@ export function parseExpressionNames(nft) {
   return expressionNames;
 }
 
-export const NftDetailDisplay = ({ nft }) => {
+export const AssetDetailDisplay = ({ asset }) => {
   slotButtonStyle = { color: 'white', border: '1px solid white', fontSize: '4vw' };
   const [expressionNames, setExpressionNames] = useState(['Menu View']);
   const [spine, setSpine] = useState(null);
   const [app, setApp] = useState(null);
   const [audioFile, setAudioFile] = useState(null); 
   const [videoFile, setVideoFile] = useState(null);
-  const [nfts, setNfts] = useState([]);
+  const [assets, setAssets] = useState([]);
   const [animationNames, setAnimationNames] = useState(null);
   const [currentExpression, setCurrentExpression] = useState('Menu View');
   
@@ -83,11 +83,11 @@ export const NftDetailDisplay = ({ nft }) => {
   const [frameHeight, setFrameHeight] = useState(matches900 ? '90vw' : '35vw');
 
   useEffect(()=>{
-    if (nft) {
-      setExpressionNames(parseExpressionNames(nft));
-      setNfts([nft]);
+    if (asset) {
+      setExpressionNames(parseExpressionNames(asset));
+      setAssets([asset]);
     }
-  }, [nft])
+  }, [asset])
 
   const onLoaded = useCallback((loadedSpine) => {
     setSpine(loadedSpine);
@@ -129,8 +129,8 @@ export const NftDetailDisplay = ({ nft }) => {
 
   return (
     <>
-      {nft ? (
-        <Grid container item key={nft.nftId} xs={12}>
+      {asset ? (
+        <Grid container item key={asset.assetId} xs={12}>
           <Grid item xs={matches900 ? 12 : "auto"}>
             <Box display="flex" justifyContent={matches900 ? "center" : "flex-start"}>
               <Card
@@ -146,10 +146,10 @@ export const NftDetailDisplay = ({ nft }) => {
                   position: 'relative',
                 }}
               >
-                <DisplayNFTWithNoSSR
-                  assetlayerNFTs={nfts}
+                <DisplayAssetWithNoSSR
+                  assetlayerAssets={assets}
                   expression={currentExpression}
-                  nftSizePercentage={75}
+                  assetSizePercentage={75}
                   onSpineLoaded={onLoaded}
                   onAudioLoaded={onAudioLoaded}
                   onVideoLoaded={onVideoLoaded}
@@ -190,18 +190,18 @@ export const NftDetailDisplay = ({ nft }) => {
           </Grid>
           {matches900 && (
             <Grid item xs={12} md={12} lg={12} xl={12} sx={{ backgroundColor: 'none' }}>
-              <NftPropertyDisplay nft={nft} />
+              <AssetPropertyDisplay asset={asset} />
             </Grid>
           )}
         </Grid>
       ) : (
         <Grid item>
-          <Typography>No Nft Loaded</Typography>
+          <Typography>No Asset Loaded</Typography>
         </Grid>
       )}
       {!matches900 && (
         <Grid item xs={12} md={12} lg={12} xl={12} sx={{ backgroundColor: 'none' }}>
-          <NftPropertyDisplay nft={nft} />
+          <AssetPropertyDisplay asset={asset} />
         </Grid>
       )}
     </>

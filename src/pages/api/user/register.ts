@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next/types";
 import { errorHandling } from "../validate";
 import { AssetLayer } from "@assetlayer/sdk-client";
 
-export const assetlayer = new AssetLayer({ 
-    appSecret: process.env.ASSETLAYER_APP_SECRET2
+export const assetlayerDidToken = new AssetLayer({ 
+    appSecret: process.env.ASSETLAYER_APP_SECRET
 });
 
 export default function registerUserHandler(req:NextApiRequest, res:NextApiResponse) {
@@ -13,7 +13,7 @@ export default function registerUserHandler(req:NextApiRequest, res:NextApiRespo
         try {
             const { otp } = req.body;
 
-            assetlayer.users.raw.register({ otp }, { didtoken: (req.headers.didtoken as string) })
+            assetlayerDidToken.users.raw.register({ otp }, { didtoken: (req.headers.didtoken as string) })
                 .then((response) => resolve(res.status(200).json(response)))
                 .catch(handleError);
         } catch(e:any) {

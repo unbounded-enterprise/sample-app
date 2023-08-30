@@ -4,13 +4,14 @@ import {useRouter} from 'next/router';
 import { Box, Breadcrumbs, LinearProgress, Typography, Grid } from '@mui/material';
 import { BasicSearchbar } from 'src/components/widgets/basic/basic-searchbar';
 import { MainLayout } from 'src/components/main-layout';
-import { NftCard } from 'src/components/inventory/NftCard';
+import { AssetCard } from 'src/components/inventory/AssetCard';
 import axios from 'axios';
 import React from 'react';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
 import { useAuth } from 'src/hooks/use-auth';
-import { HomeHandcash } from 'src/components/home/home-handcash';
+import LoginButton from 'src/components/home/login-button';
+import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
 
 
 
@@ -25,23 +26,88 @@ const InventoryCollectionPage = () => {
   const router = useRouter();
   const [app, setApp] = useState(null);
   const [sort, setSort] = useState("maximum");
-  const [nfts, setNFTs] = useState(null);
+  const [assets, setAssets] = useState(null);
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenSlot, setChosenSlot] = useState(null);
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState(20);
-  const [nftSearch, setNftSearch] = useState(null);
+  const [assetSearch, setAssetSearch] = useState(null);
 
   const [slotId, setSlotId] = useState(null)
   const [collectionId, setCollectionId] = useState(null)
-  const { user } = useAuth();
+  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const [user, setUser] = useState(null);
 
 
-  const handleNftSearch = (e) => {
+  const handleAssetSearch = (e) => {
     if (e.key === "Enter") {
-      setNftSearch(e.target.value);
+      setAssetSearch(e.target.value);
     }
   }
+
+  const getApp = async () => {
+    const appObject = (await axios.post('/api/app/info', { }));
+    return appObject.data.body.app;
+  }
+  
+  const getSlot = async (slotId) => { 
+    if (slotId.length > 10) {
+      const slotsObject = (await axios.post('/api/slot/info', { slotId }));
+      return slotsObject.data.body.slot;
+    }
+  }
+  
+  
+  const getCollection = async (collection, sortFunction) => {
+    if (collection.length > 10) {
+      const {result: collectionsObject} = await assetlayerClient.collections.safe.getCollections({collectionIds: [collection]});
+      //const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
+      console.log(collectionsObject[0]);
+      return collectionsObject[0];
+    }
+  }
+  
+  const getAssets = async({ collectionId })=>{
+    let assetsObject;  
+    if (collectionId) {
+      const {result: assetsObject} = await assetlayerClient.assets.safe.getUserCollectionsAssets({collectionIds: [collectionId]});
+      return assetsObject[collectionId];
+    }
+  }
+  
+  const getUser = async () => {
+    const {result: user} = await assetlayerClient.users.safe.getUser();
+    return user;
+  }
+  
+  const getIsLoggedIn = async () => {
+    const loggedIn = await assetlayerClient.initialize();
+    return loggedIn;
+  }
+
+  useEffect(() => {
+    getIsLoggedIn()
+      .then((isLoggedIn) => {
+        setLoggedIn(isLoggedIn)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    if(loggedIn){
+      getUser()
+      .then((user) => {
+        setUser(user)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
     if (router.isReady) {
@@ -77,17 +143,17 @@ const InventoryCollectionPage = () => {
   }, [collectionId]);
 
   useEffect(() => {
-    if (chosenCollection) {
-      getNFTs({ collectionId: chosenCollection.collectionId })
-        .then((nfts) => {
-          setNFTs(nfts)
+    if (chosenCollection && loggedIn) {
+      getAssets({ collectionId: chosenCollection.collectionId })
+        .then((assets) => {
+          setAssets(assets)
         })
         .catch((e) => {
           const error = parseBasicErrorClient(e);
           console.log('setting error: ', error.message);
         });
     }
-  }, [chosenCollection]);
+  }, [chosenCollection, loggedIn]);
 
   useEffect(()=>{
     getApp()
@@ -100,7 +166,7 @@ const InventoryCollectionPage = () => {
       });
   }, []);
   
-  if (!user) return <HomeHandcash />;
+  if (!loggedIn) return <LoginButton />;
   if (!(chosenCollection && chosenSlot && app)) return loading;
 
   return (
@@ -166,7 +232,7 @@ const InventoryCollectionPage = () => {
               My Supply:&nbsp;
             </Typography>
             <Typography variant="p2" sx={boldTextStyle}>
-              {nfts?.length || 0} &emsp;
+              {assets?.length || 0} &emsp;
             </Typography>
             <Typography variant="p2" sx={textStyle}>
               Type:&nbsp;
@@ -177,21 +243,21 @@ const InventoryCollectionPage = () => {
           </Grid>
           <Grid item xs={12} sx={{ backgroundColor: "none" }}>
             <Box sx={{ left: 0, width:"100%" }}>
-              <BasicSearchbar onKeyPress={handleNftSearch} sx={{ left:0, width:"80%", p: 1 }}/>
+              <BasicSearchbar onKeyPress={handleAssetSearch} sx={{ left:0, width:"80%", p: 1 }}/>
             </Box>
           </Grid>
           <Grid item>
             <Box sx={{}}>
               <Typography variant="h3">
-                Select NFT to View Details
+                Select Asset to View Details
               </Typography> 
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
-              { (!!nfts) ? nfts.map((nft) => (
-                <React.Fragment key={nft.nftId}>
-                  <NftCard search={nftSearch} collection={chosenCollection} nft={nft} slot={chosenSlot} />
+              { (!!assets) ? assets.map((asset) => (
+                <React.Fragment key={asset.assetId}>
+                  <AssetCard search={assetSearch} collection={chosenCollection} asset={asset} slot={chosenSlot} />
                 </React.Fragment>
               )) : <LinearProgress sx={{ width: '100%', mb: '1rem' }}/> }
             </Grid>
@@ -210,30 +276,3 @@ InventoryCollectionPage.getLayout = (page) => (
 
 export default InventoryCollectionPage;
 
-const getApp = async () => {
-  const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
-}
-
-const getSlot = async (slotId) => { 
-  if (slotId.length > 10) {
-    const slotsObject = (await axios.post('/api/slot/info', { slotId }));
-    return slotsObject.data.slot;
-  }
-}
-
-
-const getCollection = async (collection, sortFunction) => {
-  if (collection.length > 10) {
-    const collectionsObject = (await axios.post('/api/collection/info', { collectionId: collection, idOnly: false, includeDeactivated: false }));
-    return collectionsObject.data.collections[0];
-  }
-}
-
-const getNFTs = async({ collectionId })=>{
-  let nftsObject;  
-  if (collectionId) {
-    nftsObject = (await axios.post('/api/nft/collections', { collectionIds: [collectionId], idOnly: false }));
-    return nftsObject.data.collections[collectionId];
-  }
-}

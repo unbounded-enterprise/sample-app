@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import { BasicError } from "src/types/error";
-import { getCollectionNFTs } from "./collection/nfts";
+import { getCollectionNFTs } from "./collection/assets";
 import { errorHandling } from "./validate";
 
 const dogCollectionId = process.env.DOG_COLLECTION_ID;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Grid, Typography, Link, Button, useMediaQuery, useTheme } from '@mui/material';
 
-const CollectionDetailsInfos = ({ creator, appName, slotName, totalSupply, collectionName, type, nftLocation }) => {
+const CollectionDetailsInfos = ({ creator, appName, slotName, totalSupply, collectionName, type }) => {
   const [showDetails, setShowDetails] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -47,11 +47,6 @@ const CollectionDetailsInfos = ({ creator, appName, slotName, totalSupply, colle
               <Typography variant="p2" sx={{ lineHeight: '25px', marginBottom: "40px" }}>
                 <b>Type:</b> {type}
               </Typography>
-            </Grid>
-            <Grid item xs={12} sm="auto">
-              <Link href={"https://whatsonchain.com/tx/" + nftLocation.slice(0, -3)} variant="p2">
-                <b>Location</b>
-              </Link>
             </Grid>
           </Grid>
         </Box>

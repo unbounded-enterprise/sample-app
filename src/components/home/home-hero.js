@@ -6,19 +6,42 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { authApi } from '../../_api_/auth-api';
 import { useAuth } from 'src/hooks/use-auth';
+import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
+import LoginButton from 'src/components/home/login-button';
+
+
 
 export const HomeHero = (props) => {
   const [redirectionUrl, setRedirectionUrl] = useState("/");
   const { app } = props;
-  const { user } = useAuth();
+  const [user, setUser] = useState(null);
+  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+
   const theme = useTheme();
+
+  const getUser = async () => {
+    const {result: user} = await assetlayerClient.users.safe.getUser();
+    return user;
+  }
 
   useEffect(() => {
     authApi.getRedirectionURL().then((url) => { 
       if (url) setRedirectionUrl(url); 
     });
   }, []);
-  
+
+  useEffect(() => {
+    if(loggedIn){
+    getUser()
+      .then((user) => {
+        setUser(user)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });}
+  }, [loggedIn]);
+
   return (
     <Box 
       sx={{ pt: 2, pb: '2em' }}
@@ -54,26 +77,7 @@ export const HomeHero = (props) => {
           { app.description }
         </Typography>
         { (!user) ? (
-          <NextLink href={redirectionUrl} legacyBehavior passHref>
-            <Button 
-              startIcon={<img src='/static/icons/handcash1024.png' style={{ marginBottom: '2px', width: '1.5em' , height: '1.5em' }}/>} 
-              sx={{
-                height: '4em',
-                width: '20em',
-                backgroundColor: '#38CB7B', 
-                color: 'white',
-                fontSize: '1em',
-                px: '1em',
-                textTransform: 'none',
-                '&:hover': {
-                  backgroundColor: '#38CB7B',
-                  transform: 'scale(1.01)',
-                }
-              }}
-            >
-              Login with HandCash
-            </Button>
-          </NextLink>
+          <LoginButton />
         ) : (
           <Typography
             align="left"

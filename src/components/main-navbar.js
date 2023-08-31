@@ -106,7 +106,7 @@ export const MainNavbar = (props) => {
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ minHeight: 64 }}>
           <NextLink href="/" passHref>
-            <Logo sx={{ pt: 1, display: { md: "inline", xs: "none" } }} />
+            <img src="static/Rolltopia Logo Just Text.png" alt="logo" style={{ height: "50px" }} sx={{ pt:1, display: {md: "inline", sx:"none"}}}/>
           </NextLink>
           <Box
             onClick={handleOpenMenu}
@@ -137,7 +137,7 @@ export const MainNavbar = (props) => {
                 }}
               >
                 <Typography color="textSecondary" variant="subtitle2">
-                  NFT Explorer
+                  Explorer
                 </Typography>
               </Button>
             </NextLink>
@@ -150,7 +150,7 @@ export const MainNavbar = (props) => {
                 }}
               >
                 <Typography color="textSecondary" variant="subtitle2">
-                  My NFTs
+                  My Assets
                 </Typography>
               </Button>
             </NextLink>
@@ -177,23 +177,6 @@ export const MainNavbar = (props) => {
               >
                 <Typography color="textSecondary" variant="subtitle2">
                   Store
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink
-              href="https://docs.assetlayer.com"
-              passHref
-              legacyBehavior
-            >
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Docs
                 </Typography>
               </Button>
             </NextLink>

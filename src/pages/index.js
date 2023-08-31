@@ -2,7 +2,7 @@ import Head from 'next/head';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useEffect, useState } from 'react';
-import { Button, Card, CardMedia, Grid } from '@mui/material';
+import { Button, Card, CardMedia, Container, Grid } from '@mui/material';
 import { MainLayout } from '../components/main-layout';
 import { HomeHero } from '../components/home/home-hero';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
@@ -82,6 +82,7 @@ const Page = () => {
         { app.appName }
       </title>
     </Head>
+    <Container maxWidth="lg">
     <main>
       <Grid container spacing={2} mb={"1em"}>
         <Grid item sm={12} md={7} lg={6}>
@@ -106,6 +107,7 @@ const Page = () => {
         </Grid>
       </Grid>
     </main>
+    </Container>
   </>);
 };
 

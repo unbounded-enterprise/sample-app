@@ -51,7 +51,7 @@ export const HomeHero = (props) => {
         maxWidth="md"
         sx={{
           mt:{ xs: '1em', md: '6em' },
-          ml:{ xs: '.5em', md: '3em' },
+          ml:{ xs: '.5em', md: '.5em' },
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -71,7 +71,7 @@ export const HomeHero = (props) => {
           variant="h5"
           sx={{ 
             mb: '1em', 
-            mr:{ xs: '1em', md: '3em' } 
+            mr:{ xs: '1em', md: '1em' } 
           }}
         >
           { app.description }

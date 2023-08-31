@@ -15,7 +15,7 @@ const LoginButton = () => {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: '60vh', // 100% of the viewport height
+        height: '20vh', // 100% of the viewport height
         padding: '2rem' // Add more space around the button
       }}
     >

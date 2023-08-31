@@ -76,7 +76,7 @@ export const HomeHero = (props) => {
         >
           { app.description }
         </Typography>
-        { (!user) ? (
+        { (!loggedIn) ? (
           <LoginButton />
         ) : (
           <Typography

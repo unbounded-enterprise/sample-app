@@ -86,10 +86,6 @@ const Page = () => {
       <Grid container spacing={2} mb={"1em"}>
         <Grid item sm={12} md={7} lg={6}>
           <HomeHero app={app} />
-              {loggedIn ? <></> :
-                <Button onClick={loginUser}>
-                        Login
-                </Button>}
         </Grid>
         <Grid item sm={12} md={5} lg={6} sx={{ display: 'flex', flexDirection: { xs:'column', md:'row' }, alignItems: 'center', mt: { xs: '.5em' , md: '2em' } }}>
           <Card sx={{

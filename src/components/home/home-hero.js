@@ -78,7 +78,8 @@ export const HomeHero = (props) => {
         </Typography>
         { (!loggedIn) ? (
           <LoginButton />
-        ) : (
+        ) : <></>}
+        { (loggedIn && user) ? (
           <Typography
             align="left"
             variant="h5"
@@ -89,7 +90,7 @@ export const HomeHero = (props) => {
           >
             Greetings ${user.handle}!
           </Typography>
-        ) }
+        ) : <></>}
       </Container>
     </Box>
   );

@@ -88,7 +88,7 @@ export const HomeHero = (props) => {
               mr: { xs: '1em', md: '3em' } 
             }}
           >
-            Greetings ${user.handle}!
+            Greetings {user.handle}!
           </Typography>
         ) : <></>}
       </Container>

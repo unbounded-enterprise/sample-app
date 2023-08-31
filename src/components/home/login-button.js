@@ -21,9 +21,12 @@ const LoginButton = () => {
     >
       <Button 
         variant="contained" 
-        color="primary" 
         onClick={handleLogin}
         sx={{ 
+          backgroundColor: '#045CD2', // Set the background color
+          '&:hover': {
+            backgroundColor: '#045CD2', // Set hover color
+          },
           color: 'white',
           fontSize: '1.5rem', // Make the text larger
           padding: '1rem 2rem' // Add more padding to make the button larger

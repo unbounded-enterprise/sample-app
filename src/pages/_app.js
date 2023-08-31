@@ -93,7 +93,6 @@ const App = (props) => {
 };
 
 const getApp = async () => {
-  console.log("here");
   const appObject = (await axios.post('/api/app/info', { }));
   return appObject.data.body.app;
 }

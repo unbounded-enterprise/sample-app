@@ -13,6 +13,7 @@ const Play = () => {
   const [initialized, setInitialized] = useState(false);
   const [email, setEmail] = useState("");
   const [emailAlt, setEmailAlt] = useState("");
+  const [newUser, setNewUser] = useState(false);
   const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   const runOnceRef = useRef(false);
 
@@ -129,8 +130,97 @@ const Play = () => {
         </CardContent>
       </Card>
     </Stack></>
-      :
-      <><Stack alignItems="center" justifyContent="center" sx={{height: '100vh'}}>
+      : 
+      <>{newUser? <Stack alignItems="center" justifyContent="center" sx={{height: '100vh'}}>
+      <Card sx={{ 
+        backgroundColor: 'rgba(50, 50, 50, 0.9)', // Transparent gray
+        borderRadius: '15px', // Rounded edges
+        width: '600px',
+        textAlign: 'center',
+        p: 3 // Padding for more spacing
+      }}>
+        <CardMedia
+          component="img"
+          height="140"
+          image="static/Rolltopia Logo Just Text.png" // Replace with your image path
+          alt="Your Image"
+        />
+        <CardContent sx={{ pt: 3 }}>
+          <Typography variant="subtitle1" color="white" component="div" sx={{ textAlign: 'left', mb: 2, fontSize: '1.2rem' }}>
+            Enter your Email Address to get Started
+          </Typography>
+          <TextField
+            variant="standard"
+            value={emailAlt}
+            onChange={(e) => setEmailAlt(e.target.value)}
+            sx={{ 
+              marginBottom: '2em', 
+              width: '100%', 
+              height: '50px', 
+              backgroundColor: 'white', 
+              color: 'black',
+              borderRadius: '5px',
+              pl: 2 // padding-left
+            }}
+            placeholder="user@assetlayer.com"
+            InputProps={{
+              disableUnderline: true,
+              style: { color: 'black', lineHeight: '50px' } // Vertically center the text
+            }}
+          />
+          <Button 
+          variant="contained" 
+          color="primary" 
+          sx={{
+            backgroundColor: '#045CD2', // Set the background color
+            '&:hover': {
+              backgroundColor: '#045CD2', // Set hover color
+            },
+            width: '100%', 
+            mb: 5,
+            boxShadow: '0px 3px 5px 2px rgba(0, 0, 0, .3)', // Add drop shadow
+            fontWeight: 'bold' // Bold font
+          }}
+          onClick={() => assetlayerClient.loginUser({email: emailAlt, onSuccess: onInitialized})}
+        >
+            Sign Up
+          </Button>
+          <Button 
+  variant="text" 
+  sx={{
+    backgroundColor: 'transparent', // No background color
+    color: 'white', // Text color
+    textDecoration: 'underline', // Underlined text
+    textTransform: 'none', // Keep the text as-is (don't uppercase)
+    '&:hover': {
+      backgroundColor: 'transparent', // No background color on hover
+      textDecoration: 'underline', // Keep the underline on hover
+    },
+    width: 'auto', // Auto width
+    mb: 5, // Margin bottom
+    fontWeight: 'normal' // Normal font weight
+  }}
+  onClick={() => setNewUser(false)}
+>
+  Returning User?
+</Button>
+
+          <CardMedia
+            component="img"
+            alignContent= 'center'
+            sx={{
+              maxHeight: '30px', // or any size you want
+              width: 'auto', // maintain aspect ratio
+              margin: 'auto'
+            }}
+            image="static/Powered by AL Big.png" // Replace with your second image path
+            alt="Your Second Image"
+          />
+        </CardContent>
+      </Card>
+    </Stack>
+     :
+      <Stack alignItems="center" justifyContent="center" sx={{height: '100vh'}}>
   <Card sx={{ 
     backgroundColor: 'rgba(50, 50, 50, 0.9)', // Transparent gray
     borderRadius: '15px', // Rounded edges
@@ -185,33 +275,11 @@ const Play = () => {
         }}
         onClick={() => assetlayerClient.loginUser({email, onSuccess: onInitialized})}
       >
-        Login
+        Sign In
       </Button>
       <Typography variant="h4" color="white" component="div" sx={{ fontWeight: 'normal', mb: 2 }}>
         New User?
       </Typography>
-      <Typography variant="subtitle1" color="white" component="div" sx={{ textAlign: 'left', mb: 2, fontSize: '1.2rem' }}>
-        Account Email
-      </Typography>
-      <TextField
-        variant="standard"
-        value={emailAlt}
-        onChange={(e) => setEmailAlt(e.target.value)}
-        sx={{ 
-          marginBottom: '2em', 
-          width: '100%', 
-          height: '50px', 
-          backgroundColor: 'white', 
-          color: 'black',
-          borderRadius: '5px',
-          pl: 2 // padding-left
-        }}
-        placeholder="user@assetlayer.com"
-        InputProps={{
-          disableUnderline: true,
-          style: { color: 'gray', lineHeight: '50px' } // Vertically center the text
-        }}
-      />
       <Button 
       variant="contained" 
       color="primary" 
@@ -225,15 +293,15 @@ const Play = () => {
         boxShadow: '0px 3px 5px 2px rgba(0, 0, 0, .3)', // Add drop shadow
         fontWeight: 'bold' // Bold font
       }}
-      onClick={() => assetlayerClient.loginUser({emailAlt, onSuccess: onInitialized})}
+      onClick={() => setNewUser(true)}
     >
-        Create New Account
+        Create an Account
       </Button>
       <CardMedia
         component="img"
         alignContent= 'center'
         sx={{
-          maxHeight: '40px', // or any size you want
+          maxHeight: '30px', // or any size you want
           width: 'auto', // maintain aspect ratio
           margin: 'auto'
         }}
@@ -242,7 +310,7 @@ const Play = () => {
       />
     </CardContent>
   </Card>
-</Stack>
+</Stack>}
 
 </>
       }

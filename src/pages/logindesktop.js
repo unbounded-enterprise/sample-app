@@ -97,7 +97,7 @@ const Play = () => {
   return (
     <main
     style={{
-      backgroundImage: `url("/static/Utopia Background Landscape.png")`,
+      backgroundImage: `url("/static/Utopia Background Landscape (1).png")`,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundColor: "transparent",

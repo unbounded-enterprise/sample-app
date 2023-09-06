@@ -4,7 +4,7 @@ import { AssetLayer } from '@assetlayer/sdk-client';
 import { Box, TextField, Button, CircularProgress, Card, CardContent, Typography, CardMedia, Stack } from "@mui/material";
 import CryptoJS from "crypto-js";
 import { MainLayout } from 'src/components/main-layout';
-
+import { useRouter } from 'next/router';
 import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
 
 
@@ -19,7 +19,8 @@ const Play = () => {
   const [newUser, setNewUser] = useState(false);
   const [unityLoaded, setUnityLoaded] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, setLoggedIn, unityOn, setUnityOn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const router = useRouter();
 
   const sendMessageRef = useRef(null);
   const runOnceRef = useRef(false);
@@ -265,17 +266,15 @@ const Play = () => {
     </>
     : 
     <>
-      <Stack alignItems="center"  sx={{height: '100vh'}}>
 
-      <PlayUnity sendMessageRef={sendMessageRef} setUnityLoaded={setUnityLoaded}/>
-      </Stack>
+      <PlayUnity sendMessageRef={sendMessageRef} setUnityLoaded={setUnityLoaded} unityOn={unityOn} setUnityOn={setUnityOn} router={router}/>
     </>
     }
   </Fragment>);
 }
 
-const PlayUnity = ({ sendMessageRef, setUnityLoaded }) => {
-  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext({
+const PlayUnity = ({ sendMessageRef, setUnityLoaded, unityOn, setUnityOn, router }) => {
+  const { unityProvider, loadingProgression, isLoaded, unload, sendMessage, addEventListener, removeEventListener } = useUnityContext({
     loaderUrl: "unity/Build/WEBGL.loader.js",
     dataUrl: "unity/Build/WEBGL.data",
     frameworkUrl: "unity/Build/WEBGL.framework.js",
@@ -285,6 +284,43 @@ const PlayUnity = ({ sendMessageRef, setUnityLoaded }) => {
   const handleGameOver = useCallback((userName, score) => {
   }, []);
 
+  async function handleClickBack() {
+    await unload();
+    setUnityOn(false);
+    router.push('/');
+    // Ready to navigate to another page.
+  }
+
+  useEffect(() => {
+    // Add event listeners
+    addEventListener("GameOver", handleGameOver);
+    setUnityOn(true);
+  
+    // Cleanup function
+    return () => {
+      removeEventListener("GameOver", handleGameOver);
+      sendMessage.current = null;
+      const unityCanvas = document.querySelector("#unity-canvas");
+      if (unityCanvas) {
+        unityCanvas.remove();
+      }
+    };
+  }, [addEventListener, removeEventListener, handleGameOver]);
+
+  useEffect(()=>{
+// Add event listeners
+addEventListener("GameOver", handleGameOver);
+  
+// Cleanup function
+return () => {
+  removeEventListener("GameOver", handleGameOver);
+  sendMessage.current = null;
+  const unityCanvas = document.querySelector("#unity-canvas");
+  if (unityCanvas) {
+    unityCanvas.remove();
+  }
+};  },[])
+  
 
   useEffect(()=>{
     setUnityLoaded(isLoaded);
@@ -306,11 +342,36 @@ const PlayUnity = ({ sendMessageRef, setUnityLoaded }) => {
     { !isLoaded && (
       <p>Loading Application... {Math.round(loadingProgression * 100)}%</p>
     ) }
+    <Stack>
     <Unity unityProvider={unityProvider}
-      style={{ visibility: (isLoaded) ? "visible" : "hidden",
-      width: '93%', 
-      height: '93%'  }}
+      style={{ 
+        position: 'relative',  // or 'absolute'
+        top: 0,
+        left: 0,
+        zIndex: 1000,  // any value higher than the z-index of your navbar
+        visibility: (isLoaded) ? "visible" : "hidden",
+        width: '100%', 
+        height: '90%' 
+      }}
     />
+    <Button 
+      variant="contained" 
+      color="primary" 
+      sx={{
+        backgroundColor: '#045CD2', // Set the background color
+        '&:hover': {
+          backgroundColor: '#045CD2', // Set hover color
+        },
+        width: '100%', 
+        mb: 5,
+        boxShadow: '0px 3px 5px 2px rgba(0, 0, 0, .3)', // Add drop shadow
+        fontWeight: 'bold' // Bold font
+      }}
+      onClick={handleClickBack}
+    >
+        Back
+      </Button>
+      </Stack>
   </Fragment>);
 }
 

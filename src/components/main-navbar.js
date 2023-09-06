@@ -66,7 +66,7 @@ export const MainNavbar = (props) => {
   const menuRef = useRef(null);
   const accountRef = useRef(null);
   const { user } = useAuth();
-  const { loggedIn, setLoggedIn, assetlayerClient } = useAssetLayer();
+  const { loggedIn, setLoggedIn, unityOn, assetlayerClient } = useAssetLayer();
 
   const handleOpenMenu = () => {
     setMenuOpen(true);
@@ -81,6 +81,9 @@ export const MainNavbar = (props) => {
     setAccountPopoverOpen(false);
   };
 
+  if (unityOn) {
+    return null;
+  } else {
   return (
     <AppBar
       elevation={0}
@@ -180,6 +183,19 @@ export const MainNavbar = (props) => {
                 </Typography>
               </Button>
             </NextLink>
+            <NextLink href="/play" passHref legacyBehavior>
+              <Button
+                sx={{
+                  borderRadius: 1,
+                  py: "0.25em",
+                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                }}
+              >
+                <Typography color="textSecondary" variant="subtitle2">
+                  Play
+                </Typography>
+              </Button>
+            </NextLink>
           </Box>
           {loggedIn && (
             <Button
@@ -224,5 +240,5 @@ export const MainNavbar = (props) => {
         </Toolbar>
       </Container>
     </AppBar>
-  );
+  );}
 };

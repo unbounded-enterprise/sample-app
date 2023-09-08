@@ -351,7 +351,7 @@ return () => {
         zIndex: 1000,  // any value higher than the z-index of your navbar
         visibility: (isLoaded) ? "visible" : "hidden",
         width: '100%', 
-        height: '90%' 
+        height: '80vh' 
       }}
     />
     <Button 

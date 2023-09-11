@@ -19,13 +19,12 @@ import { UserCircle as UserCircleIcon } from "../icons/user-circle";
 import { AccountPopover } from "./account-popover";
 import { useAuth } from "src/hooks/use-auth";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js";
+import "@fontsource/chango";
 
 const menuItems = [
-  { label: "NFT Explorer", value: "explorerMenuItem", href: "/explorer" },
-  { label: "My NFTs", value: "nftsMenuItem", href: "/inventory" },
-  { label: "Marketplace", value: "marketMenuItem", href: "/marketplace" },
-  { label: "Store", value: "storeMenuItem", href: "/store" },
-  { label: "Docs", value: "docsMenuItem", href: "https://docs.assetlayer.com" },
+  { label: "Play", value: "playMenuItem", href: "/play" },
+  { label: "Shop", value: "shopMenuItem", href: "/shop" },
+  { label: "My Assets", value: "assetsMenuItem", href: "/inventory" }
 ];
 
 export const MenuPopover = (props) => {
@@ -131,7 +130,7 @@ export const MainNavbar = (props) => {
           <Box
             sx={{ alignItems: "center", display: { xs: "none", md: "flex" } }}
           >
-            <NextLink href="/explorer" passHref legacyBehavior>
+            <NextLink href="/play" passHref legacyBehavior>
               <Button
                 sx={{
                   borderRadius: 1,
@@ -139,8 +138,41 @@ export const MainNavbar = (props) => {
                   "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
                 }}
               >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Explorer
+                <Typography variant="subtitle1" color="#FF4D0D"
+            fontFamily="Chango"
+            sx={{
+              textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+            }}>
+                  Play
+                </Typography>
+              </Button>
+            </NextLink>
+            <NextLink href="/shop" passHref legacyBehavior>
+              <Button
+                sx={{
+                  borderRadius: 1,
+                  py: "0.25em",
+                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                }}
+              >
+                <Typography variant="subtitle1" color="#FF4D0D"
+            fontFamily="Chango"
+            sx={{
+              textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+            }}>
+                  Shop
                 </Typography>
               </Button>
             </NextLink>
@@ -152,47 +184,18 @@ export const MainNavbar = (props) => {
                   "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
                 }}
               >
-                <Typography color="textSecondary" variant="subtitle2">
+                <Typography variant="subtitle1" color="#FF4D0D"
+            fontFamily="Chango"
+            sx={{
+              textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+            }}>
                   My Assets
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink href="/marketplace" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Marketplace
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink href="/store" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Store
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink href="/play" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Play
                 </Typography>
               </Button>
             </NextLink>
@@ -209,9 +212,19 @@ export const MainNavbar = (props) => {
                 "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
               }}
             >
-              <Typography color="textSecondary" variant="subtitle2">
-                Logout
-              </Typography>
+              <Typography variant="subtitle1" color="#FF4D0D"
+            fontFamily="Chango"
+            sx={{
+              textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+            }}>
+                  Logout
+                </Typography>
             </Button>
           )}
 

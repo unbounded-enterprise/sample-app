@@ -10,7 +10,8 @@ export default function getCollectionsHandler(req:NextApiRequest, res:NextApiRes
         const handleError = (e:any) => errorHandling(e, resolve, res);
 
         try {
-            const { slotId, idOnly, includeDeactivated } = req.body;
+            console.log(req.query);
+            const { slotId, idOnly, includeDeactivated } = { ...req.body, ...req.query } as GetCollectionsProps;
 
             if (!slotId) throw new BasicError('missing slotId', 409);
 

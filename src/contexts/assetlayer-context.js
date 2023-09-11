@@ -12,6 +12,7 @@ export const AssetLayerProvider = ({ children }) => {
   const [assetlayerClient, setAssetLayerClient] = useState(new AssetLayer({baseUrl: "/api"}));
   const [loggedIn, setLoggedIn] = useState(false);
   const [unityOn, setUnityOn] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
 
   const getIsLoggedIn = async () => {
     return assetlayerClient.initialize();
@@ -33,7 +34,9 @@ export const AssetLayerProvider = ({ children }) => {
     loggedIn,
     setLoggedIn,
     unityOn,
-    setUnityOn
+    setUnityOn,
+    gameEnded,
+    setGameEnded
   };
 
   return (

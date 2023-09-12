@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { AssetLayer } from '@assetlayer/sdk-client';
 import { get } from 'http';
 
@@ -14,25 +14,55 @@ export const AssetLayerProvider = ({ children }) => {
   const [unityOn, setUnityOn] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
   const [user, setUser] = useState(null);
+  const [balance, setBalance] = useState(null);
+  const runOnceRef = useRef(false);
 
-  const getIsLoggedIn = async () => {
+  async function getIsLoggedIn() {
     return assetlayerClient.initialize();
   }
 
-  const getUser = async () => {
-    const { result: user } = await assetlayerClient.users.safe.getUser();
+  async function loadUser() {
+    const { result: user, error } = 
+      await assetlayerClient.users.safe.getUser();
+    if (user) setUser(user);
     return user;
+  };
+
+  async function loadCurrencyBalance() {
+    const { result: balance, error } =
+      await assetlayerClient.currencies.safe.getCurrencyBalance();
+    if (balance) setBalance(balance);
+    return balance;
+  }
+
+  async function handleUserLogin(loggedIn) {
+    if (loggedIn) {
+      if (!user) await loadUser();
+      if (!balance) await loadCurrencyBalance();
+    }
+    else {
+      if (user) setUser(null);
+      if (balance) setBalance(null);
+    }
+
+    setLoggedIn(loggedIn);
   }
 
   useEffect(() => {
+    if (runOnceRef.current) return;
+
     getIsLoggedIn()
       .then((isLoggedIn) => {
-        setLoggedIn(isLoggedIn);
+        handleUserLogin(isLoggedIn);
       })
       .catch((e) => { 
         const error = parseBasicErrorClient(e);
         console.log('setting error: ', error.message);
       });
+
+    return () => {
+      runOnceRef.current = true;
+    }
   }, []);
 
   useEffect(() => {
@@ -51,13 +81,13 @@ export const AssetLayerProvider = ({ children }) => {
   const value = {
     assetlayerClient,
     loggedIn,
-    setLoggedIn,
+    handleUserLogin,
     unityOn,
     setUnityOn,
     gameEnded,
     setGameEnded,
     user,
-    setUser
+    balance,
   };
 
   return (

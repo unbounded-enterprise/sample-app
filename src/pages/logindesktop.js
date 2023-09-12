@@ -14,20 +14,18 @@ const Play = () => {
   const [email, setEmail] = useState("");
   const [emailAlt, setEmailAlt] = useState("");
   const [newUser, setNewUser] = useState(false);
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   const runOnceRef = useRef(false);
 
   function onInitialized() {
-    setLoggedIn(true);
+    handleUserLogin(true);
   }
 
   useEffect(() => {
     if (!loggedIn || !assetlayerClient.didToken ) return;
     assetlayerClient.users.getUser().then(user => {
-          contactUnityEncrypted(assetlayerClient.didToken);
-          
-
-  })}, [loggedIn]);
+      contactUnityEncrypted(assetlayerClient.didToken); })
+  }, [loggedIn]);
 
   async function contactUnityEncrypted(token) {
     const key = CryptoJS.enc.Utf8.parse('1234567812345678'); // 128-bit key
@@ -81,7 +79,7 @@ const Play = () => {
     }
   }
 
-  async function logoutCLicked() {
+  async function logoutClicked() {
     assetlayerClient.logoutUser();
     setInitialized(false);  
   }

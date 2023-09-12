@@ -3,10 +3,10 @@ import { Button, Box } from '@mui/material'; // Import Box for additional stylin
 import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
 
 const LoginButton = () => {
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client
 
   const handleLogin = async () => {
-    await assetlayerClient.loginUser({ onSuccess: async () => setLoggedIn(true) });
+    await assetlayerClient.loginUser({ onSuccess: async () => handleUserLogin(true) });
   };
 
   return (

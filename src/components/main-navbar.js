@@ -24,7 +24,7 @@ import "@fontsource/chango";
 const menuItems = [
   { label: "Play", value: "playMenuItem", href: "/play" },
   { label: "Shop", value: "shopMenuItem", href: "/shop" },
-  { label: "My Assets", value: "assetsMenuItem", href: "/inventory" }
+  { label: "My Assets", value: "assetsMenuItem", href: "/assets" }
 ];
 
 export const MenuPopover = (props) => {
@@ -64,8 +64,7 @@ export const MainNavbar = (props) => {
   const [accountPopoverOpen, setAccountPopoverOpen] = useState(false);
   const menuRef = useRef(null);
   const accountRef = useRef(null);
-  const { user } = useAuth();
-  const { loggedIn, setLoggedIn, unityOn, assetlayerClient } = useAssetLayer();
+  const { loggedIn, handleUserLogin, unityOn, user, assetlayerClient } = useAssetLayer();
 
   const handleOpenMenu = () => {
     setMenuOpen(true);
@@ -176,7 +175,7 @@ export const MainNavbar = (props) => {
                 </Typography>
               </Button>
             </NextLink>
-            <NextLink href="/inventory" passHref legacyBehavior>
+            <NextLink href="/assets" passHref legacyBehavior>
               <Button
                 sx={{
                   borderRadius: 1,
@@ -200,34 +199,6 @@ export const MainNavbar = (props) => {
               </Button>
             </NextLink>
           </Box>
-          {loggedIn && (
-            <Button
-              onClick={() => {
-                assetlayerClient.logoutUser();
-                setLoggedIn(false);
-              }}
-              sx={{
-                borderRadius: 1,
-                py: "0.25em",
-                "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-              }}
-            >
-              <Typography variant="subtitle1" color="#FF4D0D"
-            fontFamily="Chango"
-            sx={{
-              textShadow: `
-        2px 2px 0 white, 
-        -2px -2px 0 white, 
-        2px -2px 0 white, 
-        -2px 2px 0 white,
-        3px 3px 8px rgba(0, 0, 0, 0.5)
-      `,
-            }}>
-                  Logout
-                </Typography>
-            </Button>
-          )}
-
           {user && (
             <Box
               component={ButtonBase}
@@ -244,7 +215,7 @@ export const MainNavbar = (props) => {
                   height: 50,
                   width: 50,
                 }}
-                src={user.avatarUrl}
+                src={"favicon.ico"}
               >
                 <UserCircleIcon fontSize="small" />
               </Avatar>

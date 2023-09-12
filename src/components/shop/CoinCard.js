@@ -1,14 +1,19 @@
 import { Box, Card, Typography } from '@mui/material';
 import "@fontsource/chango";
 
-export const CoinCard = ({ price, quantity }) => {
+export const CoinCard = ({ price, quantity, onClick }) => {
   return (
-    <Card 
+    <Card onClick={onClick}
       sx={{
         border: '3px solid black',
         backgroundColor: 'white',
         borderRadius: '15px',
-        textAlign: 'center'
+        textAlign: 'center',
+        cursor: 'pointer',
+        '&:hover': {
+          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+          boxShadow: '0px 3px 5px 2px rgba(0, 0, 0, .3)'
+        }
       }}
     >
       {/* Image */}

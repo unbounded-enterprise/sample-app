@@ -64,7 +64,7 @@ const globalScrollbarStyles = `
 `;
 
 const HomePage = () => {
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   //const [user, setUser] = useState(null);
 
  

@@ -17,13 +17,13 @@ const Play = () => {
   const [email, setEmail] = useState("");
   const [unityLoaded, setUnityLoaded] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
-  const { assetlayerClient, loggedIn, setLoggedIn, unityOn, setUnityOn, gameEnded, setGameEnded } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin, unityOn, setUnityOn, gameEnded, setGameEnded } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   const router = useRouter();
 
   const sendMessageRef = useRef(null);
   const runOnceRef = useRef(false);
   function onInitialized() {
-    setLoggedIn(true);
+    handleUserLogin(true);
     setInitialized(true);
   }
 
@@ -61,9 +61,9 @@ const Play = () => {
     }
   }, []);
 
-  async function logoutCLicked() {
+  async function logoutClicked() {
     assetlayerClient.logoutUser();
-    setLoggedIn(false);
+    handleUserLogin(false);
     setInitialized(false);  
   }
 
@@ -197,10 +197,10 @@ const Play = () => {
 
 const PlayUnity = ({ sendMessageRef, setUnityLoaded, gameEnded, setGameEnded }) => {
   const { unityProvider, loadingProgression, isLoaded, unload, sendMessage, addEventListener, removeEventListener } = useUnityContext({
-    loaderUrl: "unity/Build/WEBGL.loader.js",
-    dataUrl: "unity/Build/WEBGL.data",
-    frameworkUrl: "unity/Build/WEBGL.framework.js",
-    codeUrl: "unity/Build/WEBGL.wasm",
+    loaderUrl: "unity/Build/WebGL.loader.js",
+    dataUrl: "unity/Build/WebGL.data",
+    frameworkUrl: "unity/Build/WebGL.framework.js",
+    codeUrl: "unity/Build/WebGL.wasm",
   });
 
   const handleGameOver = useCallback((userName, score) => {

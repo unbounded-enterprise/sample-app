@@ -15,7 +15,7 @@ export const HomeHero = (props) => {
   const [redirectionUrl, setRedirectionUrl] = useState("/");
   const { app } = props;
   const [user, setUser] = useState(null);
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
   const theme = useTheme();
 

@@ -24,7 +24,7 @@ import "@fontsource/chango";
 const menuItems = [
   { label: "Play", value: "playMenuItem", href: "/play" },
   { label: "Shop", value: "shopMenuItem", href: "/shop" },
-  { label: "My Assets", value: "assetsMenuItem", href: "/inventory" }
+  { label: "My Assets", value: "assetsMenuItem", href: "/assets" }
 ];
 
 export const MenuPopover = (props) => {
@@ -175,7 +175,7 @@ export const MainNavbar = (props) => {
                 </Typography>
               </Button>
             </NextLink>
-            <NextLink href="/inventory" passHref legacyBehavior>
+            <NextLink href="/assets" passHref legacyBehavior>
               <Button
                 sx={{
                   borderRadius: 1,

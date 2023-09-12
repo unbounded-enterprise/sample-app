@@ -25,7 +25,7 @@ export const AssetCard = ({ search, collection, asset, slot }) => {
           }}> 
             <img src={menuViewExpressionValue} alt={'Collection Image'} style={{ maxHeight: '300px', maxWidth: '300px', placeSelf: 'center' }} />
             <Typography variant="p2" sx={{ padding: 1, fontWeight: "bold" }}>
-              {collection.collectionName} #{asset.serial}
+              {collection.collectionId} #{asset.serial}
             </Typography>
           </Card>
         </NextLink>

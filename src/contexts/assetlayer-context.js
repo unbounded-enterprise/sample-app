@@ -13,9 +13,15 @@ export const AssetLayerProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [unityOn, setUnityOn] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
+  const [user, setUser] = useState(null);
 
   const getIsLoggedIn = async () => {
     return assetlayerClient.initialize();
+  }
+
+  const getUser = async () => {
+    const { result: user } = await assetlayerClient.users.safe.getUser();
+    return user;
   }
 
   useEffect(() => {
@@ -29,6 +35,19 @@ export const AssetLayerProvider = ({ children }) => {
       });
   }, []);
 
+  useEffect(() => {
+    if(loggedIn){
+      getUser()
+      .then((newUser) => {
+        setUser(newUser);
+      })
+      .catch((e) => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+    }
+  }, [loggedIn]);
+
   const value = {
     assetlayerClient,
     loggedIn,
@@ -36,7 +55,9 @@ export const AssetLayerProvider = ({ children }) => {
     unityOn,
     setUnityOn,
     gameEnded,
-    setGameEnded
+    setGameEnded,
+    user,
+    setUser
   };
 
   return (

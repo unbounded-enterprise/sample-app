@@ -65,19 +65,6 @@ export const AssetLayerProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if(loggedIn){
-      getUser()
-      .then((newUser) => {
-        setUser(newUser);
-      })
-      .catch((e) => { 
-        const error = parseBasicErrorClient(e);
-        console.log('setting error: ', error.message);
-      });
-    }
-  }, [loggedIn]);
-
   const value = {
     assetlayerClient,
     loggedIn,

@@ -64,8 +64,7 @@ export const MainNavbar = (props) => {
   const [accountPopoverOpen, setAccountPopoverOpen] = useState(false);
   const menuRef = useRef(null);
   const accountRef = useRef(null);
-  const { user } = useAuth();
-  const { loggedIn, handleUserLogin, unityOn, assetlayerClient } = useAssetLayer();
+  const { loggedIn, handleUserLogin, unityOn, user, assetlayerClient } = useAssetLayer();
 
   const handleOpenMenu = () => {
     setMenuOpen(true);
@@ -200,34 +199,6 @@ export const MainNavbar = (props) => {
               </Button>
             </NextLink>
           </Box>
-          {loggedIn && (
-            <Button
-              onClick={() => {
-                assetlayerClient.logoutUser();
-                handleUserLogin(false);
-              }}
-              sx={{
-                borderRadius: 1,
-                py: "0.25em",
-                "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-              }}
-            >
-              <Typography variant="subtitle1" color="#FF4D0D"
-            fontFamily="Chango"
-            sx={{
-              textShadow: `
-        2px 2px 0 white, 
-        -2px -2px 0 white, 
-        2px -2px 0 white, 
-        -2px 2px 0 white,
-        3px 3px 8px rgba(0, 0, 0, 0.5)
-      `,
-            }}>
-                  Logout
-                </Typography>
-            </Button>
-          )}
-
           {user && (
             <Box
               component={ButtonBase}

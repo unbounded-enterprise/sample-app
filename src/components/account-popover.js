@@ -10,15 +10,14 @@ import { useAssetLayer } from "src/contexts/assetlayer-context.js";
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props;
-  const { loggedIn, setLoggedIn, unityOn, user, setUser, assetlayerClient } = useAssetLayer();
+  const { loggedIn, handleUserLogin, unityOn, user, assetlayerClient } = useAssetLayer();
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
       onClose?.();
       await assetlayerClient.logoutUser();
-      setLoggedIn(false);
-      setUser(null);
+      handleUserLogin(false);
       router.push('/').catch(console.error);
     } catch (err) {
       console.error(err);

@@ -66,7 +66,7 @@ const MyAssetsPage = () => {
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenAsset, setChosenAsset] = useState(null);
   const [menuViewExpressionValue, setMenuViewExpressionValue] = useState(null);
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -252,7 +252,7 @@ const MyAssetsPage = () => {
         ) : (
           <LoginContent
             assetlayerClient={assetlayerClient}
-            setLoggedIn={setLoggedIn}
+            handleUserLogin={handleUserLogin}
           />
         )}
       </Card>
@@ -264,10 +264,10 @@ MyAssetsPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
 export default MyAssetsPage;
 
-const LoginContent = ({ assetlayerClient, setLoggedIn }) => {
+const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
   const [email, setEmail] = useState("");
   function onInitialized() {
-    setLoggedIn(true);
+    handleUserLogin(true);
   }
   return (
     <Stack alignItems="center" justifyContent="center" sx={{ height: "100vh" }}>

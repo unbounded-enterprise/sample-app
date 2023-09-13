@@ -293,6 +293,7 @@ const BuyBallsContent = ({ collections }) => {
 };
 
 const PurchaseCoinsHeader = ({ text, onBack }) => {
+  
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
       <Box onClick={onBack} sx={{ width: '5rem', height: '100%', py: '0.4rem', cursor: 'pointer' }}>
@@ -317,6 +318,7 @@ const PurchaseCoinsHeader = ({ text, onBack }) => {
 };
 
 const PurchaseCoinsBody = ({ bundle }) => {
+  
   return (<>
     <Box textAlign="center" pb={2}>
       <Typography
@@ -347,19 +349,52 @@ const PurchaseCoinsBody = ({ bundle }) => {
 };
 
 const PurchaseCoinsCurrencyButtons = ({ setCurrency }) => {
+  
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: '1.5rem', sm: '2.5rem' }} sx={{ 
       justifyContent: 'center', alignItems: 'center', width: '100%' 
     }}>
       <Button onClick={()=>setCurrency("USD")} sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
         background: 'linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-        boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+        boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        cursor: "pointer",
+        position: "relative", // Set the card's position to relative
+        "&:hover::before": {
+          // Use the ::before pseudo-element for the overlay
+          content: '""',
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+          zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+        },
+        "&:hover": {
+          boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        },
       }}>
         Buy with USD
       </Button>
       <Button onClick={()=>setCurrency("BSV")} sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
         background: 'linear-gradient(180deg, #135322 0%, #31C052 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-        boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+        boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        cursor: "pointer",
+        position: "relative", // Set the card's position to relative
+        "&:hover::before": {
+          // Use the ::before pseudo-element for the overlay
+          content: '""',
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+          zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+        },
+        "&:hover": {
+          boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        },
       }}>
         Buy with Handcash
       </Button>
@@ -418,6 +453,7 @@ const ShopContent = ({ user, balance, collections }) => {
       <Card sx={{ my: '1rem', p: '1rem', pb: '3rem', borderRadius: '15px', maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
         <Stack spacing="1rem" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
           <PurchaseCoinsHeader text="Purchase Coins" onBack={() => setSelectedBundle(undefined)}/>
+          <Box sx={{ width: "100%", maxWidth: "5rem" }} />
           <PurchaseCoinsBody bundle={selectedBundle}/>
           <PurchaseCoinsCurrencyButtons setCurrency={setSelectedCurrency}/>
         </Stack>
@@ -520,13 +556,13 @@ const ShopPage = () => {
   }, []);
 
   //if (!loggedIn) return <LoginButton />;
-  if (!(collections)) return loading;
+  //if (!(collections)) return loading;
 
   return (
     <main style={mainStyleProps}>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
         <Container maxWidth="md">
-          <ShopContent user={user} balance={balance} collections={collections}/>
+          {collections ? <ShopContent user={user} balance={balance} collections={collections}/> : <CenteredImage src="/static/loader.gif" alt="placeholder" />}
         </Container>
       </Box>
     </main>

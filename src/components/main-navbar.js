@@ -24,7 +24,7 @@ import "@fontsource/chango";
 const menuItems = [
   { label: "Play", value: "playMenuItem", href: "/play" },
   { label: "Shop", value: "shopMenuItem", href: "/shop" },
-  { label: "My Assets", value: "assetsMenuItem", href: "/assets" }
+  { label: "My Stuff", value: "assetsMenuItem", href: "/assets" },
 ];
 
 export const MenuPopover = (props) => {
@@ -64,7 +64,8 @@ export const MainNavbar = (props) => {
   const [accountPopoverOpen, setAccountPopoverOpen] = useState(false);
   const menuRef = useRef(null);
   const accountRef = useRef(null);
-  const { loggedIn, handleUserLogin, unityOn, user, assetlayerClient } = useAssetLayer();
+  const { loggedIn, handleUserLogin, unityOn, user, assetlayerClient } =
+    useAssetLayer();
 
   const handleOpenMenu = () => {
     setMenuOpen(true);
@@ -82,147 +83,171 @@ export const MainNavbar = (props) => {
   if (unityOn) {
     return null;
   } else {
-  return (
-    <AppBar
-      elevation={0}
-      sx={{
-        backgroundColor: "background.paper",
-        borderBottomColor: "divider",
-        borderBottomStyle: "solid",
-        borderBottomWidth: 1,
-        color: "text.secondary",
-      }}
-    >
-      <MenuPopover
-        anchorEl={menuRef.current}
-        close={handleCloseMenu}
-        open={menuOpen}
-        items={menuItems}
-      />
-      <AccountPopover
-        anchorEl={accountRef.current}
-        onClose={handleCloseAccountPopover}
-        open={accountPopoverOpen}
-      />
-      <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ minHeight: 64 }}>
-          <NextLink href="/" passHref>
-            <img src="static/Rolltopia Logo Just Text.png" alt="logo" style={{ height: "50px" }} sx={{ pt:1, display: {md: "inline", sx:"none"}}}/>
-          </NextLink>
-          <Box
-            onClick={handleOpenMenu}
-            ref={menuRef}
-            disabled={{ md: true }}
-            sx={{
-              display: { xs: "flex", md: "none" },
-              justifyContent: "center",
-              alignItems: "center",
-              cursor: "pointer",
-              p: "1rem",
-            }}
-          >
-            <IconButton color="inherit">
-              <MenuIcon fontSize="small" />
-            </IconButton>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box
-            sx={{ alignItems: "center", display: { xs: "none", md: "flex" } }}
-          >
-            <NextLink href="/play" passHref legacyBehavior>
-              <Button
+    return (
+      <AppBar
+        elevation={0}
+        sx={{
+          backgroundColor: "background.paper",
+          borderBottomColor: "divider",
+          borderBottomStyle: "solid",
+          borderBottomWidth: 1,
+          color: "text.secondary",
+        }}
+      >
+        <MenuPopover
+          anchorEl={menuRef.current}
+          close={handleCloseMenu}
+          open={menuOpen}
+          items={menuItems}
+        />
+        <AccountPopover
+          anchorEl={accountRef.current}
+          onClose={handleCloseAccountPopover}
+          open={accountPopoverOpen}
+        />
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ minHeight: 64 }}>
+            <NextLink href="/" passHref>
+              <ButtonBase
                 sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                  "&:hover": {
+                    backgroundColor: "rgba(155,155,155,0.1)", // This is the hover effect
+                  },
                 }}
               >
-                <Typography variant="subtitle1" color="#FF4D0D"
-            fontFamily="Chango"
-            sx={{
-              textShadow: `
-        2px 2px 0 white, 
-        -2px -2px 0 white, 
-        2px -2px 0 white, 
-        -2px 2px 0 white,
-        3px 3px 8px rgba(0, 0, 0, 0.5)
-      `,
-            }}>
-                  Play
-                </Typography>
-              </Button>
+                <img
+                  src="static/Rolltopia Logo Just Text.png"
+                  alt="logo"
+                  style={{ height: "50px" }}
+                  sx={{ pt: 1, display: { md: "inline", sx: "none" } }}
+                />
+              </ButtonBase>
             </NextLink>
-            <NextLink href="/shop" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography variant="subtitle1" color="#FF4D0D"
-            fontFamily="Chango"
-            sx={{
-              textShadow: `
-        2px 2px 0 white, 
-        -2px -2px 0 white, 
-        2px -2px 0 white, 
-        -2px 2px 0 white,
-        3px 3px 8px rgba(0, 0, 0, 0.5)
-      `,
-            }}>
-                  Shop
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink href="/assets" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography variant="subtitle1" color="#FF4D0D"
-            fontFamily="Chango"
-            sx={{
-              textShadow: `
-        2px 2px 0 white, 
-        -2px -2px 0 white, 
-        2px -2px 0 white, 
-        -2px 2px 0 white,
-        3px 3px 8px rgba(0, 0, 0, 0.5)
-      `,
-            }}>
-                  My Assets
-                </Typography>
-              </Button>
-            </NextLink>
-          </Box>
-          {user && (
+
             <Box
-              component={ButtonBase}
-              onClick={handleOpenAccountPopover}
-              ref={accountRef}
+              onClick={handleOpenMenu}
+              ref={menuRef}
+              disabled={{ md: true }}
               sx={{
+                display: { xs: "flex", md: "none" },
+                justifyContent: "center",
                 alignItems: "center",
-                display: "flex",
-                px: "1rem",
+                cursor: "pointer",
+                p: "1rem",
               }}
             >
-              <Avatar
-                sx={{
-                  height: 50,
-                  width: 50,
-                }}
-                src={"favicon.ico"}
-              >
-                <UserCircleIcon fontSize="small" />
-              </Avatar>
+              <IconButton color="inherit">
+                <MenuIcon fontSize="small" />
+              </IconButton>
             </Box>
-          )}
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );}
+            <Box sx={{ flexGrow: 1 }} />
+            <Box
+              sx={{ alignItems: "center", display: { xs: "none", md: "flex" } }}
+            >
+              <NextLink href="/play" passHref legacyBehavior>
+                <Button
+                  sx={{
+                    borderRadius: 1,
+                    py: "0.25em",
+                    "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    color="#FF4D0D"
+                    fontFamily="Chango"
+                    sx={{
+                      textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+                    }}
+                  >
+                    Play
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href="/shop" passHref legacyBehavior>
+                <Button
+                  sx={{
+                    borderRadius: 1,
+                    py: "0.25em",
+                    "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    color="#FF4D0D"
+                    fontFamily="Chango"
+                    sx={{
+                      textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+                    }}
+                  >
+                    Shop
+                  </Typography>
+                </Button>
+              </NextLink>
+              <NextLink href="/assets" passHref legacyBehavior>
+                <Button
+                  sx={{
+                    borderRadius: 1,
+                    py: "0.25em",
+                    "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                  }}
+                >
+                  <Typography
+                    variant="subtitle1"
+                    color="#FF4D0D"
+                    fontFamily="Chango"
+                    sx={{
+                      textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+                    }}
+                  >
+                    My Stuff
+                  </Typography>
+                </Button>
+              </NextLink>
+            </Box>
+            {user && (
+              <Box
+                component={ButtonBase}
+                onClick={handleOpenAccountPopover}
+                ref={accountRef}
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                  px: "1rem",
+                }}
+              >
+                <Avatar
+                  sx={{
+                    height: 50,
+                    width: 50,
+                  }}
+                  src={"favicon.ico"}
+                >
+                  <UserCircleIcon fontSize="small" />
+                </Avatar>
+              </Box>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
+    );
+  }
 };

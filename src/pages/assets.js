@@ -173,11 +173,11 @@ const MyAssetsPage = () => {
 
   useEffect(() => {
     if (chosenAsset) {
-        chosenAsset.expressionValues.forEach((element) => {
-            if (element.expression.expressionName === "Menu View") {
-              setMenuViewExpressionValue(element.value);
-            }
-          });
+      chosenAsset.expressionValues.forEach((element) => {
+        if (element.expression.expressionName === "Menu View") {
+          setMenuViewExpressionValue(element.value);
+        }
+      });
     }
   }, [chosenAsset]);
 
@@ -234,6 +234,7 @@ const MyAssetsPage = () => {
             <CollectionSelectedContent
               searchSerial={searchSerial}
               assets={assets}
+              setAssets={setAssets}
               collection={chosenCollection}
               handleSearchSerial={handleSearchSerial}
               setChosenAsset={setChosenAsset}
@@ -313,16 +314,19 @@ const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
             sx={{
               marginBottom: "2em",
               width: "100%",
-              height: "50px",
               backgroundColor: "white",
               color: "black",
               borderRadius: "5px",
-              pl: 2, // padding-left
+              "& .MuiInputBase-input": {
+                height: "50px",
+                padding: "0 8px", // 0 top/bottom padding, 8px left/right padding
+                boxSizing: "border-box",
+              },
             }}
             placeholder="Your Email Address"
             InputProps={{
               disableUnderline: true,
-              style: { color: "gray", lineHeight: "50px" }, // Vertically center the text
+              style: { color: "gray" },
             }}
           />
           <Button
@@ -330,17 +334,38 @@ const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
             color="primary"
             sx={{
               backgroundColor: "#045CD2", // Set the background color
-              "&:hover": {
-                backgroundColor: "#045CD2", // Set hover color
-              },
               width: "100%",
               mb: 5,
               boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
               fontWeight: "bold", // Bold font
+              "&:hover::before": {
+                // Use the ::before pseudo-element for the overlay
+                content: '""',
+                position: "absolute",
+                top: 0,
+                borderRadius: "5px",
+                right: 0,
+                bottom: 0,
+                left: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+              },
+              "&:hover": {
+                backgroundColor: "#045CD2", // Keep the background color consistent when hovered
+                boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
+              },
             }}
             onClick={() => {
-              assetlayerClient.loginUser({ email, onSuccess: onInitialized });
-              setEmail("");
+              if (email.length > 0) {
+                assetlayerClient.loginUser({ email, onSuccess: onInitialized });
+                setEmail("");
+              } else {
+                assetlayerClient.loginUser({
+                  email: "abc",
+                  onSuccess: onInitialized,
+                });
+                setEmail("");
+              }
             }}
           >
             Get Started
@@ -370,8 +395,6 @@ const MainCardContent = ({
   collectionCounts,
   setChosenCollection,
 }) => {
-  if (!(collections && collectionCounts)) return loading;
-
   return (
     <Box sx={{ backgroundColor: "none", py: 5 }}>
       <Box
@@ -417,24 +440,28 @@ const MainCardContent = ({
             />
           </Box>
         </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={1} sx={{ p: 1 }}>
-            {collections.map((collection) => (
-              <Grid item xs={12} md={4} xl={3} key={collection.collectionId}>
-                {" "}
-                {/* Adjusted this line */}
-                <CollectionCard
-                  search={search}
-                  collection={collection}
-                  assetCount={activeCollections[collection.collectionId]}
-                  onCardClick={() => {
-                    setChosenCollection(collection);
-                  }} // Pass the callback here
-                />
-              </Grid>
-            ))}
+        {collections && collectionCounts ? (
+          <Grid item xs={12}>
+            <Grid container spacing={1} sx={{ p: 1 }}>
+              {collections.map((collection) => (
+                <Grid item xs={12} md={4} xl={3} key={collection.collectionId}>
+                  {" "}
+                  {/* Adjusted this line */}
+                  <CollectionCard
+                    search={search}
+                    collection={collection}
+                    assetCount={activeCollections[collection.collectionId]}
+                    onCardClick={() => {
+                      setChosenCollection(collection);
+                    }} // Pass the callback here
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-        </Grid>
+        ) : (
+          <CenteredImage src="/static/loader.gif" alt="placeholder" />
+        )}
       </Box>
     </Box>
   );
@@ -443,13 +470,12 @@ const MainCardContent = ({
 const CollectionSelectedContent = ({
   searchSerial,
   assets,
+  setAssets,
   handleSearchSerial,
   collection,
   setChosenAsset,
   setChosenCollection,
 }) => {
-  if (!assets) return loading;
-
   return (
     <Box sx={{ backgroundColor: "none", py: 5 }}>
       <Box
@@ -474,7 +500,10 @@ const CollectionSelectedContent = ({
             edge="start"
             color="inherit"
             aria-label="back"
-            onClick={() => setChosenCollection(null)}
+            onClick={() => {
+              setChosenCollection(null);
+              setAssets(null);
+            }}
             sx={{
               color: "#FF4D0D",
               border: "2px solid white", // White outline
@@ -528,30 +557,40 @@ const CollectionSelectedContent = ({
             />
           </Box>
         </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={1} sx={{ p: 1 }}>
-            {assets.map((asset) => (
-              <Grid item xs={12} md={4} xl={3} key={asset.assetId}>
-                {" "}
-                {/* Adjusted this line */}
-                <AssetCard
-                  search={searchSerial}
-                  collection={collection}
-                  asset={asset}
-                  onCardClick={() => {
-                    setChosenAsset(asset);
-                  }} // Pass the callback here
-                />
-              </Grid>
-            ))}
+        {assets ? (
+          <Grid item xs={12}>
+            <Grid container spacing={1} sx={{ p: 1 }}>
+              {assets.map((asset) => (
+                <Grid item xs={12} md={4} xl={3} key={asset.assetId}>
+                  {" "}
+                  {/* Adjusted this line */}
+                  <AssetCard
+                    search={searchSerial}
+                    collection={collection}
+                    asset={asset}
+                    onCardClick={() => {
+                      setChosenAsset(asset);
+                    }} // Pass the callback here
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-        </Grid>
+        ) : (
+          <CenteredImage src="/static/loader.gif" alt="placeholder" />
+        )}
       </Box>
     </Box>
   );
 };
 
-const AssetSelectedContent = ({ asset, collection, setChosenAsset, menuViewExpressionValue, setMenuViewExpressionValue }) => {
+const AssetSelectedContent = ({
+  asset,
+  collection,
+  setChosenAsset,
+  menuViewExpressionValue,
+  setMenuViewExpressionValue,
+}) => {
   if (!asset && menuViewExpressionValue) return loading;
 
   return (
@@ -578,7 +617,10 @@ const AssetSelectedContent = ({ asset, collection, setChosenAsset, menuViewExpre
             edge="start"
             color="inherit"
             aria-label="back"
-            onClick={() => {setChosenAsset(null); setMenuViewExpressionValue(null)}}
+            onClick={() => {
+              setChosenAsset(null);
+              setMenuViewExpressionValue(null);
+            }}
             sx={{
               color: "#FF4D0D",
               border: "2px solid white", // White outline
@@ -617,18 +659,17 @@ const AssetSelectedContent = ({ asset, collection, setChosenAsset, menuViewExpre
             {collection.collectionName} #{asset.serial}
           </Typography>
         </Box>
-        <Stack alignItems='center' display="flex" py={2}>
+        <Stack alignItems="center" display="flex" py={2}>
           <img
             src={menuViewExpressionValue}
             alt="Asset Image"
             style={{ width: "60%", display: "block", marginBottom: "0" }}
           />
 
-        <Typography variant="h4" color="#1D2D59" fontFamily="Chango" py={2}>
-          Max Supply: {collection.maximum}
-        </Typography>
+          <Typography variant="h4" color="#1D2D59" fontFamily="Chango" py={2}>
+            Max Supply: {collection.maximum}
+          </Typography>
         </Stack>
-
       </Box>
     </Box>
   );

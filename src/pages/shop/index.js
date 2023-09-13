@@ -254,79 +254,168 @@ const ShopContent = ({ user, balance, collections }) => {
     setSelectedBundle(bundle);
   }
 
-  return ((selectedBundle === undefined) ? (
-      <Card sx={shopCardSx}>
-        <BalanceField balance={balance?.at(0)?.balance}/>
-        <BuyCoinsHeader/>
-        <BuyCoinsGrid selectBundle={selectBundle}/>
-        <BuyBallsContent collections={collections}/>
-      </Card>
-    ) : (
-      <Card sx={{ my: '1rem', p: '1rem', pb: '3rem', borderRadius: '15px', maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
-        <Stack spacing="1rem" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <Box onClick={()=>selectBundle(undefined)} sx={{ width: '5rem', height: '100%', py: '0.4rem', cursor: 'pointer' }}>
-              <Box sx={{ height: '3.5rem', pt: '0.5rem' }}>
-                <SvgIcon component={ChangoBackArrowOrange} viewBox="0 0 42 43" sx={{ width: '100%', height: '100%' }}/>
-              </Box>
+  return selectedBundle === undefined ? (
+    <Card sx={shopCardSx}>
+      <BalanceField balance={balance?.at(0)?.balance} />
+      <BuyCoinsHeader />
+      <BuyCoinsGrid selectBundle={selectBundle} />
+      <BuyBallsContent collections={collections} />
+    </Card>
+  ) : (
+    <Card
+      sx={{
+        my: "1rem",
+        p: "1rem",
+        pb: "3rem",
+        borderRadius: "15px",
+        maxHeight: "calc(100vh - 64px)",
+        overflowY: "auto",
+      }}
+    >
+      <Stack
+        spacing="1rem"
+        sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
+      >
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Box
+            onClick={() => selectBundle(undefined)}
+            sx={{
+              width: "5rem",
+              height: "100%",
+              py: "0.4rem",
+              cursor: "pointer",
+            }}
+          >
+            <Box sx={{ height: "3.5rem", pt: "0.5rem" }}>
+              <SvgIcon
+                component={ChangoBackArrowOrange}
+                viewBox="0 0 42 43"
+                sx={{ width: "100%", height: "100%" }}
+              />
             </Box>
-            <Box sx={{ pb: '0.25rem', height: '100%' }}>
-              <Typography
-                variant="h2"
-                textAlign="center"
-                color="#FF4D0D"
-                fontFamily="Chango"
-                sx={defaultTextSx}
-              >
-                Purchase Coins
-              </Typography>
-            </Box>
-            <Box sx={{ width: '100%', maxWidth: '5rem' }}/>
-          </Stack>
-          <Box textAlign="center" pb={2}>
+          </Box>
+          <Box sx={{ pb: "0.25rem", height: "100%" }}>
             <Typography
-              variant="h3"
-              color="#284B9B"
+              variant="h2"
+              textAlign="center"
+              color="#FF4D0D"
               fontFamily="Chango"
               sx={defaultTextSx}
             >
-              Buy {selectedBundle.quantity} Coins for
-            </Typography>
-            <Typography
-              variant="h3"
-              color="#284B9B"
-              fontFamily="Chango"
-              sx={defaultTextSx}
-            >
-              ${selectedBundle.price}
+              Purchase Coins
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', width: '100%', height: '100%', maxWidth:'15rem' }}>
-            <img
-              src="/static/coinImage.png"
-              alt="balance-icon"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </Box>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: '1.5rem', sm: '2.5rem' }} sx={{ 
-            justifyContent: 'center', alignItems: 'center', width: '100%' 
-          }}>
-            <Button sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
-              background: 'linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-              boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-            }}>
-              Buy with USD
-            </Button>
-            <Button sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
-              background: 'linear-gradient(180deg, #135322 0%, #31C052 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-              boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-            }}>
-              Buy with Handcash
-            </Button>
-          </Stack>
+          <Box sx={{ width: "100%", maxWidth: "5rem" }} />
         </Stack>
-      </Card>
-    )
+        <Box textAlign="center" pb={2}>
+          <Typography
+            variant="h3"
+            color="#284B9B"
+            fontFamily="Chango"
+            sx={defaultTextSx}
+          >
+            Buy {selectedBundle.quantity} Coins for
+          </Typography>
+          <Typography
+            variant="h3"
+            color="#284B9B"
+            fontFamily="Chango"
+            sx={defaultTextSx}
+          >
+            ${selectedBundle.price}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+            maxWidth: "15rem",
+          }}
+        >
+          <img
+            src="/static/coinImage.png"
+            alt="balance-icon"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </Box>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={{ xs: "1.5rem", sm: "2.5rem" }}
+          sx={{
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Button
+            sx={{
+              color: "white",
+              fontFamily: "Chango",
+              border: "2px solid white",
+              borderRadius: "4px",
+              background:
+                "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+              cursor: "pointer",
+              boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              position: "relative", // Set the card's position to relative
+              "&:hover::before": {
+                // Use the ::before pseudo-element for the overlay
+                content: '""',
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+              },
+              "&:hover": {
+                boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              },
+            }}
+          >
+            Buy with USD
+          </Button>
+          <Button
+            sx={{
+              color: "white",
+              fontFamily: "Chango",
+              border: "2px solid white",
+              borderRadius: "4px",
+              background:
+                "linear-gradient(180deg, #135322 0%, #31C052 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+              cursor: "pointer",
+              boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              position: "relative", // Set the card's position to relative
+              "&:hover::before": {
+                // Use the ::before pseudo-element for the overlay
+                content: '""',
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+              },
+              "&:hover": {
+                boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              },
+            }}
+          >
+            Buy with Handcash
+          </Button>
+        </Stack>
+      </Stack>
+    </Card>
   );
 };
 
@@ -367,13 +456,13 @@ const ShopPage = () => {
   }, []);
 
   //if (!loggedIn) return <LoginButton />;
-  if (!(collections)) return loading;
+  //if (!(collections)) return loading;
 
   return (
     <main style={mainStyleProps}>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
         <Container maxWidth="md">
-          <ShopContent user={user} balance={balance} collections={collections}/>
+          {collections ? <ShopContent user={user} balance={balance} collections={collections}/> : <CenteredImage src="/static/loader.gif" alt="placeholder" />}
         </Container>
       </Box>
     </main>

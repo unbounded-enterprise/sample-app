@@ -19,6 +19,7 @@
     "@emotion/server": "11.10.0",
     "@emotion/styled": "11.10.4",
     "@fontsource/chango": "^5.0.12",
+    "@fontsource/inter": "^5.0.8",
     "@handcash/handcash-connect": "0.6.2",
     "@mui/icons-material": "5.10.3",
     "@mui/lab": "5.0.0-alpha.99",

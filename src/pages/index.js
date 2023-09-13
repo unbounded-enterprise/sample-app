@@ -16,7 +16,7 @@ import React from "react";
 import { styled } from "@mui/system";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import the hook
 import "@fontsource/chango";
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import NextLink from "next/link";
 
 const CenteredImage = styled("img")({
@@ -67,7 +67,6 @@ const HomePage = () => {
   const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   //const [user, setUser] = useState(null);
 
- 
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = globalScrollbarStyles;
@@ -106,9 +105,9 @@ const HomePage = () => {
           },
         }}
       >
-       {/* Updated Text Sections */}
-       <Box textAlign="center" pb={4}>
-          <Typography variant="h4" color="white" fontFamily="Chango" > 
+        {/* Updated Text Sections */}
+        <Box textAlign="center" pb={4}>
+          <Typography variant="h4" color="white" fontFamily="Chango">
             Welcome to
           </Typography>
           <Typography
@@ -128,21 +127,33 @@ const HomePage = () => {
           >
             Rolltopia
           </Typography>
-          <Typography variant="body2" color="white" fontFamily="Chango" pb={4}>
-            Casual games that let you earn while you play
+          <Typography variant="p1" color="white" fontFamily="Chango" pb={4}>
+            A creator driven hyper-casual gaming universe for web and mobile.
           </Typography>
         </Box>
 
         {/* Updated Cards */}
         <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} style={{ maxWidth: "80%" }}>
+          <Grid item xs={12} style={{ maxWidth: "80%" }}>
             <NextLink href="/play" passHref legacyBehavior>
-
               <Card
                 sx={{
                   border: "1px solid white",
                   borderRadius: "15px",
                   overflow: "hidden",
+                  cursor: "pointer",
+                  position: "relative", // Set the card's position to relative
+                  "&:hover::before": {
+                    // Use the ::before pseudo-element for the overlay
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                    zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+                  },
                 }}
               >
                 <Box
@@ -151,7 +162,8 @@ const HomePage = () => {
                     alignItems: "center",
                     justifyContent: "space-between",
                     padding: "0.5rem 1rem",
-                    background: "linear-gradient(45deg, #045CD2 30%, #03A9F4 90%)", // Updated gradient color
+                    background:
+                      "linear-gradient(45deg, #045CD2 30%, #03A9F4 90%)",
                     borderBottom: "1px solid white",
                   }}
                 >
@@ -165,27 +177,28 @@ const HomePage = () => {
                   alt={`Card Image`}
                   style={{ width: "100%", display: "block" }}
                 />
-                </Card>
-                </NextLink>
-              </Grid>
-              <Grid item xs={12} style={{ maxWidth: "80%" }}>
-              <Card
-                sx={{
-                  border: "1px solid white",
-                  borderRadius: "15px",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src="/static/jumpyHelixPlaceholder.png"
-                  alt={`Card Image`}
-                  style={{ width: "100%", display: "block" }}
-                />
-                </Card>
-              </Grid>
+              </Card>
+            </NextLink>
           </Grid>
-        </Card>
-      </main>
+
+          <Grid item xs={12} style={{ maxWidth: "80%" }}>
+            <Card
+              sx={{
+                border: "1px solid white",
+                borderRadius: "15px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src="/static/jumpyHelixPlaceholder.png"
+                alt={`Card Image`}
+                style={{ width: "100%", display: "block" }}
+              />
+            </Card>
+          </Grid>
+        </Grid>
+      </Card>
+    </main>
   );
 };
 

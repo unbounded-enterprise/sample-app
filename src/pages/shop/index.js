@@ -6,6 +6,7 @@ import {
   Breadcrumbs,
   Button,
   Card,
+  CircularProgress,
   Container,
   Typography,
   Grid,
@@ -34,6 +35,26 @@ import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import th
 import "@fontsource/chango";
 import SearchIcon from "@mui/icons-material/Search";
 import { ChangoBackArrowOrange } from 'src/icons/chango_back-arrow_orange.js';
+import { authApi } from "../../_api_/auth-api";
+import createBasicContext from "src/components/widgets/basic/basic-context";
+import { BasicTextField } from "src/components/widgets/basic/basic-textfield";
+import { basicClone } from "src/utils/basic/basic-format.ts";
+import { loadStripe } from '@stripe/stripe-js';
+import { CardElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js';
+
+export const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
+
+export const defaultPaymentFormState = {
+  cardName: '',
+  line1: '',
+  line2: '',
+  city: '',
+  state: '',
+  postal_code: '',
+  email: '',
+}
+
+export const { BasicProvider:PaymentFormProvider, useBasicStore:usePaymentFormProvider } = createBasicContext(basicClone(defaultPaymentFormState));
 
 const CenteredImage = styled("img")({
   display: "block",
@@ -78,6 +99,19 @@ const defaultTextSx = {
     3px 3px 8px rgba(0, 0, 0, 0.5)
   `,
 };
+const creditCardFieldSx =  {
+  height: '2.5rem',
+  padding: '10px',
+  fontSize: '16px',
+  border: '1px solid #aaaaaa',
+  borderRadius: '8px',
+  '&:hover': {
+    border: '1px solid #045CD2',
+  },
+  '&:focus': {
+    border: '2px solid #045CD2',
+  },
+};
 
 const loading = (
   <>
@@ -116,6 +150,17 @@ const coinPrices = [
   { id: 2, price: 39.99, quantity: 25000 },
   { id: 3, price: 149.99, quantity: 100000 },
 ];
+
+export async function createPaymentIntent(amount) {
+  try {
+    const paymentIntent = await authApi.createStripePaymentIntent({ amount });
+    return { result: paymentIntent };
+  }
+  catch (error) {
+    console.warn(error.message);
+    return { error };
+  }
+}
 
 const BalanceField = ({ balance }) => {
   return (
@@ -247,12 +292,120 @@ const BuyBallsContent = ({ collections }) => {
   </Box>);
 };
 
+const PurchaseCoinsHeader = ({ text, onBack }) => {
+  return (
+    <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+      <Box onClick={onBack} sx={{ width: '5rem', height: '100%', py: '0.4rem', cursor: 'pointer' }}>
+        <Box sx={{ height: '3.5rem', pt: '0.5rem' }}>
+          <SvgIcon component={ChangoBackArrowOrange} viewBox="0 0 42 43" sx={{ width: '100%', height: '100%' }}/>
+        </Box>
+      </Box>
+      <Box sx={{ pb: '0.25rem', height: '100%' }}>
+        { text && <Typography
+          variant="h2"
+          textAlign="center"
+          color="#FF4D0D"
+          fontFamily="Chango"
+          sx={defaultTextSx}
+        >
+          { text }
+        </Typography> }
+      </Box>
+      <Box sx={{ width: '100%', maxWidth: '5rem' }}/>
+    </Stack>
+  );
+};
+
+const PurchaseCoinsBody = ({ bundle }) => {
+  return (<>
+    <Box textAlign="center" pb={2}>
+      <Typography
+        variant="h3"
+        color="#284B9B"
+        fontFamily="Chango"
+        sx={defaultTextSx}
+      >
+        Buy {bundle.quantity} Coins for
+      </Typography>
+      <Typography
+        variant="h3"
+        color="#284B9B"
+        fontFamily="Chango"
+        sx={defaultTextSx}
+      >
+        ${bundle.price}
+      </Typography>
+    </Box>
+    <Box sx={{ display: 'flex', width: '100%', height: '100%', maxWidth:'15rem' }}>
+      <img
+        src="/static/coinImage.png"
+        alt="balance-icon"
+        style={{ width: '100%', height: '100%' }}
+      />
+    </Box>
+  </>);
+};
+
+const PurchaseCoinsCurrencyButtons = ({ setCurrency }) => {
+  return (
+    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: '1.5rem', sm: '2.5rem' }} sx={{ 
+      justifyContent: 'center', alignItems: 'center', width: '100%' 
+    }}>
+      <Button onClick={()=>setCurrency("USD")} sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
+        background: 'linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
+        boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+      }}>
+        Buy with USD
+      </Button>
+      <Button onClick={()=>setCurrency("BSV")} sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
+        background: 'linear-gradient(180deg, #135322 0%, #31C052 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
+        boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+      }}>
+        Buy with Handcash
+      </Button>
+    </Stack>
+  );
+};
+
 const ShopContent = ({ user, balance, collections }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
+  const [selectedCurrency, setSelectedCurrency] = useState("");
+  const [paymentQR, setPaymentQR] = useState("");
+  const [paymentIntent, setPaymentIntent] = useState(undefined);
 
   function selectBundle(bundle) {
-    setSelectedBundle(bundle);
+    if (!bundle || user) setSelectedBundle(bundle);
   }
+
+  async function createHandcashPayment(bundle) {
+    try {
+      const payment = await authApi.createHandcashPayment({ userId: user.userId, bundleId: bundle.id, price: bundle.price });
+      console.log('payment response!', payment);
+      setPaymentQR(payment.paymentRequestQrCodeUrl);
+    }
+    catch (e) {}
+  }
+
+  async function createStripePayment(bundle) {
+    const { result, error } = await createPaymentIntent(bundle.price);
+    console.log('result:', result, result?.client_secret);
+    if (result?.client_secret) {
+      setPaymentIntent(result);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedCurrency === "BSV") {
+      createHandcashPayment(selectedBundle);
+      if (paymentIntent) {
+        setPaymentIntent(undefined);
+      }
+    }
+    else if (selectedCurrency === "USD") {
+      createStripePayment(selectedBundle);
+      if (paymentQR) setPaymentQR('');
+    }
+  }, [selectedCurrency]);
 
   return ((selectedBundle === undefined) ? (
       <Card sx={shopCardSx}>
@@ -261,70 +414,70 @@ const ShopContent = ({ user, balance, collections }) => {
         <BuyCoinsGrid selectBundle={selectBundle}/>
         <BuyBallsContent collections={collections}/>
       </Card>
-    ) : (
+    ) : (!selectedCurrency) ? (
       <Card sx={{ my: '1rem', p: '1rem', pb: '3rem', borderRadius: '15px', maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
         <Stack spacing="1rem" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <Box onClick={()=>selectBundle(undefined)} sx={{ width: '5rem', height: '100%', py: '0.4rem', cursor: 'pointer' }}>
-              <Box sx={{ height: '3.5rem', pt: '0.5rem' }}>
-                <SvgIcon component={ChangoBackArrowOrange} viewBox="0 0 42 43" sx={{ width: '100%', height: '100%' }}/>
-              </Box>
-            </Box>
-            <Box sx={{ pb: '0.25rem', height: '100%' }}>
-              <Typography
-                variant="h2"
-                textAlign="center"
-                color="#FF4D0D"
-                fontFamily="Chango"
-                sx={defaultTextSx}
-              >
-                Purchase Coins
-              </Typography>
-            </Box>
-            <Box sx={{ width: '100%', maxWidth: '5rem' }}/>
-          </Stack>
-          <Box textAlign="center" pb={2}>
-            <Typography
-              variant="h3"
-              color="#284B9B"
-              fontFamily="Chango"
-              sx={defaultTextSx}
-            >
-              Buy {selectedBundle.quantity} Coins for
-            </Typography>
-            <Typography
-              variant="h3"
-              color="#284B9B"
-              fontFamily="Chango"
-              sx={defaultTextSx}
-            >
-              ${selectedBundle.price}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', width: '100%', height: '100%', maxWidth:'15rem' }}>
-            <img
-              src="/static/coinImage.png"
-              alt="balance-icon"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </Box>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: '1.5rem', sm: '2.5rem' }} sx={{ 
-            justifyContent: 'center', alignItems: 'center', width: '100%' 
-          }}>
-            <Button sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
-              background: 'linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-              boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-            }}>
-              Buy with USD
-            </Button>
-            <Button sx={{ color: 'white', fontFamily: 'Chango', border: '2px solid white', borderRadius: '4px', 
-              background: 'linear-gradient(180deg, #135322 0%, #31C052 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)',
-              boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-            }}>
-              Buy with Handcash
-            </Button>
-          </Stack>
+          <PurchaseCoinsHeader text="Purchase Coins" onBack={() => setSelectedBundle(undefined)}/>
+          <PurchaseCoinsBody bundle={selectedBundle}/>
+          <PurchaseCoinsCurrencyButtons setCurrency={setSelectedCurrency}/>
         </Stack>
+      </Card>
+    ) : (
+      <Card sx={{ my: '1rem', p: '1rem', pb: '3rem', borderRadius: '15px', maxHeight: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        { selectedCurrency === "USD" && 
+          <Stack sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <PurchaseCoinsHeader text="" onBack={() => setSelectedCurrency("")}/>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing="1rem" sx={{ justifyContent: 'space-between', width: '100%', px: '5rem' }}>
+              <Stack>
+                <Typography
+                  variant="h6"
+                  color="#284B9B"
+                  fontFamily="Chango"
+                  sx={defaultTextSx}
+                >
+                  Purchase {selectedBundle.quantity} Coins for:
+                </Typography>
+                <Typography
+                  variant="h5"
+                  color="#FF4D0D"
+                  fontFamily="Chango"
+                  sx={defaultTextSx}
+                >
+                  ${selectedBundle.price}
+                </Typography>
+              </Stack>
+              <Elements stripe={stripePromise} key={paymentIntent?.client_secret}>
+                <PaymentFormProvider>
+                  <Stack sx={{ maxWidth: { md: '50%' } }}>
+                    <BasicTextField size="small" placeholder="Name on Card"/>
+                    <Box sx={creditCardFieldSx}>
+                      <CardElement/>
+                    </Box>
+                    <BasicTextField size="small" placeholder="Card Number"/>
+                    <BasicTextField size="small" placeholder="Street Address"/>
+                    <BasicTextField size="small" placeholder="Apt, Suite, Unit, Etc. (Optional)"/>
+                    <BasicTextField size="small" placeholder=""/>
+                    <BasicTextField size="small" placeholder="City"/>
+                    <Stack direction="row">
+                      <BasicTextField size="small" placeholder="State"/>
+                      <BasicTextField size="small" placeholder="Zip Code"/>
+                    </Stack>
+                  </Stack>
+                </PaymentFormProvider>
+              </Elements>
+            </Stack>
+          </Stack> 
+        }
+        { selectedCurrency === "BSV" && 
+          <Stack spacing="1rem" sx={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <PurchaseCoinsHeader text="Pay with Handcash" onBack={() => setSelectedCurrency("")}/>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: '15rem' }}>
+              { (paymentQR) ? <img src={paymentQR} alt="" style={{ width: '100%', height: '100%' }}/> 
+                : <CircularProgress sx={{ width: '5rem', height: '5rem' }}/> 
+              }
+            </Box>
+          </Stack> 
+        }
       </Card>
     )
   );

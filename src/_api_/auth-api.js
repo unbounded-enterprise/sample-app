@@ -12,6 +12,21 @@ export function parseBasicErrorClient(error, fallbackCode = 500) {
   return new BasicError(message, status);
 }
 
+const resolveHandlingClient = (res, resolve, noDataMessage = 'Invalid Response') => {
+  if (!res.data && res.data !== false) throw new Error(noDataMessage);
+
+  return resolve(res.data);
+};
+
+const errorHandlingClient = (error, reject) => { 
+  const { response } = error;
+  const e = parseBasicErrorClient(response || error);
+
+  console.warn('[Auth Api]:', e.message);
+
+  return reject(e);
+};
+
 class AuthApi {
   getRedirectionURL(){
     return new Promise((resolve, reject) => {
@@ -132,6 +147,32 @@ class AuthApi {
       } catch (err) {
         errorHandling(err);
       } 
+    });
+  }
+
+  createHandcashPayment(props) {
+    return new Promise((resolve, reject) => {
+      try { 
+        axios.post('/api/handcash/payment', props)
+          .then((res) => resolveHandlingClient(res, resolve))
+          .catch((e) => errorHandlingClient(e, reject))
+      } 
+      catch (e) {
+        errorHandlingClient(e, reject);
+      }
+    });
+  }
+  
+  createStripePaymentIntent(props) {
+    return new Promise((resolve, reject) => {
+      try {
+        axios.post('/api/stripe/createPaymentIntent', props)
+          .then((res) => resolveHandlingClient(res, resolve))
+          .catch((e) => errorHandlingClient(e, reject))
+      }
+      catch (e) {
+        errorHandlingClient(e, reject);
+      }
     });
   }
 

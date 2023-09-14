@@ -257,7 +257,7 @@ const MainCardContent = ({
       `,
             }}
           >
-            My Assets
+            My Stuff
           </Typography>
         </Box>
         <Grid item xs={12} sx={{ backgroundColor: "none" }}>

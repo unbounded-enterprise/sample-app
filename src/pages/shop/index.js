@@ -240,7 +240,7 @@ const BalanceField = ({ balance }) => {
       >
         My Balance: {balance ?? "?"}
         <img
-          src="/static/coinImage.png"
+          src="/static/Coin With Outline.png"
           alt="balance-icon"
           style={{
             marginLeft: "10px",
@@ -448,7 +448,7 @@ const PurchaseCoinsBody = ({ bundle }) => {
         }}
       >
         <img
-          src="/static/coinImage.png"
+          src="/static/Coin With Outline.png"
           alt="balance-icon"
           style={{ width: "100%", height: "100%" }}
         />

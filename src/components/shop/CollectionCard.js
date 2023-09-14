@@ -79,23 +79,13 @@ export const CollectionCard = ({ collection }) => {
             color: "white",
           }}
         >
-          {collection.collectionName}
-        </Box>
-
-        {/* Minted and Maximum */}
-
-        <ButtonBase
-          sx={{ zIndex: 2 }}
-          ref={anchorRef}
-          onMouseEnter={() => setTooltipOpen(true)}
-          onMouseLeave={() => setTooltipOpen(false)}
-        >
           <Typography
             variant="h6"
-            py={1}
+            py={0.5}
             sx={{
-              color: "#1E3465",
+              color: "white",
               fontFamily: "chango",
+              fontWeight: "normal",
               fontSize: {
                 xs: "14px",
                 sm: "16px",
@@ -105,9 +95,36 @@ export const CollectionCard = ({ collection }) => {
               },
             }}
           >
-            {collection.maximum - collection.minted} / {collection.maximum}
+            {collection.collectionName}
           </Typography>
-        </ButtonBase>
+          <ButtonBase
+            sx={{ zIndex: 2 }}
+            ref={anchorRef}
+            onMouseEnter={() => setTooltipOpen(true)}
+            onMouseLeave={() => setTooltipOpen(false)}
+          >
+            <Typography
+              variant="h6"
+              py={0.5}
+              sx={{
+                color: "white",
+                fontFamily: "chango",
+                fontWeight: "normal",
+                fontSize: {
+                  xs: "14px",
+                  sm: "16px",
+                  md: "18px",
+                  lg: "18px",
+                  xl: "20px",
+                },
+              }}
+            >
+              {collection.maximum - collection.minted} / {collection.maximum}
+            </Typography>
+          </ButtonBase>
+        </Box>
+
+        {/* Minted and Maximum */}
 
         {/* Price */}
         <Typography
@@ -127,7 +144,7 @@ export const CollectionCard = ({ collection }) => {
         >
           50{" "}
           <img
-            src="/static/coinImage.png"
+            src="/static/Coin With Outline.png"
             alt="price-icon"
             style={{ height: "1.2rem", verticalAlign: "middle" }}
           />

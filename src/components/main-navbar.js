@@ -41,7 +41,7 @@ export const MenuPopover = (props) => {
       onClick={close}
       onClose={close}
       open={!!open}
-      PaperProps={{ sx: { width: 180, height: '90vh' } }} // Set height to 100vh
+      PaperProps={{ sx: { width: 180} }} // Set height to 100vh
       transitionDuration={0}
       sx={{ display: !!open ? "inherit" : "none" }}
       {...other}
@@ -256,7 +256,7 @@ export const MainNavbar = (props) => {
                     height: 50,
                     width: 50,
                   }}
-                  src={"favicon.ico"}
+                  src={"/static/Avatar.png"}
                 >
                   <UserCircleIcon fontSize="small" />
                 </Avatar>

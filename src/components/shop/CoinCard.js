@@ -1,7 +1,7 @@
 import { Box, Card, Typography } from "@mui/material";
 import "@fontsource/chango";
 
-export const CoinCard = ({ price, quantity, onClick }) => {
+export const CoinCard = ({ price, quantity, onClick, imageLink }) => {
   return (
     <Card
       onClick={onClick}
@@ -28,11 +28,7 @@ export const CoinCard = ({ price, quantity, onClick }) => {
     >
       {/* Image */}
       <Box>
-        <img
-          src="/static/coinImage.png"
-          alt="Coin Image"
-          style={{ width: "70%" }}
-        />
+        <img src={imageLink} alt="Coin Image" style={{ width: "70%" }} />
       </Box>
 
       {/* Quantity */}
@@ -42,7 +38,13 @@ export const CoinCard = ({ price, quantity, onClick }) => {
           width: "100%", // Make the box full width
           backgroundColor: "#1e3465",
           fontFamily: "chango",
-          fontSize: "1rem",
+          fontSize: {
+            xs: "14px",
+            sm: "16px",
+            md: "18px",
+            lg: "18px",
+            xl: "20px",
+          },
           color: "white",
         }}
       >
@@ -56,7 +58,13 @@ export const CoinCard = ({ price, quantity, onClick }) => {
         sx={{
           color: "#FF4D0D",
           fontFamily: "chango",
-          fontSize: "1.2rem",
+          fontSize: {
+            xs: "14px",
+            sm: "16px",
+            md: "18px",
+            lg: "20px",
+            xl: "24px",
+          },
         }}
       >
         ${price}

@@ -127,10 +127,10 @@ const creditCardFieldSx = {
     border: "2px solid #045CD2",
   },
 };
-const stripeElementsOptions = {  
+const stripeElementsOptions = {
   appearance: {
-    theme: 'stripe',
-    labels: 'floating',
+    theme: "stripe",
+    labels: "floating",
     /*
     variables: {
       colorPrimary: '#ffffff',
@@ -144,13 +144,15 @@ const stripeElementsOptions = {
     }
     */
     rules: {
-      '.Label': { color: '#929394' },
-      '.Input': { borderRadius: '8px' },
-      '.Input::placeholder': { color: '#929394' },
-    }
-  }
+      ".Label": { color: "#929394" },
+      ".Input": { borderRadius: "8px" },
+      ".Input::placeholder": { color: "#929394" },
+    },
+  },
 };
-const cardElementOptions = { style: { base: { '::placeholder': { color: '#929394' } } } };
+const cardElementOptions = {
+  style: { base: { "::placeholder": { color: "#929394" } } },
+};
 
 const loading = (
   <>
@@ -489,7 +491,7 @@ const StripeCheckoutForm = ({ user }) => {
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -503,7 +505,7 @@ const StripeCheckoutForm = ({ user }) => {
 
     const { error } = await stripe.confirmPayment({
       elements,
-      redirect: 'if_required',
+      redirect: "if_required",
       confirmParams: {
         // Make sure to change this to your payment completion page
         // return_url: "http://localhost:3000",
@@ -528,20 +530,33 @@ const StripeCheckoutForm = ({ user }) => {
 
   return (
     <Stack sx={{ maxWidth: { md: "50%" } }}>
-      <PaymentElement options={{ paymentMethodOrder: ['card', 'link', 'google_pay'], defaultValues: { billingDetails: { email: user.email } } }}/>
-      <Box sx={{ height: '0.8rem' }}/>
-      <AddressElement options={{ mode: 'billing' }}/>
-      <Typography variant="subtitle2" sx={{ my: '1rem', fontSize: '14px' }}>
-        { `You'll have a chance to review your order before it's placed.` }
+      <PaymentElement
+        options={{
+          paymentMethodOrder: ["card", "link", "google_pay"],
+          defaultValues: { billingDetails: { email: user.email } },
+        }}
+      />
+      <Box sx={{ height: "0.8rem" }} />
+      <AddressElement options={{ mode: "billing" }} />
+      <Typography variant="subtitle2" sx={{ my: "1rem", fontSize: "14px" }}>
+        {`You'll have a chance to review your order before it's placed.`}
       </Typography>
-      { (isLoading) ? (
-        <LinearProgress sx={{ my: '1rem', width: '100%' }}/>
-      ) : (<>
-        { errorMessage && <Typography sx={{ color: 'red' }}>{ errorMessage }</Typography> }
-        <Button onClick={handleSubmit} disabled={isLoading} sx={{ color: 'white', backgroundColor: '#045CD2' }}>
-          Next
-        </Button>
-      </>) }
+      {isLoading ? (
+        <LinearProgress sx={{ my: "1rem", width: "100%" }} />
+      ) : (
+        <>
+          {errorMessage && (
+            <Typography sx={{ color: "red" }}>{errorMessage}</Typography>
+          )}
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading}
+            sx={{ color: "white", backgroundColor: "#045CD2" }}
+          >
+            Next
+          </Button>
+        </>
+      )}
     </Stack>
   );
 };
@@ -638,9 +653,13 @@ const ShopContent = ({ user, balance, collections }) => {
           <Stack
             direction={{ xs: "column", md: "row" }}
             spacing="1rem"
-            sx={{ justifyContent: "space-between", width: "100%", px: "5rem" }}
+            sx={{
+              justifyContent: "space-between",
+              width: "100%",
+              px: { sm: "5rem" },
+            }}
           >
-            <Stack sx={{ justifyContent: 'space-between' }}>
+            <Stack sx={{ justifyContent: "space-between" }}>
               <Stack>
                 <Typography
                   variant="h6"
@@ -658,7 +677,14 @@ const ShopContent = ({ user, balance, collections }) => {
                 >
                   ${selectedBundle.price}
                 </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: '2.5rem', md: '4rem' }, width: '100%' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: { xs: "2.5rem", md: "4rem" },
+                    width: "100%",
+                  }}
+                >
                   <img
                     src="/static/coinImage.png"
                     alt=""
@@ -670,27 +696,43 @@ const ShopContent = ({ user, balance, collections }) => {
                 </Box>
               </Stack>
               <Stack>
-                <Box sx={{ minHeight: { xs: '4rem', md: '12rem'} }}/>
-                <Typography sx={{ fontSize: '16px' }}>Powered by</Typography>
-                <Stack direction="row" spacing="1rem" sx={{ alignItems: 'center' }}>
+                <Box sx={{ minHeight: { xs: "4rem", md: "12rem" } }} />
+                <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
+                <Stack
+                  direction="row"
+                  spacing="1rem"
+                  sx={{ alignItems: "center" }}
+                >
                   <SvgIcon
                     component={StripeWordMark}
                     viewBox="0 0 368 222.5"
-                    sx={{ width: 'auto', height: '2.25rem' }}
+                    sx={{ width: "auto", height: "2.25rem" }}
                   />
-                  <Typography sx={{ color: '#6B7280', fontSize: '14px' }}>|</Typography>
-                  <Typography sx={{ color: '#6B7280', fontSize: '14px' }}>Terms</Typography>
-                  <Typography sx={{ color: '#6B7280', fontSize: '14px' }}>Privacy</Typography>
+                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+                    |
+                  </Typography>
+                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+                    Terms
+                  </Typography>
+                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+                    Privacy
+                  </Typography>
                 </Stack>
               </Stack>
             </Stack>
-            { paymentIntent && 
-              <Elements stripe={stripePromise} options={{ clientSecret: paymentIntent?.client_secret, ...stripeElementsOptions}}>
+            {paymentIntent && (
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  clientSecret: paymentIntent?.client_secret,
+                  ...stripeElementsOptions,
+                }}
+              >
                 <PaymentFormProvider>
-                  <StripeCheckoutForm user={user}/>
+                  <StripeCheckoutForm user={user} />
                 </PaymentFormProvider>
               </Elements>
-            }
+            )}
           </Stack>
         </Stack>
       )}

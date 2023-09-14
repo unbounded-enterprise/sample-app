@@ -190,25 +190,25 @@ const coinPrices = [
     id: 0,
     price: 1.89,
     quantity: 5000,
-    imageLink: "/static/5000 Coin Image.png",
+    imageLink: "/static/Coins 1.png",
   },
   {
     id: 1,
     price: 8.99,
     quantity: 25000,
-    imageLink: "/static/25000 Coin Image.png",
+    imageLink: "/static/Coins 2.png",
   },
   {
     id: 2,
     price: 39.99,
     quantity: 100000,
-    imageLink: "/static/100000 Coin Image.png",
+    imageLink: "/static/Coins 3.png",
   },
   {
     id: 3,
     price: 149.99,
     quantity: 500000,
-    imageLink: "/static/500000 Coin Image.png",
+    imageLink: "/static/Coins 4.png",
   },
 ];
 

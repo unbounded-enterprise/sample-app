@@ -176,6 +176,7 @@ const BalanceField = ({ balance }) => {
     <Box textAlign="center" pb={2}>
       <Typography
         variant="h2"
+        fontSize={{ xs: "20px", sm: "32px", md: "32px", lg: "50px", xl: "50px" }}
         color="#284B9B"
         fontFamily="Chango"
         sx={defaultTextSx}
@@ -200,6 +201,7 @@ const BuyCoinsHeader = () => {
     <Box textAlign="center" pb={4}>
       <Typography
         variant="h2"
+        fontSize={{ xs: "20px", sm: "32px", md: "32px", lg: "50px", xl: "50px" }}
         color="#FF4D0D"
         fontFamily="Chango"
         sx={defaultTextSx}
@@ -235,7 +237,7 @@ const BuyCoinsGrid = ({ selectBundle }) => {
 const BuyBallsHeader = () => {
   return (
     <Box textAlign="center" pb={4} sx={defaultTextSx}>
-      <Typography variant="h2" color="#FF4D0D" fontFamily="Chango">
+      <Typography variant="h2" color="#FF4D0D" fontFamily="Chango" fontSize={{ xs: "20px", sm: "32px", md: "32px", lg: "50px", xl: "50px" }}>
         Shop Rolltopia Balls
       </Typography>
     </Box>

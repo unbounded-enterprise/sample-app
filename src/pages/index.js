@@ -1,43 +1,10 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Breadcrumbs,
-  Card,
-  Typography,
-  Grid,
-  FormControl,
-  InputLabel,
-  TextField,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { useEffect } from "react";
+import { Box, Card, Typography, Grid } from "@mui/material";
 import { MainLayout } from "src/components/main-layout";
 import React from "react";
-import { styled } from "@mui/system";
-import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import the hook
 import "@fontsource/chango";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import NextLink from "next/link";
-
-const CenteredImage = styled("img")({
-  display: "block",
-  marginLeft: "auto",
-  maxWidth: "200px",
-  marginRight: "auto",
-  width: "50%",
-});
-const slotButtonStyle = {
-  color: "blue",
-  border: "1px solid blue",
-  fontSize: "1vw",
-};
-
-const loading = (
-  <>
-    {" "}
-    <CenteredImage src="/static/loader.gif" alt="placeholder" />{" "}
-  </>
-);
 
 // Styling for the scrollbar
 const globalScrollbarStyles = `
@@ -64,9 +31,6 @@ const globalScrollbarStyles = `
 `;
 
 const HomePage = () => {
-  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
-  //const [user, setUser] = useState(null);
-
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = globalScrollbarStyles;
@@ -90,7 +54,13 @@ const HomePage = () => {
       <Card
         sx={{
           backgroundColor: "rgb(46, 44, 44)", // Gray background
-          width: "50%",
+          width: {
+            xs: "90%",
+            sm: "80%",
+            md: "70%",
+            lg: "70%",
+            xl: "60%",
+          },
           height: "90vh",
           margin: "5vh auto 0 auto",
           overflowY: "auto",
@@ -105,9 +75,28 @@ const HomePage = () => {
           },
         }}
       >
-        {/* Updated Text Sections */}
-        <Box textAlign="center" pb={4}>
-          <Typography variant="h4" color="white" fontFamily="Chango">
+        {/*Text Sections */}
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          pb={2}
+        >
+          <Typography
+            variant="h4"
+            color="white"
+            fontFamily="Chango"
+            fontSize={{
+              xs: "28px",
+              sm: "32px",
+              md: "32px",
+              lg: "40px",
+              xl: "40px",
+            }}
+            style={{ margin: 0 }}
+          >
             Welcome to
           </Typography>
           <Typography
@@ -115,44 +104,68 @@ const HomePage = () => {
             color="#FF4D0D"
             fontFamily="Chango"
             py={4}
+            style={{ margin: 0 }}
             sx={{
               textShadow: `
-                2px 2px 0 white, 
-                -2px -2px 0 white, 
-                2px -2px 0 white, 
-                -2px 2px 0 white,
-                3px 3px 8px rgba(0, 0, 0, 0.5)
-              `,
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
             }}
           >
             Rolltopia
           </Typography>
-          <Typography variant="p1" color="white" fontFamily="Chango" pb={4}>
+          <Typography
+            variant="p1"
+            color="white"
+            fontFamily="Chango"
+            pb={4}
+            style={{ margin: 0 }}
+          >
             A creator driven hyper-casual gaming universe for web and mobile.
           </Typography>
         </Box>
 
-        {/* Updated Cards */}
+        {/* Cards */}
         <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} style={{ maxWidth: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              maxWidth: {
+                xs: "95%",
+                sm: "85%",
+                md: "80%",
+                lg: "80%",
+                xl: "80%",
+              },
+            }}
+          >
             <NextLink href="/play" passHref legacyBehavior>
               <Card
                 sx={{
                   border: "1px solid white",
-                  borderRadius: "15px",
+                  borderRadius: {
+                    xs: "5px",
+                    sm: "5px",
+                    md: "10px",
+                    lg: "15px",
+                    xl: "15px",
+                  },
                   overflow: "hidden",
                   cursor: "pointer",
-                  position: "relative", // Set the card's position to relative
+                  position: "relative",
                   "&:hover::before": {
-                    // Use the ::before pseudo-element for the overlay
                     content: '""',
                     position: "absolute",
                     top: 0,
                     right: 0,
                     bottom: 0,
                     left: 0,
-                    backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
-                    zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    zIndex: 1,
                   },
                 }}
               >
@@ -160,17 +173,39 @@ const HomePage = () => {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "center",
                     padding: "0.5rem 1rem",
                     background:
                       "linear-gradient(45deg, #045CD2 30%, #03A9F4 90%)",
                     borderBottom: "1px solid white",
                   }}
                 >
-                  <Typography variant="h4" fontFamily="Chango" color="white">
+                  <Typography
+                    variant="h4"
+                    fontFamily="Chango"
+                    color="white"
+                    fontSize={{
+                      xs: "16px",
+                      sm: "24px",
+                      md: "32px",
+                      lg: "40px",
+                      xl: "40px",
+                    }}
+                  >
                     Play Runway Roller
                   </Typography>
-                  <PlayArrowIcon sx={{ color: "white", fontSize: "3rem" }} />
+                  <PlayArrowIcon
+                    sx={{
+                      color: "white",
+                      fontSize: {
+                        xs: "1.5rem",
+                        sm: "3rem",
+                        md: "3rem",
+                        lg: "3rem",
+                        xl: "3rem",
+                      },
+                    }}
+                  />
                 </Box>
                 <img
                   src="/static/runwayRollerPlaceholder.png"
@@ -181,11 +216,29 @@ const HomePage = () => {
             </NextLink>
           </Grid>
 
-          <Grid item xs={12} style={{ maxWidth: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              maxWidth: {
+                xs: "95%",
+                sm: "85%",
+                md: "80%",
+                lg: "80%",
+                xl: "80%",
+              },
+            }}
+          >
             <Card
               sx={{
                 border: "1px solid white",
-                borderRadius: "15px",
+                borderRadius: {
+                  xs: "5px",
+                  sm: "5px",
+                  md: "10px",
+                  lg: "15px",
+                  xl: "15px",
+                },
                 overflow: "hidden",
               }}
             >

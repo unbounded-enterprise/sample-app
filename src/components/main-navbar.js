@@ -41,15 +41,32 @@ export const MenuPopover = (props) => {
       onClick={close}
       onClose={close}
       open={!!open}
-      PaperProps={{ sx: { width: 180 } }}
+      PaperProps={{ sx: { width: 180, height: '90vh' } }} // Set height to 100vh
       transitionDuration={0}
       sx={{ display: !!open ? "inherit" : "none" }}
       {...other}
-    >
+      >
       {items.map((item) =>
         item.href ? (
           <NextLink key={item.value} href={item.href} passHref legacyBehavior>
-            <MenuItem>{item.label}</MenuItem>
+            <MenuItem>
+              <Typography
+                variant="subtitle1"
+                color="#FF4D0D"
+                fontFamily="Chango"
+                sx={{
+                  textShadow: `
+                    2px 2px 0 white, 
+                    -2px -2px 0 white, 
+                    2px -2px 0 white, 
+                    -2px 2px 0 white,
+                    3px 3px 8px rgba(0, 0, 0, 0.5)
+                  `,
+                }}
+              >
+                {item.label}
+              </Typography>
+            </MenuItem>
           </NextLink>
         ) : (
           <MenuItem key={item.value}>{item.label}</MenuItem>
@@ -107,6 +124,22 @@ export const MainNavbar = (props) => {
         />
         <Container maxWidth="lg">
           <Toolbar disableGutters sx={{ minHeight: 64 }}>
+          <Box
+              onClick={handleOpenMenu}
+              ref={menuRef}
+              disabled={{ md: true }}
+              sx={{
+                display: { xs: "flex", md: "none" },
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                p: "1rem",
+              }}
+            >
+              <IconButton color="inherit">
+                <MenuIcon fontSize="small" />
+              </IconButton>
+            </Box>
             <NextLink href="/" passHref>
               <ButtonBase
                 sx={{
@@ -124,22 +157,6 @@ export const MainNavbar = (props) => {
               </ButtonBase>
             </NextLink>
 
-            <Box
-              onClick={handleOpenMenu}
-              ref={menuRef}
-              disabled={{ md: true }}
-              sx={{
-                display: { xs: "flex", md: "none" },
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                p: "1rem",
-              }}
-            >
-              <IconButton color="inherit">
-                <MenuIcon fontSize="small" />
-              </IconButton>
-            </Box>
             <Box sx={{ flexGrow: 1 }} />
             <Box
               sx={{ alignItems: "center", display: { xs: "none", md: "flex" } }}

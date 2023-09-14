@@ -87,6 +87,14 @@ const Play = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!document.querySelector(`script[src="https://cdn.applixir.com/applixir.sdk3.0m.js"]`)) {
+      const script = document.createElement('script');
+      script.src = "https://cdn.applixir.com/applixir.sdk3.0m.js";
+      document.body.appendChild(script);
+    }
+  }, []);
+
   async function logoutClicked() {
     assetlayerClient.logoutUser();
     handleUserLogin(false);
@@ -303,6 +311,9 @@ const Play = () => {
           </>
         )}
       </Fragment>
+        <div id="applixir_vanishing_div" style={{ position: 'absolute', hidden: true, zIndex: 2000 }}>
+          <iframe id="applixir_parent" allowed="autoplay"></iframe>
+        </div>
     </main>
   );
 };

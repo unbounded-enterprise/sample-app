@@ -192,9 +192,9 @@ const coinPrices = [
   { id: 3, price: 149.99, quantity: 100000 },
 ];
 
-export async function createPaymentIntent(amount) {
+export async function createPaymentIntent(bundle) {
   try {
-    const paymentIntent = await authApi.createStripePaymentIntent({ amount });
+    const paymentIntent = await authApi.createStripePaymentIntent({ bundle });
     return { result: paymentIntent };
   } catch (error) {
     console.warn(error.message);
@@ -532,7 +532,7 @@ const StripeCheckoutForm = ({ user }) => {
     <Stack sx={{ maxWidth: { md: "50%" } }}>
       <PaymentElement
         options={{
-          paymentMethodOrder: ["card", "link", "google_pay"],
+          paymentMethodOrder: ["card", "link", "google_pay", "apple_pay"],
           defaultValues: { billingDetails: { email: user.email } },
         }}
       />
@@ -584,7 +584,7 @@ const ShopContent = ({ user, balance, collections }) => {
   }
 
   async function createStripePayment(bundle) {
-    const { result, error } = await createPaymentIntent(bundle.price);
+    const { result, error } = await createPaymentIntent(bundle);
     console.log("result:", result, result?.client_secret);
     if (result?.client_secret) {
       setPaymentIntent(result);

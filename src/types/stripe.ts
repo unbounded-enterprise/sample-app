@@ -1,3 +1,5 @@
+import { RolltopiaBundle } from "./shop";
+
 export interface CreatePaymentIntentProps {
-    amount: number;
+    bundle: RolltopiaBundle;
 }

@@ -11,20 +11,18 @@ const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
 const endpointSecret = process.env.PAYMENT_INTENT_WEBHOOK_SECRET;
 
-export default function paymentIntentWebhookHandler(req:NextApiRequest, res:NextApiResponse) {
+export default function paymentIntentWebhookHandler(req:Request, res:NextApiResponse) {
 	return new Promise((resolve, reject) => {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
 		try {
 			const sig = req.headers['stripe-signature'];
-			const body = req.body;
-
-			console.log('sig', sig, body)
 			
 			// if (!sig) throw new BasicError('missing sig', 409);
 			// if (!body) throw new BasicError('missing body', 409);
-
-			handlePaymentIntentWebhook(sig, body)
+			
+			req.text()
+				.then((body) => handlePaymentIntentWebhook(sig, body))
 				.then((data) => resolve(res.status(200).end()))
 				.catch(handleError);
 		} catch(e:any) {
@@ -34,6 +32,7 @@ export default function paymentIntentWebhookHandler(req:NextApiRequest, res:Next
 }
 
 export async function handlePaymentIntentWebhook(sig, body) {
+	console.log('sig', sig, body)
 	const event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
 	const paymentIntent = event.data.object as Stripe.PaymentIntent;
 

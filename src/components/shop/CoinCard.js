@@ -39,7 +39,7 @@ export const CoinCard = ({ price, quantity, onClick, imageLink }) => {
           backgroundColor: "#1e3465",
           fontFamily: "chango",
           fontSize: {
-            xs: "14px",
+            xs: "12px",
             sm: "16px",
             md: "18px",
             lg: "18px",

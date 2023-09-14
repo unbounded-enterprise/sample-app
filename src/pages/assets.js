@@ -1,39 +1,25 @@
 import { useEffect, useState } from "react";
-import NextLink from "next/link";
 import {
   Box,
-  Button,
-  Breadcrumbs,
   Card,
-  CardMedia,
-  CardContent,
-  TextField,
   Typography,
   Grid,
-  FormControl,
-  InputLabel,
-  Select,
   Stack,
-  MenuItem,
 } from "@mui/material";
 import { BasicSearchbar } from "src/components/widgets/basic/basic-searchbar";
 import { MainLayout } from "src/components/main-layout";
 import { CollectionCard } from "src/components/assets/CollectionCard";
 import { AssetCard } from "src/components/assets/AssetCard";
-import axios from "axios";
 import React from "react";
 import {
-  sortCollections,
   collectionSortMethods,
 } from "src/pages/explorer/slot/[id]/index";
-import DropdownMenu from "src/components/widgets/DropdownMenu";
 import { parseBasicErrorClient } from "src/_api_/auth-api";
 import { styled } from "@mui/system";
-import { useAuth } from "src/hooks/use-auth";
-import LoginButton from "src/components/home/login-button";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import the hook
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
+import { LoginContent } from "src/components/login-content";
 
 const CenteredImage = styled("img")({
   display: "block",
@@ -42,11 +28,6 @@ const CenteredImage = styled("img")({
   marginRight: "auto",
   width: "50%",
 });
-const slotButtonStyle = {
-  color: "blue",
-  border: "1px solid blue",
-  fontSize: "1vw",
-};
 
 const loading = (
   <>
@@ -60,8 +41,6 @@ const MyAssetsPage = () => {
   const [assets, setAssets] = useState(null);
   const [search, setSearch] = useState("");
   const [searchSerial, setSearchSerial] = useState("");
-  const [totalNfts, setTotalNfts] = useState(0);
-  const [collectionCounts, setCollectionCounts] = useState({});
   const [activeCollections, setActiveCollections] = useState(null);
   const [chosenCollection, setChosenCollection] = useState(null);
   const [chosenAsset, setChosenAsset] = useState(null);
@@ -77,16 +56,6 @@ const MyAssetsPage = () => {
     setSearchSerial(e.target.value);
   };
 
-  const countNfts = async (collectionCounts) => {
-    let nftCount = 0;
-    for (const key in collectionCounts) {
-      if (collectionCounts.hasOwnProperty(key)) {
-        nftCount += collectionCounts[key];
-      }
-    }
-    return nftCount;
-  };
-
   const getCollections = async (activeCollections) => {
     if (activeCollections) {
       const collections = Object.keys(activeCollections);
@@ -96,7 +65,6 @@ const MyAssetsPage = () => {
           collectionIds: collections,
           idOnly: false,
         });
-      //(await axios.post('/api/collection/info', { collectionIds: collections, idOnly: false, includeDeactivated: false }));
       return collectionsObject.result.sort(collectionSortMethods.maximum);
     }
   };
@@ -148,17 +116,6 @@ const MyAssetsPage = () => {
   }, [activeCollections]);
 
   useEffect(() => {
-    countNfts(activeCollections)
-      .then((count) => {
-        setTotalNfts(count);
-      })
-      .catch((e) => {
-        const error = parseBasicErrorClient(e);
-        console.log("setting error: ", error.message);
-      });
-  }, [activeCollections]);
-
-  useEffect(() => {
     if (chosenCollection) {
       getAssets(chosenCollection.collectionId)
         .then((assets) => {
@@ -181,18 +138,6 @@ const MyAssetsPage = () => {
     }
   }, [chosenAsset]);
 
-  const sharedSx = {
-    font: "nunito",
-    lineHeight: "40px",
-    fontSize: { xs: "12px", sm: "12px", md: "14px", lg: "16px", xl: "18px" },
-  };
-  const sharedSxBold = {
-    fontWeight: "bold",
-    font: "nunito",
-    lineHeight: "40px",
-    fontSize: { xs: "12px", sm: "12px", md: "14px", lg: "16px", xl: "18px" },
-  };
-
   return (
     <main
       style={{
@@ -206,7 +151,13 @@ const MyAssetsPage = () => {
     >
       <Card
         sx={{
-          width: "50%",
+          width: {
+            xs: "90%",
+            sm: "80%",
+            md: "70%",
+            lg: "70%",
+            xl: "60%",
+          },
           height: "90vh",
           margin: "5vh auto 0 auto",
           overflowY: "auto",
@@ -246,7 +197,6 @@ const MyAssetsPage = () => {
               collections={collections}
               activeCollections={activeCollections}
               handleSearch={handleSearch}
-              collectionCounts={collectionCounts}
               setChosenCollection={setChosenCollection}
             />
           )
@@ -265,134 +215,11 @@ MyAssetsPage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
 export default MyAssetsPage;
 
-const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
-  const [email, setEmail] = useState("");
-  function onInitialized() {
-    handleUserLogin(true);
-  }
-  return (
-    <Stack alignItems="center" justifyContent="center" sx={{ height: "100vh" }}>
-      <Card
-        sx={{
-          backgroundColor: "rgba(50, 50, 50, 0.9)", // Transparent gray
-          borderRadius: "15px", // Rounded edges
-          width: "600px",
-          textAlign: "center",
-          p: 3, // Padding for more spacing
-        }}
-      >
-        <CardMedia
-          component="img"
-          height="140"
-          image="static/Rolltopia Logo Just Text.png" // Replace with your image path
-          alt="Your Image"
-        />
-        <CardContent sx={{ pt: 3 }}>
-          <Typography
-            variant="h4"
-            color="white"
-            component="div"
-            sx={{ fontWeight: "normal", mb: 2 }}
-          >
-            Sign Up / Sign In
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            color="white"
-            component="div"
-            sx={{ textAlign: "left", mb: 2, fontSize: "1.2rem" }}
-          >
-            Account Email
-          </Typography>
-          <TextField
-            variant="standard"
-            value={email}
-            onChange={(e) => {
-              e.preventDefault();
-              setEmail(e.target.value);
-            }}
-            sx={{
-              marginBottom: "2em",
-              width: "100%",
-              backgroundColor: "white",
-              color: "black",
-              borderRadius: "5px",
-              "& .MuiInputBase-input": {
-                height: "50px",
-                padding: "0 8px", // 0 top/bottom padding, 8px left/right padding
-                boxSizing: "border-box",
-              },
-            }}
-            placeholder="Your Email Address"
-            InputProps={{
-              disableUnderline: true,
-              style: { color: "gray" },
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              backgroundColor: "#045CD2", // Set the background color
-              width: "100%",
-              mb: 5,
-              boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
-              fontWeight: "bold", // Bold font
-              "&:hover::before": {
-                // Use the ::before pseudo-element for the overlay
-                content: '""',
-                position: "absolute",
-                top: 0,
-                borderRadius: "5px",
-                right: 0,
-                bottom: 0,
-                left: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
-                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
-              },
-              "&:hover": {
-                backgroundColor: "#045CD2", // Keep the background color consistent when hovered
-                boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
-              },
-            }}
-            onClick={() => {
-              if (email.length > 0) {
-                assetlayerClient.loginUser({ email, onSuccess: onInitialized });
-                setEmail("");
-              } else {
-                assetlayerClient.loginUser({
-                  email: "abc",
-                  onSuccess: onInitialized,
-                });
-                setEmail("");
-              }
-            }}
-          >
-            Get Started
-          </Button>
-          <CardMedia
-            component="img"
-            alignContent="center"
-            sx={{
-              maxHeight: "30px", // or any size you want
-              width: "auto", // maintain aspect ratio
-              margin: "auto",
-            }}
-            image="static/Powered by AL Big.png" // Replace with your second image path
-            alt="Your Second Image"
-          />
-        </CardContent>
-      </Card>
-    </Stack>
-  );
-};
-
 const MainCardContent = ({
   search,
   collections,
   activeCollections,
   handleSearch,
-  collectionCounts,
   setChosenCollection,
 }) => {
   return (
@@ -404,13 +231,20 @@ const MainCardContent = ({
           marginLeft: "auto",
           marginRight: "auto",
           py: 1,
-          px: { xs: 2, sm: 2 },
+          px: { xs: 0, sm: 0, md: 1, lg: 1, xl: 2 },
           backgroundColor: "none",
         }}
       >
         <Box textAlign="center" pb={4}>
           <Typography
             variant="h2"
+            fontSize={{
+              xs: "24px",
+              sm: "32px",
+              md: "32px",
+              lg: "40px",
+              xl: "40px",
+            }}
             color="#FF4D0D"
             fontFamily="Chango"
             sx={{
@@ -423,7 +257,7 @@ const MainCardContent = ({
       `,
             }}
           >
-            My Assets
+            My Stuff
           </Typography>
         </Box>
         <Grid item xs={12} sx={{ backgroundColor: "none" }}>
@@ -434,17 +268,16 @@ const MainCardContent = ({
                 left: 0,
                 width: "100%",
                 p: 1,
-                borderColor: "black", // Black outline
                 color: "black",
               }}
             />
           </Box>
         </Grid>
-        {collections && collectionCounts ? (
+        {collections ? (
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
               {collections.map((collection) => (
-                <Grid item xs={12} md={4} xl={3} key={collection.collectionId}>
+                <Grid item xs={6} md={4} lg={3} key={collection.collectionId}>
                   {" "}
                   {/* Adjusted this line */}
                   <CollectionCard
@@ -485,7 +318,7 @@ const CollectionSelectedContent = ({
           marginLeft: "auto",
           marginRight: "auto",
           py: 1,
-          px: { xs: 2, sm: 2 },
+          px: { xs: 0, sm: 0, md: 1, lg: 1, xl: 2 },
           backgroundColor: "none",
         }}
       >
@@ -518,6 +351,13 @@ const CollectionSelectedContent = ({
           </IconButton>
           <Typography
             variant="h2"
+            fontSize={{
+              xs: "24px",
+              sm: "32px",
+              md: "32px",
+              lg: "40px",
+              xl: "40px",
+            }}
             color="#FF4D0D"
             fontFamily="Chango"
             py={2}
@@ -561,7 +401,7 @@ const CollectionSelectedContent = ({
           <Grid item xs={12}>
             <Grid container spacing={1} sx={{ p: 1 }}>
               {assets.map((asset) => (
-                <Grid item xs={12} md={4} xl={3} key={asset.assetId}>
+                <Grid item xs={6} md={4} lg={3} key={asset.assetId}>
                   {" "}
                   {/* Adjusted this line */}
                   <AssetCard
@@ -602,7 +442,7 @@ const AssetSelectedContent = ({
           marginLeft: "auto",
           marginRight: "auto",
           py: 1,
-          px: { xs: 2, sm: 2 },
+          px: { xs: 0, sm: 0, md: 1, lg: 1, xl: 2 },
           backgroundColor: "none",
         }}
       >
@@ -635,6 +475,13 @@ const AssetSelectedContent = ({
           </IconButton>
           <Typography
             variant="h2"
+            fontSize={{
+              xs: "24px",
+              sm: "28px",
+              md: "32px",
+              lg: "36px",
+              xl: "40px",
+            }}
             color="#FF4D0D"
             fontFamily="Chango"
             py={2}
@@ -649,7 +496,6 @@ const AssetSelectedContent = ({
               position: "absolute", // Absolute positioning to keep the title centered
               left: "50%",
               transform: "translateX(-50%)",
-              whiteSpace: "nowrap", // Prevent wrapping onto the next line
               overflow: "hidden", // Hide overflow
               textOverflow: "ellipsis", // Add ellipsis if the text is too long
               maxWidth: "calc(100% - 60px)", // Deducting the approximate width of the IconButton
@@ -666,7 +512,19 @@ const AssetSelectedContent = ({
             style={{ width: "60%", display: "block", marginBottom: "0" }}
           />
 
-          <Typography variant="h4" color="#1D2D59" fontFamily="Chango" py={2}>
+          <Typography
+            variant="h4"
+            color="#1D2D59"
+            fontFamily="Chango"
+            fontSize={{
+              xs: "24px",
+              sm: "28px",
+              md: "32px",
+              lg: "40px",
+              xl: "40px",
+            }}
+            py={2}
+          >
             Max Supply: {collection.maximum}
           </Typography>
         </Stack>

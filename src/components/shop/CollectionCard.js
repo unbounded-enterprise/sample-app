@@ -69,7 +69,13 @@ export const CollectionCard = ({ collection }) => {
             width: "100%", // Make the box full width
             backgroundColor: "#1e3465",
             fontFamily: "chango",
-            fontSize: "1rem",
+            fontSize: {
+              xs: "14px",
+              sm: "16px",
+              md: "18px",
+              lg: "18px",
+              xl: "20px",
+            },
             color: "white",
           }}
         >
@@ -90,7 +96,13 @@ export const CollectionCard = ({ collection }) => {
             sx={{
               color: "#1E3465",
               fontFamily: "chango",
-              fontSize: "1.2rem",
+              fontSize: {
+                xs: "14px",
+                sm: "16px",
+                md: "18px",
+                lg: "18px",
+                xl: "20px",
+              },
             }}
           >
             {collection.maximum - collection.minted} / {collection.maximum}
@@ -104,7 +116,13 @@ export const CollectionCard = ({ collection }) => {
           sx={{
             color: "#FF4D0D",
             fontFamily: "chango",
-            fontSize: "1.2rem",
+            fontSize: {
+              xs: "14px",
+              sm: "16px",
+              md: "18px",
+              lg: "18px",
+              xl: "20px",
+            },
           }}
         >
           50{" "}

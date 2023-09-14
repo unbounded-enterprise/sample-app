@@ -10,18 +10,34 @@ const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
 const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
 const endpointSecret = process.env.PAYMENT_INTENT_WEBHOOK_SECRET;
+const getBuffer = (req: NextApiRequest) => {
+	return new Promise((resolve, reject) => {
+		const chunks = [];
+	
+		req.on('data', (chunk) => {
+			chunks.push(chunk);
+		});
+	
+		req.on('end', () => {
+			resolve(Buffer.concat(chunks));
+		});
+	
+		req.on('error', reject);
+	});
+};
 
-export default function paymentIntentWebhookHandler(req:Request, res:NextApiResponse) {
+export default function paymentIntentWebhookHandler(req:NextApiRequest, res:NextApiResponse) {
 	return new Promise((resolve, reject) => {
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
 		try {
+			if (!(req.method === 'POST')) throw new BasicError('invalid method', 405);
 			const sig = req.headers['stripe-signature'];
 			
 			// if (!sig) throw new BasicError('missing sig', 409);
 			// if (!body) throw new BasicError('missing body', 409);
 			
-			req.text()
+			getBuffer(req)
 				.then((body) => handlePaymentIntentWebhook(sig, body))
 				.then((data) => resolve(res.status(200).end()))
 				.catch(handleError);
@@ -50,3 +66,9 @@ export async function handlePaymentIntentWebhook(sig, body) {
 
 	return true;
 }
+
+export const config = {
+	api: {
+	  	bodyParser: false,
+	},
+};

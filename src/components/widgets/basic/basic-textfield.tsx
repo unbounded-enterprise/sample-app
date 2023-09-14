@@ -6,16 +6,16 @@ export const textfieldStyleEnabled = {
   backgroundColor: '#FFFFFF',
   color: '#666666',
   '& fieldset': {
-    borderColor: '#AAAAAA',
+    borderColor: '#D1D5DB',
   },
   input: {
     "&::placeholder": {
-      color: '#999999',
+      color: '#929394',
     }
   },
   textarea: {
     "&::placeholder": {
-      color: '#999999',
+      color: '#929394',
     }
   },
 }
@@ -42,7 +42,7 @@ export type BasicTextFieldProps = StandardTextFieldProps | FilledTextFieldProps 
 export const BasicTextField: FC<BasicTextFieldProps> = ({ sx={}, ...props }) => {
 
   return (
-    <TextField {...props} InputLabelProps={{ sx: { color: "#555555" } }} 
+    <TextField {...props} InputLabelProps={{ sx: { color: "#929394 !important" } }} 
       sx={{ '& .MuiOutlinedInput-root': (props.disabled) ? textfieldStyleDisabled : textfieldStyleEnabled, ...sx }}/>
   );
 };

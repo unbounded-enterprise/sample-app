@@ -528,7 +528,7 @@ const StripeCheckoutForm = ({ user }) => {
 
   return (
     <Stack sx={{ maxWidth: { md: "50%" } }}>
-      <PaymentElement options={{ defaultValues: { billingDetails: { email: user.email } } }}/>
+      <PaymentElement options={{ paymentMethodOrder: ['card', 'link', 'google_pay'], defaultValues: { billingDetails: { email: user.email } } }}/>
       <Box sx={{ height: '0.8rem' }}/>
       <AddressElement options={{ mode: 'billing' }}/>
       <Typography variant="subtitle2" sx={{ my: '1rem', fontSize: '14px' }}>

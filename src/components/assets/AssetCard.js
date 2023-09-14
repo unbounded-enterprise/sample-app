@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Typography } from "@mui/material";
+import { Box, Card } from "@mui/material";
 
 var menuViewExpressionValue;
 
@@ -22,6 +22,20 @@ export const AssetCard = ({ search, collection, asset, onCardClick }) => {
             textAlign: "center",
             cursor: "pointer",
             boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+            minWidth: {
+              xs: "7rem",
+              sm: "12.5rem",
+              md: "12rem",
+              lg: "11rem",
+              xl: "14rem",
+            },
+            maxWidth: {
+              xs: "11rem",
+              sm: "13.5rem",
+              md: "14rem",
+              lg: "15rem",
+              xl: "16rem",
+            },
             position: "relative", // Set the card's position to relative
             "&:hover::before": {
               // Use the ::before pseudo-element for the overlay
@@ -49,7 +63,13 @@ export const AssetCard = ({ search, collection, asset, onCardClick }) => {
           <Box
             sx={{
               position: "absolute", // Absolute positioning
-              bottom: 50, // Padding from the bottom
+              top: {
+                xs: "60%",
+                sm: "10rem",
+                md: "70%",
+                lg: "70%",
+                xl: "70%rem",
+              },
               right: 8, // Padding from the right
               backgroundColor: "#1E3465",
               color: "white",
@@ -68,7 +88,13 @@ export const AssetCard = ({ search, collection, asset, onCardClick }) => {
               width: "100%", // Make the box full width
               backgroundColor: "#1e3465",
               fontFamily: "chango",
-              fontSize: "1rem",
+              fontSize: {
+                xs: "12px",
+                sm: "14px",
+                md: "16px",
+                lg: "18px",
+                xl: "20px",
+              },
               color: "white",
             }}
           >

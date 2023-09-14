@@ -186,10 +186,30 @@ const globalScrollbarStyles = `
 `;
 
 const coinPrices = [
-  { id: 0, price: 1.89, quantity: 1000 },
-  { id: 1, price: 8.99, quantity: 5000 },
-  { id: 2, price: 39.99, quantity: 25000 },
-  { id: 3, price: 149.99, quantity: 100000 },
+  {
+    id: 0,
+    price: 1.89,
+    quantity: 5000,
+    imageLink: "/static/5000 Coin Image.png",
+  },
+  {
+    id: 1,
+    price: 8.99,
+    quantity: 25000,
+    imageLink: "/static/25000 Coin Image.png",
+  },
+  {
+    id: 2,
+    price: 39.99,
+    quantity: 100000,
+    imageLink: "/static/100000 Coin Image.png",
+  },
+  {
+    id: 3,
+    price: 149.99,
+    quantity: 500000,
+    imageLink: "/static/500000 Coin Image.png",
+  },
 ];
 
 export async function createPaymentIntent(amount) {
@@ -207,6 +227,13 @@ const BalanceField = ({ balance }) => {
     <Box textAlign="center" pb={2}>
       <Typography
         variant="h2"
+        fontSize={{
+          xs: "20px",
+          sm: "32px",
+          md: "32px",
+          lg: "50px",
+          xl: "50px",
+        }}
         color="#284B9B"
         fontFamily="Chango"
         sx={defaultTextSx}
@@ -231,6 +258,13 @@ const BuyCoinsHeader = () => {
     <Box textAlign="center" pb={4}>
       <Typography
         variant="h2"
+        fontSize={{
+          xs: "20px",
+          sm: "32px",
+          md: "32px",
+          lg: "50px",
+          xl: "50px",
+        }}
         color="#FF4D0D"
         fontFamily="Chango"
         sx={defaultTextSx}
@@ -250,11 +284,12 @@ const BuyCoinsGrid = ({ selectBundle }) => {
         }
 
         return (
-          <Grid item xs={12} md={3} key={item.price}>
+          <Grid item xs={6} sm={4} md={3} key={item.price}>
             <CoinCard
               price={item.price}
               quantity={item.quantity}
               onClick={bundleSelected}
+              imageLink={item.imageLink}
             />
           </Grid>
         );
@@ -266,7 +301,18 @@ const BuyCoinsGrid = ({ selectBundle }) => {
 const BuyBallsHeader = () => {
   return (
     <Box textAlign="center" pb={4} sx={defaultTextSx}>
-      <Typography variant="h2" color="#FF4D0D" fontFamily="Chango">
+      <Typography
+        variant="h2"
+        color="#FF4D0D"
+        fontFamily="Chango"
+        fontSize={{
+          xs: "20px",
+          sm: "32px",
+          md: "32px",
+          lg: "50px",
+          xl: "50px",
+        }}
+      >
         Shop Rolltopia Balls
       </Typography>
     </Box>
@@ -299,7 +345,7 @@ const BuyBallsGrid = ({ collections }) => {
   return (
     <Grid container spacing={2}>
       {collections.map((collection) => (
-        <Grid item xs={12} sm={6} md={3} key={collection.collectionId}>
+        <Grid item xs={6} sm={4} md={3} key={collection.collectionId}>
           <CollectionCard collection={collection} />
         </Grid>
       ))}

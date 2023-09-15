@@ -51,7 +51,7 @@ export async function createPaymentIntent(props:CreatePaymentIntentProps): Promi
 	};
 
 	const paymentIntent: Stripe.PaymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
-	await dbInvoices.insertOne({ paymentIntentId: paymentIntent.id, bundle: props.bundle, completed: false });
+	// await dbInvoices.insertOne({ paymentIntentId: paymentIntent.id, bundle: props.bundle, completed: false });
 
 	return paymentIntent;
 }

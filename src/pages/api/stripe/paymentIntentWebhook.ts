@@ -57,12 +57,14 @@ export async function handlePaymentIntentWebhook(sig, body) {
 	switch (event['type']) {
 		case 'payment_intent.succeeded': {
 			console.log("Succeeded:", paymentIntent.id);
+			/*
 			await assetlayer.currencies.increaseCurrencyBalance({ 
 				currencyId: rolltopiaCurrencyId, 
 				amount: Number(paymentIntent.metadata.quantity), 
 				walletUserId: paymentIntent.metadata.userId 
 			});
-			await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
+			*/
+			// await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
 			break;
 		}
 		case 'payment_intent.payment_failed': {

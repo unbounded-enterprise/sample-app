@@ -181,27 +181,27 @@ const globalScrollbarStyles = `
   }
 `;
 
-const coinPrices = [
+export const rolltopiaBundles = [
   {
-    id: 0,
+    id: '0',
     price: 1.89,
     quantity: 5000,
     imageLink: "/static/Coins 1.png",
   },
   {
-    id: 1,
+    id: '1',
     price: 8.99,
     quantity: 25000,
     imageLink: "/static/Coins 2.png",
   },
   {
-    id: 2,
+    id: '2',
     price: 39.99,
     quantity: 100000,
     imageLink: "/static/Coins 3.png",
   },
   {
-    id: 3,
+    id: '3',
     price: 149.99,
     quantity: 500000,
     imageLink: "/static/Coins 4.png",
@@ -210,7 +210,7 @@ const coinPrices = [
 
 export async function createPaymentIntent(user, bundle) {
   try {
-    const paymentIntent = await authApi.createStripePaymentIntent({ userId: user.userId, bundle });
+    const paymentIntent = await authApi.createStripePaymentIntent({ userId: user.userId, bundleId: bundle.id });
     return { result: paymentIntent };
   } catch (error) {
     console.warn(error.message);
@@ -274,7 +274,7 @@ const BuyCoinsHeader = () => {
 const BuyCoinsGrid = ({ selectBundle }) => {
   return (
     <Grid container spacing={2} pb={4}>
-      {coinPrices.map((item) => {
+      {rolltopiaBundles.map((item) => {
         function bundleSelected() {
           selectBundle(item);
         }
@@ -606,7 +606,6 @@ const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaym
 
 const ShopContent = ({ user, balance, collections }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
-  const [selectedCurrency, setSelectedCurrency] = useState("");
   const [handcashSelected, setHandcashSelected] = useState(false);
   const [paymentQR, setPaymentQR] = useState("");
   const [paymentIntent, setPaymentIntent] = useState(undefined);
@@ -622,7 +621,6 @@ const ShopContent = ({ user, balance, collections }) => {
       const payment = await authApi.createHandcashPayment({
         userId: user.userId,
         bundleId: bundle.id,
-        price: bundle.price,
       });
       console.log("payment response!", payment);
       setPaymentQR(payment.paymentRequestQrCodeUrl);

@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
-import axios from "axios";
 import { BasicError } from "src/types/error";
-import { CreatePaymentIntentProps } from "src/types/stripe";
 import { errorHandling } from "../validate";
 import Stripe from 'stripe';
 // import { MongoClient } from 'mongodb';
@@ -11,8 +9,30 @@ import { RolltopiaBundle } from "src/types/shop";
 // const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
 // const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
+export const rolltopiaBundles = {
+  '0': {
+    id: '0',
+    price: 1.89,
+    quantity: 5000,
+  },
+  '1': {
+    id: '1',
+    price: 8.99,
+    quantity: 25000,
+  },
+  '2': {
+    id: '2',
+    price: 39.99,
+    quantity: 100000,
+  },
+  '3': {
+    id: '3',
+    price: 149.99,
+    quantity: 500000,
+  },
+};
 
-function createMetadata(userId: string, bundle: RolltopiaBundle) {
+export function createBundleMetadata(userId: string, bundle: RolltopiaBundle) {
 	return {
 		userId,
 		bundleId: "" + bundle.id,
@@ -26,12 +46,15 @@ export default function createPaymentIntentHandler(req:NextApiRequest, res:NextA
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
 		try {
-			const { userId, bundle } = req.body;
+			const { userId, bundleId } = req.body;
 			
 			if (!userId) throw new BasicError('missing userId', 409);
-			if (!bundle) throw new BasicError('missing bundle', 409);
+			if (!bundleId) throw new BasicError('missing bundleId', 409);
 
-			createPaymentIntent({ userId, bundle })
+			const bundle = rolltopiaBundles[bundleId];
+			if (!bundle) throw new BasicError('invalid bundleId', 409);
+
+			createPaymentIntent(userId, bundle)
 				.then((intent) => resolve(res.status(200).json(intent)))
 				.catch(handleError);
 		} catch(e:any) {
@@ -40,14 +63,14 @@ export default function createPaymentIntentHandler(req:NextApiRequest, res:NextA
 	})
 }
 
-export async function createPaymentIntent(props:CreatePaymentIntentProps): Promise<any> {
+export async function createPaymentIntent(userId: string, bundle: RolltopiaBundle): Promise<any> {
 	const paymentIntentParams = {
-	  	amount: props.bundle.price * 100,
+	  	amount: bundle.price * 100,
 	  	currency: 'usd',
 	  	automatic_payment_methods: { enabled: true }, // default true
 		// payment_method_types: ['card'], // defaults to payment methods in set in stripe dashboard
-	  	statement_descriptor: `${props.bundle.quantity} Coins`, // max length + prefix (stripe dashboard) = 22
-		metadata: createMetadata(props.userId, props.bundle),
+	  	statement_descriptor: `${bundle.quantity} Coins`, // max length + prefix (stripe dashboard) = 22
+		metadata: createBundleMetadata(userId, bundle),
 	};
 
 	const paymentIntent: Stripe.PaymentIntent = await stripe.paymentIntents.create(paymentIntentParams);

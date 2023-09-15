@@ -1,10 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
-import { getAccount } from './getProfile';
-import { errorHandling, parseError } from '../validate';
+import { errorHandling } from '../validate';
 import { BasicError } from 'src/types/error';
 import axios from "axios";
+import { RolltopiaBundle } from "src/types/shop";
+import { createBundleMetadata, rolltopiaBundles } from "../stripe/createPaymentIntent";
+import { MongoClient } from 'mongodb';
 
-function getPaymentProps(userId: string, bundleId: number, price: number) {
+const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
+const dbInvoices = mdb.db('rolltopia').collection('invoices');
+
+function getPaymentProps(userId: string, bundle: RolltopiaBundle) {
   return {
     method: 'POST',
     url: 'https://cloud.handcash.io/v2/paymentRequests',
@@ -21,12 +26,12 @@ function getPaymentProps(userId: string, bundleId: number, price: number) {
         imageUrl: 'https://www.rolltopia.games/static/explorerImage.png'
       },
       receivers: [
-        { sendAmount: price, currencyCode: 'USD', destination: 'dubby' }
+        { sendAmount: bundle.price, currencyCode: 'USD', destination: 'dubby' }
       ],
       requestedUserData: ['paymail'],
       notifications: {
         webhook: {
-          customParameters: { userId, bundleId },
+          customParameters: createBundleMetadata(userId, bundle),
           webhookUrl: 'https://www.rolltopia.games/api/handcash/paymentWebhook'
         },
         email: 'jordan@assetlayer.com'
@@ -42,16 +47,17 @@ export default function createPaymentHandler(req:NextApiRequest, res:NextApiResp
 		const handleError = (e:any) => errorHandling(e, resolve, res);
 
     try {
-      const { userId, bundleId, price } = req.body;
-      console.log(userId, bundleId, price)
+      const { userId, bundleId } = req.body;
 
       if (!userId) throw new BasicError('missing userId', 409);
-      else if (!bundleId && bundleId !== 0) throw new BasicError('missing bundleId', 409);
-      else if (!price) throw new BasicError('missing price', 409);
+			else if (!bundleId) throw new BasicError('missing bundleId', 409);
 
-      const paymentProps = getPaymentProps(userId, bundleId, price);
+			const bundle = rolltopiaBundles[bundleId];
+			if (!bundle) throw new BasicError('invalid bundleId', 409);
+
+      const paymentProps = getPaymentProps(userId, bundle);
       
-      createPayment(paymentProps)
+      createPayment(paymentProps, bundle)
         .then((response) => resolve(res.status(200).json(response)))
         .catch(handleError);
     } catch(e:any) {
@@ -60,8 +66,10 @@ export default function createPaymentHandler(req:NextApiRequest, res:NextApiResp
   })
 }
 
-export async function createPayment(options: any) { 
+export async function createPayment(options: any, bundle: RolltopiaBundle) { 
   const response = await axios.request(options);
+
+  await dbInvoices.insertOne({ paymentRequestId: response.data.paymentRequestId, bundle, completed: false });
 
   return response.data;
 }

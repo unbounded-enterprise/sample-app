@@ -4,12 +4,12 @@ import { BasicError } from "src/types/error";
 import { CreatePaymentIntentProps } from "src/types/stripe";
 import { errorHandling } from "../validate";
 import Stripe from 'stripe';
-import { MongoClient } from 'mongodb';
+// import { MongoClient } from 'mongodb';
 import { RolltopiaBundle } from "src/types/shop";
 // import { getUser } from "../user/info";
 
-const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
-const dbInvoices = mdb.db('rolltopia').collection('invoices');
+// const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
+// const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
 
 function createMetadata(userId: string, bundle: RolltopiaBundle) {

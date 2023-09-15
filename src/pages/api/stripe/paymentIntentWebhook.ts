@@ -3,12 +3,12 @@ import axios from "axios";
 import { BasicError } from "src/types/error";
 import { errorHandling } from "../validate";
 import Stripe from 'stripe';
-import { MongoClient } from 'mongodb';
+// import { MongoClient } from 'mongodb';
 import { assetlayer } from "../app/info";
 // import { getUser } from "../user/info";
 
-const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
-const dbInvoices = mdb.db('rolltopia').collection('invoices');
+// const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
+// const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
 const endpointSecret = process.env.PAYMENT_INTENT_WEBHOOK_SECRET;
 const rolltopiaCurrencyId = "64f774cb151a6a3dee16df7c";

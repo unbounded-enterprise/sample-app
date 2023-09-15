@@ -69,7 +69,7 @@ export default function createPaymentHandler(req:NextApiRequest, res:NextApiResp
 export async function createPayment(options: any, bundle: RolltopiaBundle) { 
   const response = await axios.request(options);
 
-  await dbInvoices.insertOne({ paymentRequestId: response.data.paymentRequestId, bundle, completed: false });
+  await dbInvoices.insertOne({ paymentRequestId: response.data.id, bundle, completed: false });
 
   return response.data;
 }

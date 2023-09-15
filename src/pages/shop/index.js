@@ -208,9 +208,9 @@ const coinPrices = [
   },
 ];
 
-export async function createPaymentIntent(bundle) {
+export async function createPaymentIntent(user, bundle) {
   try {
-    const paymentIntent = await authApi.createStripePaymentIntent({ bundle });
+    const paymentIntent = await authApi.createStripePaymentIntent({ userId: user.userId, bundle });
     return { result: paymentIntent };
   } catch (error) {
     console.warn(error.message);
@@ -636,7 +636,7 @@ const ShopContent = ({ user, balance, collections }) => {
   }
 
   async function createStripePayment(bundle) {
-    const { result, error } = await createPaymentIntent(bundle);
+    const { result, error } = await createPaymentIntent(user, bundle);
     console.log("result:", result, result?.client_secret);
     if (result?.client_secret) {
       setPaymentIntent(result);

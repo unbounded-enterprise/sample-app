@@ -55,15 +55,21 @@ export async function handlePaymentIntentWebhook(sig, body) {
 	const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
 	switch (event['type']) {
-		case 'payment_intent.succeeded':
-		  console.log("Succeeded:", paymentIntent.id);
-		  await assetlayer.currencies.increaseCurrencyBalance({ currencyId: rolltopiaCurrencyId, amount: Number(paymentIntent.metadata.quantity) });
-		  await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
-		  break;
-		case 'payment_intent.payment_failed':
-		  const message = paymentIntent.last_payment_error && paymentIntent.last_payment_error.message;
-		  console.log('Failed:', paymentIntent.id, message);
-		  break;
+		case 'payment_intent.succeeded': {
+			console.log("Succeeded:", paymentIntent.id);
+			await assetlayer.currencies.increaseCurrencyBalance({ 
+				currencyId: rolltopiaCurrencyId, 
+				amount: Number(paymentIntent.metadata.quantity), 
+				walletUserId: paymentIntent.metadata.userId 
+			});
+			await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
+			break;
+		}
+		case 'payment_intent.payment_failed': {
+			const message = paymentIntent.last_payment_error && paymentIntent.last_payment_error.message;
+			console.log('Failed:', paymentIntent.id, message);
+			break;
+		}
 	}
 
 	return true;

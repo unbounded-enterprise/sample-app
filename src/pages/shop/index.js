@@ -36,6 +36,7 @@ import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import th
 import "@fontsource/chango";
 import SearchIcon from "@mui/icons-material/Search";
 import { ChangoBackArrowOrange } from "src/icons/chango_back-arrow_orange.js";
+import { HandcashLogo } from "src/icons/handcash_logo_light.js";
 import { authApi } from "../../_api_/auth-api";
 import createBasicContext from "src/components/widgets/basic/basic-context";
 import { BasicTextField } from "src/components/widgets/basic/basic-textfield";
@@ -51,6 +52,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { StripeWordMark } from "src/icons/Stripe wordmark - blurple.js";
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 export const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
@@ -100,6 +102,14 @@ const shopCardSx = {
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Show scrollbar thumb on hover
   },
 };
+const shopCardSx2 = {
+  my: "1rem",
+  p: "1rem",
+  pb: "3rem",
+  borderRadius: "15px",
+  maxHeight: "calc(100vh - 64px)",
+  overflowY: "auto",
+};
 const slotButtonStyle = {
   color: "blue",
   border: "1px solid blue",
@@ -127,28 +137,14 @@ const creditCardFieldSx = {
     border: "2px solid #045CD2",
   },
 };
-const stripeElementsOptions = {
-  appearance: {
-    theme: "stripe",
-    labels: "floating",
-    /*
-    variables: {
-      colorPrimary: '#ffffff',
-      colorBackground: '#aaaaaa',
-      colorText: '#ffffff',
-      colorDanger: '#ffffff',
-      fontFamily: 'Ideal Sans, system-ui, sans-serif',
-      spacingUnit: '2px',
-      borderRadius: '4px',
-      // See all possible variables below
-    }
-    */
-    rules: {
-      ".Label": { color: "#929394" },
-      ".Input": { borderRadius: "8px" },
-      ".Input::placeholder": { color: "#929394" },
-    },
-  },
+const stripeElementsAppearanceOption = {
+  theme: "stripe",
+  labels: "floating",
+  rules: {
+    ".Label": { color: "#929394" },
+    ".Input": { borderRadius: "8px" },
+    ".Input::placeholder": { color: "#929394" },
+  }
 };
 const cardElementOptions = {
   style: { base: { "::placeholder": { color: "#929394" } } },
@@ -532,7 +528,7 @@ const PurchaseCoinsCurrencyButtons = ({ setCurrency }) => {
   );
 };
 
-const StripeCheckoutForm = ({ user }) => {
+const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaymentComplete }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -569,24 +565,25 @@ const StripeCheckoutForm = ({ user }) => {
       } else {
         setErrorMessage("An unexpected error occurred.");
       }
+      return setIsLoading(false);
     }
-
-    setIsLoading(false);
+    
+    setPaymentComplete(true);
   };
 
   return (
-    <Stack sx={{ maxWidth: { md: "50%" } }}>
+    <Stack>
       <PaymentElement
+        onReady={()=>setStripeReady(true)}
         options={{
-          paymentMethodOrder: ["card", "link", "google_pay", "apple_pay"],
-          defaultValues: { billingDetails: { email: user.email } },
+          loader: 'always',
+          paymentMethodOrder: ["card", "google_pay", "apple_pay"],
+          // defaultValues: { billingDetails: { email: user.email } }, // enable to activate stripe link
         }}
       />
       <Box sx={{ height: "0.8rem" }} />
       <AddressElement options={{ mode: "billing" }} />
-      <Typography variant="subtitle2" sx={{ my: "1rem", fontSize: "14px" }}>
-        {`You'll have a chance to review your order before it's placed.`}
-      </Typography>
+      <Box sx={{ height: "2.5rem" }}/>
       {isLoading ? (
         <LinearProgress sx={{ my: "1rem", width: "100%" }} />
       ) : (
@@ -594,13 +591,13 @@ const StripeCheckoutForm = ({ user }) => {
           {errorMessage && (
             <Typography sx={{ color: "red" }}>{errorMessage}</Typography>
           )}
-          <Button
+          { stripeReady && <Button
             onClick={handleSubmit}
             disabled={isLoading}
-            sx={{ color: "white", backgroundColor: "#045CD2" }}
+            sx={{ color: "white", backgroundColor: "#045CD2", fontWeight: 'bold' }}
           >
-            Next
-          </Button>
+            Pay ${bundle.price}
+          </Button> }
         </>
       )}
     </Stack>
@@ -610,8 +607,11 @@ const StripeCheckoutForm = ({ user }) => {
 const ShopContent = ({ user, balance, collections }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [selectedCurrency, setSelectedCurrency] = useState("");
+  const [handcashSelected, setHandcashSelected] = useState(false);
   const [paymentQR, setPaymentQR] = useState("");
   const [paymentIntent, setPaymentIntent] = useState(undefined);
+  const [paymentComplete, setPaymentComplete] = useState(false);
+  const [stripeReady, setStripeReady] = useState(false);
 
   function selectBundle(bundle) {
     if (!bundle || user) setSelectedBundle(bundle);
@@ -629,6 +629,12 @@ const ShopContent = ({ user, balance, collections }) => {
     } catch (e) {}
   }
 
+  async function handleHandcashSelected(bundle) {
+    if (handcashSelected) return;
+    if (!paymentQR) createHandcashPayment(bundle);
+    setHandcashSelected(true);
+  }
+
   async function createStripePayment(bundle) {
     const { result, error } = await createPaymentIntent(bundle);
     console.log("result:", result, result?.client_secret);
@@ -638,16 +644,8 @@ const ShopContent = ({ user, balance, collections }) => {
   }
 
   useEffect(() => {
-    if (selectedCurrency === "BSV") {
-      createHandcashPayment(selectedBundle);
-      if (paymentIntent) {
-        setPaymentIntent(undefined);
-      }
-    } else if (selectedCurrency === "USD") {
-      createStripePayment(selectedBundle);
-      if (paymentQR) setPaymentQR("");
-    }
-  }, [selectedCurrency]);
+    if (selectedBundle) createStripePayment(selectedBundle);
+  }, [selectedBundle]);
 
   return selectedBundle === undefined ? (
     <Card sx={shopCardSx}>
@@ -656,93 +654,58 @@ const ShopContent = ({ user, balance, collections }) => {
       <BuyCoinsGrid selectBundle={selectBundle} />
       <BuyBallsContent collections={collections} />
     </Card>
-  ) : !selectedCurrency ? (
-    <Card
-      sx={{
-        my: "1rem",
-        p: "1rem",
-        pb: "3rem",
-        borderRadius: "15px",
-        maxHeight: "calc(100vh - 64px)",
-        overflowY: "auto",
-      }}
-    >
-      <Stack
-        spacing="1rem"
-        sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
-      >
-        <PurchaseCoinsHeader
-          text="Purchase Coins"
-          onBack={() => setSelectedBundle(undefined)}
-        />
-        <Box sx={{ width: "100%", maxWidth: "5rem" }} />
-        <PurchaseCoinsBody bundle={selectedBundle} />
-        <PurchaseCoinsCurrencyButtons setCurrency={setSelectedCurrency} />
-      </Stack>
-    </Card>
-  ) : (
-    <Card
-      sx={{
-        my: "1rem",
-        p: "1rem",
-        pb: "3rem",
-        borderRadius: "15px",
-        maxHeight: "calc(100vh - 64px)",
-        overflowY: "auto",
-      }}
-    >
-      {selectedCurrency === "USD" && (
+  ) : (!paymentComplete) ? (
+    <Card sx={shopCardSx2}>
+      <Stack sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
+        <PurchaseCoinsHeader text="" onBack={() => setSelectedBundle(undefined)} />
         <Stack
-          sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
+          direction={{ xs: "column", md: "row" }}
+          spacing="1rem"
+          sx={{
+            justifyContent: "space-between",
+            width: "100%",
+            px: { sm: "5rem" },
+          }}
         >
-          <PurchaseCoinsHeader text="" onBack={() => setSelectedCurrency("")} />
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing="1rem"
-            sx={{
-              justifyContent: "space-between",
-              width: "100%",
-              px: { sm: "5rem" },
-            }}
-          >
-            <Stack sx={{ justifyContent: "space-between" }}>
-              <Stack>
-                <Typography
-                  variant="h6"
-                  color="#284B9B"
-                  fontFamily="Chango"
-                  sx={defaultTextSx}
-                >
-                  Purchase {selectedBundle.quantity} Coins for:
-                </Typography>
-                <Typography
-                  variant="h5"
-                  color="#FF4D0D"
-                  fontFamily="Chango"
-                  sx={defaultTextSx}
-                >
-                  ${selectedBundle.price}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: { xs: "2.5rem", md: "4rem" },
-                    width: "100%",
+          <Stack sx={{ justifyContent: "space-between" }}>
+            <Stack>
+              <Typography
+                variant="h6"
+                color="#284B9B"
+                fontFamily="Chango"
+                sx={defaultTextSx}
+              >
+                Purchase {selectedBundle.quantity} Coins for:
+              </Typography>
+              <Typography
+                variant="h5"
+                color="#FF4D0D"
+                fontFamily="Chango"
+                sx={defaultTextSx}
+              >
+                ${selectedBundle.price}
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mt: { xs: "2.5rem", md: "4rem" },
+                  width: "100%",
+                }}
+              >
+                <img
+                  src="/static/coinImage.png"
+                  alt=""
+                  style={{
+                    width: "12rem",
+                    height: "12rem",
                   }}
-                >
-                  <img
-                    src="/static/coinImage.png"
-                    alt=""
-                    style={{
-                      width: "12rem",
-                      height: "12rem",
-                    }}
-                  />
-                </Box>
-              </Stack>
+                />
+              </Box>
+            </Stack>
+            { (handcashSelected) ? (<Box sx={{ minHeight: { xs: "4rem", md: "10rem" } }} />) :  (
               <Stack>
-                <Box sx={{ minHeight: { xs: "4rem", md: "12rem" } }} />
+                <Box sx={{ minHeight: { xs: "4rem", md: "16rem" } }} />
                 <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
                 <Stack
                   direction="row"
@@ -765,53 +728,108 @@ const ShopContent = ({ user, balance, collections }) => {
                   </Typography>
                 </Stack>
               </Stack>
+            ) }
+          </Stack>
+          <Stack sx={{ display: 'flex', flexGrow: 1, maxWidth: { md: "50%" } }}>
+            <Stack direction="row" sx={{ pb: '0.8rem' }}>
+              { handcashSelected && <Button onClick={()=>setHandcashSelected(false)} sx={{ 
+                width: '1rem', height: '3.5rem', mr: '1rem', border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', 
+                "&:hover": { border: "1px solid #045CD2", },
+                "&:focus": { border: "2px solid #045CD2", },
+              }}>
+                <ArrowLeftIcon fontSize="large"/>
+              </Button> }
+              <Button onClick={()=>handleHandcashSelected(selectedBundle)} 
+                startIcon={<SvgIcon component={HandcashLogo} viewBox="0 0 123 123" sx={{ width: "2.5rem", height: "2.5rem", pr: '1rem' }}/>}
+                sx={{ 
+                  display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '3.5rem',
+                  border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', fontSize: "16px", fontWeight: "bold",
+                  "&:hover": { border: "1px solid #045CD2", },
+                  "&:focus": { border: "2px solid #045CD2", },
+              }}>
+                Handcash Pay
+              </Button>
             </Stack>
-            {paymentIntent && (
+            { paymentIntent && (
               <Elements
                 stripe={stripePromise}
                 options={{
                   clientSecret: paymentIntent?.client_secret,
-                  ...stripeElementsOptions,
+                  appearance: stripeElementsAppearanceOption,
                 }}
               >
-                <PaymentFormProvider>
-                  <StripeCheckoutForm user={user} />
-                </PaymentFormProvider>
+                { (!handcashSelected) ? (
+                    <StripeCheckoutForm user={user} bundle={selectedBundle} stripeReady={stripeReady} setStripeReady={setStripeReady} setPaymentComplete={setPaymentComplete}/>
+                  ) : (
+                    <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          py: '1rem',
+                        }}
+                      >
+                        {paymentQR ? (
+                          <img
+                            src={paymentQR}
+                            alt=""
+                            style={{ width: "100%", height: "100%" }}
+                          />
+                        ) : (
+                          <CircularProgress sx={{ width: "5rem", height: "5rem" }} />
+                        )}
+                      </Box>
+                      <Typography variant="subtitle2">
+                        Scan the QR code with your Handcash app to pay
+                      </Typography>
+                    </Stack>
+                  )
+                }
               </Elements>
             )}
           </Stack>
         </Stack>
-      )}
-      {selectedCurrency === "BSV" && (
-        <Stack
-          spacing="1rem"
-          sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
-        >
-          <PurchaseCoinsHeader
-            text="Pay with Handcash"
-            onBack={() => setSelectedCurrency("")}
-          />
-          <Box
+      </Stack>
+    </Card>
+  ) : (
+    <Card sx={shopCardSx2}>
+      <Stack sx={{ justifyContent: "space-between", alignItems: "center", width: "100%", minHeight: '12rem' }}>
+        <PurchaseCoinsHeader text="Purchase Completed" onBack={() => setSelectedBundle(undefined)} />
+        <NextLink href="/play" passHref legacyBehavior>
+          <Button
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              maxWidth: "15rem",
+              width: '100%',
+              maxWidth: '35rem',
+              color: "white",
+              fontFamily: "Chango",
+              border: "2px solid white",
+              borderRadius: "4px",
+              background:
+                "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+              boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              cursor: "pointer",
+              position: "relative", // Set the card's position to relative
+              "&:hover::before": {
+                // Use the ::before pseudo-element for the overlay
+                content: '""',
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+              },
+              "&:hover": {
+                boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+              },
             }}
           >
-            {paymentQR ? (
-              <img
-                src={paymentQR}
-                alt=""
-                style={{ width: "100%", height: "100%" }}
-              />
-            ) : (
-              <CircularProgress sx={{ width: "5rem", height: "5rem" }} />
-            )}
-          </Box>
-        </Stack>
-      )}
+            Play Now
+          </Button>
+        </NextLink>
+      </Stack>
     </Card>
   );
 };

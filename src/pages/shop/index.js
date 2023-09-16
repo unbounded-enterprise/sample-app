@@ -52,7 +52,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { StripeWordMark } from "src/icons/Stripe wordmark - blurple.js";
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 
 export const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
@@ -144,7 +144,7 @@ const stripeElementsAppearanceOption = {
     ".Label": { color: "#929394" },
     ".Input": { borderRadius: "8px" },
     ".Input::placeholder": { color: "#929394" },
-  }
+  },
 };
 const cardElementOptions = {
   style: { base: { "::placeholder": { color: "#929394" } } },
@@ -183,25 +183,25 @@ const globalScrollbarStyles = `
 
 export const rolltopiaBundles = [
   {
-    id: '0',
+    id: "0",
     price: 1.89,
     quantity: 5000,
     imageLink: "/static/Coins 1.png",
   },
   {
-    id: '1',
+    id: "1",
     price: 8.99,
     quantity: 25000,
     imageLink: "/static/Coins 2.png",
   },
   {
-    id: '2',
+    id: "2",
     price: 39.99,
     quantity: 100000,
     imageLink: "/static/Coins 3.png",
   },
   {
-    id: '3',
+    id: "3",
     price: 149.99,
     quantity: 500000,
     imageLink: "/static/Coins 4.png",
@@ -210,7 +210,10 @@ export const rolltopiaBundles = [
 
 export async function createPaymentIntent(user, bundle) {
   try {
-    const paymentIntent = await authApi.createStripePaymentIntent({ userId: user.userId, bundleId: bundle.id });
+    const paymentIntent = await authApi.createStripePaymentIntent({
+      userId: user.userId,
+      bundleId: bundle.id,
+    });
     return { result: paymentIntent };
   } catch (error) {
     console.warn(error.message);
@@ -528,7 +531,13 @@ const PurchaseCoinsCurrencyButtons = ({ setCurrency }) => {
   );
 };
 
-const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaymentComplete }) => {
+const StripeCheckoutForm = ({
+  user,
+  bundle,
+  stripeReady,
+  setStripeReady,
+  setPaymentComplete,
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -567,23 +576,23 @@ const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaym
       }
       return setIsLoading(false);
     }
-    
+
     setPaymentComplete(true);
   };
 
   return (
     <Stack>
       <PaymentElement
-        onReady={()=>setStripeReady(true)}
+        onReady={() => setStripeReady(true)}
         options={{
-          loader: 'always',
+          loader: "always",
           paymentMethodOrder: ["card", "google_pay", "apple_pay"],
           // defaultValues: { billingDetails: { email: user.email } }, // enable to activate stripe link
         }}
       />
       <Box sx={{ height: "0.8rem" }} />
       <AddressElement options={{ mode: "billing" }} />
-      <Box sx={{ height: "2.5rem" }}/>
+      <Box sx={{ height: "2.5rem" }} />
       {isLoading ? (
         <LinearProgress sx={{ my: "1rem", width: "100%" }} />
       ) : (
@@ -591,13 +600,19 @@ const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaym
           {errorMessage && (
             <Typography sx={{ color: "red" }}>{errorMessage}</Typography>
           )}
-          { stripeReady && <Button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            sx={{ color: "white", backgroundColor: "#045CD2", fontWeight: 'bold' }}
-          >
-            Pay ${bundle.price}
-          </Button> }
+          {stripeReady && (
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              sx={{
+                color: "white",
+                backgroundColor: "#045CD2",
+                fontWeight: "bold",
+              }}
+            >
+              Pay ${bundle.price}
+            </Button>
+          )}
         </>
       )}
     </Stack>
@@ -605,49 +620,71 @@ const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaym
 };
 
 const PoweredByStripeElement = () => {
-  return (<Stack>
-    <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
-    <Stack
-      direction="row"
-      spacing="1rem"
-      sx={{ alignItems: "center" }}
-    >
-      <SvgIcon
-        component={StripeWordMark}
-        viewBox="0 0 368 222.5"
-        sx={{ width: "auto", height: "2.25rem" }}
-      />
-      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-        |
-      </Typography>
-      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-        Terms
-      </Typography>
-      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-        Privacy
-      </Typography>
+  return (
+    <Stack>
+      <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
+      <Stack direction="row" spacing="1rem" sx={{ alignItems: "center" }}>
+        <SvgIcon
+          component={StripeWordMark}
+          viewBox="0 0 368 222.5"
+          sx={{ width: "auto", height: "2.25rem" }}
+        />
+        <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>|</Typography>
+        <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+          Terms
+        </Typography>
+        <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+          Privacy
+        </Typography>
+      </Stack>
     </Stack>
-  </Stack>);
+  );
 };
 
 const HandcashPayButton = ({ active, onClick, onBack }) => {
   return (
-    <Stack direction="row" sx={{ pb: '0.8rem' }}>
-      { active && <Button onClick={onBack} sx={{ 
-        width: '1rem', height: '3.5rem', mr: '1rem', border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', 
-        "&:hover": { border: "1px solid #045CD2", },
-        "&:focus": { border: "2px solid #045CD2", },
-      }}>
-        <ArrowLeftIcon fontSize="large"/>
-      </Button> }
-      <Button onClick={onClick} 
-        startIcon={<SvgIcon component={HandcashLogo} viewBox="0 0 123 123" sx={{ width: "2.5rem", height: "2.5rem", pr: '1rem' }}/>}
-        sx={{ 
-          display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '3.5rem',
-          border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', fontSize: "16px", fontWeight: "bold",
-          "&:hover": { border: "1px solid #045CD2", },
-          "&:focus": { border: "2px solid #045CD2", },
-      }}>
+    <Stack direction="row" sx={{ pb: "0.8rem" }}>
+      {active && (
+        <Button
+          onClick={onBack}
+          sx={{
+            width: "1rem",
+            height: "3.5rem",
+            mr: "1rem",
+            border: "1px solid #e6e6e6",
+            borderRadius: "8px",
+            color: "#6d6e78",
+            "&:hover": { border: "1px solid #045CD2" },
+            "&:focus": { border: "2px solid #045CD2" },
+          }}
+        >
+          <ArrowLeftIcon fontSize="large" />
+        </Button>
+      )}
+      <Button
+        onClick={onClick}
+        startIcon={
+          <SvgIcon
+            component={HandcashLogo}
+            viewBox="0 0 123 123"
+            sx={{ width: "2.5rem", height: "2.5rem", pr: "1rem" }}
+          />
+        }
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "3.5rem",
+          border: "1px solid #e6e6e6",
+          borderRadius: "8px",
+          color: "#6d6e78",
+          fontSize: "16px",
+          fontWeight: "bold",
+          "&:hover": { border: "1px solid #045CD2" },
+          "&:focus": { border: "2px solid #045CD2" },
+        }}
+      >
         Handcash Pay
       </Button>
     </Stack>
@@ -658,22 +695,28 @@ const HandcashQRElement = ({ src }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Stack
+      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+    >
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          py: '1rem',
+          py: "1rem",
         }}
       >
-        { src && <img
-          src={src}
-          alt=""
-          onLoad={()=>setIsLoaded(true)}
-          style={{ width: "100%", height: "100%" }}
-        /> }
-        { !isLoaded && <CircularProgress sx={{ width: "5rem", height: "5rem" }} /> }
+        {src && (
+          <img
+            src={src}
+            alt=""
+            onLoad={() => setIsLoaded(true)}
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
+        {!isLoaded && (
+          <CircularProgress sx={{ width: "5rem", height: "5rem" }} />
+        )}
       </Box>
       <Typography variant="subtitle2">
         Scan the QR code with your Handcash app to pay
@@ -686,8 +729,8 @@ const PlayNowButton = () => {
   return (
     <Button
       sx={{
-        width: '100%',
-        maxWidth: '35rem',
+        width: "100%",
+        maxWidth: "35rem",
         color: "white",
         fontFamily: "Chango",
         border: "2px solid white",
@@ -766,10 +809,15 @@ const ShopContent = ({ user, balance, collections }) => {
       <BuyCoinsGrid selectBundle={selectBundle} />
       <BuyBallsContent collections={collections} />
     </Card>
-  ) : (!paymentComplete) ? (
+  ) : !paymentComplete ? (
     <Card sx={shopCardSx2}>
-      <Stack sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}>
-        <PurchaseCoinsHeader text="" onBack={() => setSelectedBundle(undefined)} />
+      <Stack
+        sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
+      >
+        <PurchaseCoinsHeader
+          text=""
+          onBack={() => setSelectedBundle(undefined)}
+        />
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing="1rem"
@@ -815,16 +863,22 @@ const ShopContent = ({ user, balance, collections }) => {
                 />
               </Box>
             </Stack>
-            { (handcashSelected) ? (<Box sx={{ minHeight: { xs: "4rem", md: "10rem" } }} />) :  (
+            {handcashSelected ? (
+              <Box sx={{ minHeight: { xs: "4rem", md: "10rem" } }} />
+            ) : (
               <Stack>
                 <Box sx={{ minHeight: { xs: "4rem", md: "16rem" } }} />
-                <PoweredByStripeElement/>
+                <PoweredByStripeElement />
               </Stack>
-            ) }
+            )}
           </Stack>
-          <Stack sx={{ display: 'flex', flexGrow: 1, maxWidth: { md: "50%" } }}>
-            <HandcashPayButton active={handcashSelected} onClick={()=>handleHandcashSelected(selectedBundle)} onBack={()=>setHandcashSelected(false)}/>
-            { paymentIntent && (
+          <Stack sx={{ display: "flex", flexGrow: 1, maxWidth: { md: "50%" } }}>
+            <HandcashPayButton
+              active={handcashSelected}
+              onClick={() => handleHandcashSelected(selectedBundle)}
+              onBack={() => setHandcashSelected(false)}
+            />
+            {paymentIntent && (
               <Elements
                 stripe={stripePromise}
                 options={{
@@ -832,12 +886,17 @@ const ShopContent = ({ user, balance, collections }) => {
                   appearance: stripeElementsAppearanceOption,
                 }}
               >
-                { (!handcashSelected) ? (
-                    <StripeCheckoutForm user={user} bundle={selectedBundle} stripeReady={stripeReady} setStripeReady={setStripeReady} setPaymentComplete={setPaymentComplete}/>
-                  ) : (
-                    <HandcashQRElement src={paymentQR}/>
-                  )
-                }
+                {!handcashSelected ? (
+                  <StripeCheckoutForm
+                    user={user}
+                    bundle={selectedBundle}
+                    stripeReady={stripeReady}
+                    setStripeReady={setStripeReady}
+                    setPaymentComplete={setPaymentComplete}
+                  />
+                ) : (
+                  <HandcashQRElement src={paymentQR} />
+                )}
               </Elements>
             )}
           </Stack>
@@ -846,10 +905,20 @@ const ShopContent = ({ user, balance, collections }) => {
     </Card>
   ) : (
     <Card sx={shopCardSx2}>
-      <Stack sx={{ justifyContent: "space-between", alignItems: "center", width: "100%", minHeight: '12rem' }}>
-        <PurchaseCoinsHeader text="Purchase Completed" onBack={() => setSelectedBundle(undefined)} />
+      <Stack
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          minHeight: "12rem",
+        }}
+      >
+        <PurchaseCoinsHeader
+          text="Purchase Completed"
+          onBack={() => setSelectedBundle(undefined)}
+        />
         <NextLink href="/play" passHref legacyBehavior>
-          <PlayNowButton/>
+          <PlayNowButton />
         </NextLink>
       </Stack>
     </Card>

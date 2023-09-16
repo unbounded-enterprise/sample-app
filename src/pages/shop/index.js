@@ -604,6 +604,120 @@ const StripeCheckoutForm = ({ user, bundle, stripeReady, setStripeReady, setPaym
   );
 };
 
+const PoweredByStripeElement = () => {
+  return (<Stack>
+    <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
+    <Stack
+      direction="row"
+      spacing="1rem"
+      sx={{ alignItems: "center" }}
+    >
+      <SvgIcon
+        component={StripeWordMark}
+        viewBox="0 0 368 222.5"
+        sx={{ width: "auto", height: "2.25rem" }}
+      />
+      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+        |
+      </Typography>
+      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+        Terms
+      </Typography>
+      <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
+        Privacy
+      </Typography>
+    </Stack>
+  </Stack>);
+};
+
+const HandcashPayButton = ({ active, onClick, onBack }) => {
+  return (
+    <Stack direction="row" sx={{ pb: '0.8rem' }}>
+      { active && <Button onClick={onBack} sx={{ 
+        width: '1rem', height: '3.5rem', mr: '1rem', border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', 
+        "&:hover": { border: "1px solid #045CD2", },
+        "&:focus": { border: "2px solid #045CD2", },
+      }}>
+        <ArrowLeftIcon fontSize="large"/>
+      </Button> }
+      <Button onClick={onClick} 
+        startIcon={<SvgIcon component={HandcashLogo} viewBox="0 0 123 123" sx={{ width: "2.5rem", height: "2.5rem", pr: '1rem' }}/>}
+        sx={{ 
+          display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '3.5rem',
+          border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', fontSize: "16px", fontWeight: "bold",
+          "&:hover": { border: "1px solid #045CD2", },
+          "&:focus": { border: "2px solid #045CD2", },
+      }}>
+        Handcash Pay
+      </Button>
+    </Stack>
+  );
+};
+
+const HandcashQRElement = ({ src }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          py: '1rem',
+        }}
+      >
+        { src && <img
+          src={src}
+          alt=""
+          onLoad={()=>setIsLoaded(true)}
+          style={{ width: "100%", height: "100%" }}
+        /> }
+        { !isLoaded && <CircularProgress sx={{ width: "5rem", height: "5rem" }} /> }
+      </Box>
+      <Typography variant="subtitle2">
+        Scan the QR code with your Handcash app to pay
+      </Typography>
+    </Stack>
+  );
+};
+
+const PlayNowButton = () => {
+  return (
+    <Button
+      sx={{
+        width: '100%',
+        maxWidth: '35rem',
+        color: "white",
+        fontFamily: "Chango",
+        border: "2px solid white",
+        borderRadius: "4px",
+        background:
+          "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+        boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        cursor: "pointer",
+        position: "relative", // Set the card's position to relative
+        "&:hover::before": {
+          // Use the ::before pseudo-element for the overlay
+          content: '""',
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+          zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+        },
+        "&:hover": {
+          boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+        },
+      }}
+    >
+      Play Now
+    </Button>
+  );
+};
+
 const ShopContent = ({ user, balance, collections }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
@@ -704,50 +818,12 @@ const ShopContent = ({ user, balance, collections }) => {
             { (handcashSelected) ? (<Box sx={{ minHeight: { xs: "4rem", md: "10rem" } }} />) :  (
               <Stack>
                 <Box sx={{ minHeight: { xs: "4rem", md: "16rem" } }} />
-                <Typography sx={{ fontSize: "16px" }}>Powered by</Typography>
-                <Stack
-                  direction="row"
-                  spacing="1rem"
-                  sx={{ alignItems: "center" }}
-                >
-                  <SvgIcon
-                    component={StripeWordMark}
-                    viewBox="0 0 368 222.5"
-                    sx={{ width: "auto", height: "2.25rem" }}
-                  />
-                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-                    |
-                  </Typography>
-                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-                    Terms
-                  </Typography>
-                  <Typography sx={{ color: "#6B7280", fontSize: "14px" }}>
-                    Privacy
-                  </Typography>
-                </Stack>
+                <PoweredByStripeElement/>
               </Stack>
             ) }
           </Stack>
           <Stack sx={{ display: 'flex', flexGrow: 1, maxWidth: { md: "50%" } }}>
-            <Stack direction="row" sx={{ pb: '0.8rem' }}>
-              { handcashSelected && <Button onClick={()=>setHandcashSelected(false)} sx={{ 
-                width: '1rem', height: '3.5rem', mr: '1rem', border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', 
-                "&:hover": { border: "1px solid #045CD2", },
-                "&:focus": { border: "2px solid #045CD2", },
-              }}>
-                <ArrowLeftIcon fontSize="large"/>
-              </Button> }
-              <Button onClick={()=>handleHandcashSelected(selectedBundle)} 
-                startIcon={<SvgIcon component={HandcashLogo} viewBox="0 0 123 123" sx={{ width: "2.5rem", height: "2.5rem", pr: '1rem' }}/>}
-                sx={{ 
-                  display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '3.5rem',
-                  border: "1px solid #e6e6e6", borderRadius: "8px", color: '#6d6e78', fontSize: "16px", fontWeight: "bold",
-                  "&:hover": { border: "1px solid #045CD2", },
-                  "&:focus": { border: "2px solid #045CD2", },
-              }}>
-                Handcash Pay
-              </Button>
-            </Stack>
+            <HandcashPayButton active={handcashSelected} onClick={()=>handleHandcashSelected(selectedBundle)} onBack={()=>setHandcashSelected(false)}/>
             { paymentIntent && (
               <Elements
                 stripe={stripePromise}
@@ -759,29 +835,7 @@ const ShopContent = ({ user, balance, collections }) => {
                 { (!handcashSelected) ? (
                     <StripeCheckoutForm user={user} bundle={selectedBundle} stripeReady={stripeReady} setStripeReady={setStripeReady} setPaymentComplete={setPaymentComplete}/>
                   ) : (
-                    <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          py: '1rem',
-                        }}
-                      >
-                        {paymentQR ? (
-                          <img
-                            src={paymentQR}
-                            alt=""
-                            style={{ width: "100%", height: "100%" }}
-                          />
-                        ) : (
-                          <CircularProgress sx={{ width: "5rem", height: "5rem" }} />
-                        )}
-                      </Box>
-                      <Typography variant="subtitle2">
-                        Scan the QR code with your Handcash app to pay
-                      </Typography>
-                    </Stack>
+                    <HandcashQRElement src={paymentQR}/>
                   )
                 }
               </Elements>
@@ -795,37 +849,7 @@ const ShopContent = ({ user, balance, collections }) => {
       <Stack sx={{ justifyContent: "space-between", alignItems: "center", width: "100%", minHeight: '12rem' }}>
         <PurchaseCoinsHeader text="Purchase Completed" onBack={() => setSelectedBundle(undefined)} />
         <NextLink href="/play" passHref legacyBehavior>
-          <Button
-            sx={{
-              width: '100%',
-              maxWidth: '35rem',
-              color: "white",
-              fontFamily: "Chango",
-              border: "2px solid white",
-              borderRadius: "4px",
-              background:
-                "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
-              boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-              cursor: "pointer",
-              position: "relative", // Set the card's position to relative
-              "&:hover::before": {
-                // Use the ::before pseudo-element for the overlay
-                content: '""',
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
-                zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
-              },
-              "&:hover": {
-                boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-              },
-            }}
-          >
-            Play Now
-          </Button>
+          <PlayNowButton/>
         </NextLink>
       </Stack>
     </Card>

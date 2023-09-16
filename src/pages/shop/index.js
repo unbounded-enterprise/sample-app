@@ -711,7 +711,7 @@ const HandcashQRElement = ({ src }) => {
             src={src}
             alt=""
             onLoad={() => setIsLoaded(true)}
-            style={{ width: "100%", height: "100%" }}
+            style={{ display: (isLoaded) ? 'flex' : 'none', width: "100%", height: "100%" }}
           />
         )}
         {!isLoaded && (

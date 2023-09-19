@@ -146,7 +146,13 @@ const HomePage = () => {
             <NextLink href="/play" passHref legacyBehavior>
               <Card
                 sx={{
-                  border: "8px solid white",
+                  border: {
+                    xs: "3px solid white",
+                    sm: "4px solid white",
+                    md: "6px solid white",
+                    lg: "8px solid white",
+                    xl: "8px solid white",
+                  },
                   borderRadius: {
                     xs: "5px",
                     sm: "5px",
@@ -222,7 +228,7 @@ const HomePage = () => {
                         xl: "3rem",
                       },
                       display: "block",
-                      border: "8px solid white"
+                      border: "5px solid white"
                     }}
                   />
 
@@ -242,10 +248,10 @@ const HomePage = () => {
                     sx={{
                       fontSize: {
                         xs: "24px",
-                        sm: "36px",
-                        md: "48px",
-                        lg: "64px",
-                        xl: "84px",
+                        sm: "32px",
+                        md: "44px",
+                        lg: "60px",
+                        xl: "80px",
                       },
                       textShadow: `
         2px 2px 0 white, 
@@ -278,7 +284,13 @@ const HomePage = () => {
           >
             <Card
                 sx={{
-                  border: "8px solid white",
+                  border: {
+                    xs: "3px solid white",
+                    sm: "4px solid white",
+                    md: "6px solid white",
+                    lg: "8px solid white",
+                    xl: "8px solid white",
+                  },
                   borderRadius: {
                     xs: "5px",
                     sm: "5px",

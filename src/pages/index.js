@@ -250,8 +250,8 @@ const HomePage = () => {
                         xs: "24px",
                         sm: "32px",
                         md: "44px",
-                        lg: "60px",
-                        xl: "80px",
+                        lg: "58px",
+                        xl: "78px",
                       },
                       textShadow: `
         2px 2px 0 white, 

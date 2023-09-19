@@ -146,7 +146,7 @@ const HomePage = () => {
             <NextLink href="/play" passHref legacyBehavior>
               <Card
                 sx={{
-                  border: "1px solid white",
+                  border: "8px solid white",
                   borderRadius: {
                     xs: "5px",
                     sm: "5px",
@@ -184,6 +184,7 @@ const HomePage = () => {
                     variant="h4"
                     fontFamily="Chango"
                     color="white"
+                    
                     fontSize={{
                       xs: "16px",
                       sm: "24px",
@@ -192,7 +193,7 @@ const HomePage = () => {
                       xl: "40px",
                     }}
                   >
-                    Play Runway Roller
+                    Play Now
                   </Typography>
                   <PlayArrowIcon
                     sx={{
@@ -207,17 +208,57 @@ const HomePage = () => {
                     }}
                   />
                 </Box>
-                <img
-                  src="/static/Gameplay.gif"
-                  alt={`Card Image`}
-                  style={{ width: "100%", height:{
-                    xs: "1.5rem",
-                    sm: "3rem",
-                    md: "3rem",
-                    lg: "3rem",
-                    xl: "3rem",
-                  }, display: "block" }}
-                />
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img
+                    src="/static/rolltopia gameplay.gif"
+                    alt="Card Image"
+                    style={{
+                      width: "100%",
+                      height: {
+                        xs: "1.5rem",
+                        sm: "3rem",
+                        md: "3rem",
+                        lg: "3rem",
+                        xl: "3rem",
+                      },
+                      display: "block",
+                      border: "8px solid white"
+                    }}
+                  />
+
+                  <Typography
+                    variant="h2"
+                    color="#EF1514"
+                    fontFamily="Chango"
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      margin: 0,
+                      whiteSpace: "nowrap", // This prevents the text from wrapping
+                      width: "auto", // This ensures the Typography component takes the width it needs
+                    }}
+                    sx={{
+                      fontSize: {
+                        xs: "24px",
+                        sm: "36px",
+                        md: "48px",
+                        lg: "64px",
+                        xl: "84px",
+                      },
+                      textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+                    }}
+                  >
+                    Runway Roller
+                  </Typography>
+                </div>
               </Card>
             </NextLink>
           </Grid>
@@ -237,7 +278,7 @@ const HomePage = () => {
           >
             <Card
                 sx={{
-                  border: "1px solid white",
+                  border: "8px solid white",
                   borderRadius: {
                     xs: "5px",
                     sm: "5px",
@@ -246,7 +287,7 @@ const HomePage = () => {
                     xl: "15px",
                   },
                   overflow: "hidden",
-                  position: "relative"
+                  position: "relative",                
                 }}
               >
                 <Box
@@ -272,20 +313,71 @@ const HomePage = () => {
                       xl: "40px",
                     }}
                   >
-                    Play Jumpy Helix (Coming Soon)
+                    Coming Soon...
                   </Typography>
+                  <PlayArrowIcon
+                    sx={{
+                      color: "white",
+                      fontSize: {
+                        xs: "1.5rem",
+                        sm: "3rem",
+                        md: "3rem",
+                        lg: "3rem",
+                        xl: "3rem",
+                      },
+                    }}
+                  />
                 </Box>
-                <img
-                  src="/static/Gameplay.gif"
-                  alt={`Card Image`}
-                  style={{ width: "100%", height:{
-                    xs: "1.5rem",
-                    sm: "3rem",
-                    md: "3rem",
-                    lg: "3rem",
-                    xl: "3rem",
-                  }, display: "block" }}
-                />
+                <div style={{ position: "relative", width: "100%" }}>
+                  <img
+                    src="/static/Jumpy Ball No Text.png"
+                    alt="Card Image"
+                    style={{
+                      width: "100%",
+                      height: {
+                        xs: "1.5rem",
+                        sm: "3rem",
+                        md: "3rem",
+                        lg: "3rem",
+                        xl: "3rem",
+                      },
+                      display: "block",
+                    }}
+                  />
+
+                  <Typography
+                    variant="h2"
+                    color="#20386D"
+                    fontFamily="Chango"
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      margin: 0,
+                      whiteSpace: "nowrap", // This prevents the text from wrapping
+                      width: "auto", // This ensures the Typography component takes the width it needs
+                    }}
+                    sx={{
+                      fontSize: {
+                        xs: "24px",
+                        sm: "36px",
+                        md: "48px",
+                        lg: "64px",
+                        xl: "84px",
+                      },
+                      textShadow: `
+        2px 2px 0 white, 
+        -2px -2px 0 white, 
+        2px -2px 0 white, 
+        -2px 2px 0 white,
+        3px 3px 8px rgba(0, 0, 0, 0.5)
+      `,
+                    }}
+                  >
+                    Jumpy Ball
+                  </Typography>
+                </div>
               </Card>
           </Grid>
         </Grid>

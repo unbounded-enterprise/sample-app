@@ -16,7 +16,7 @@ export const AssetCard = ({ search, collection, asset, onCardClick }) => {
       <div onClick={onCardClick}>
         <Card
           sx={{
-            border: "4px solid 1e3465",
+            border: "4px solid #1e3465",
             backgroundColor: "white",
             borderRadius: "15px",
             textAlign: "center",

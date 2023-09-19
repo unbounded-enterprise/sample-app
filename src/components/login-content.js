@@ -35,8 +35,8 @@ export const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
         <Typography
           variant="h2"
           fontSize={{
-            xs: "40px",
-            sm: "48px",
+            xs: "30px",
+            sm: "38px",
             md: "48px",
             lg: "60px",
             xl: "60px",

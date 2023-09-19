@@ -208,9 +208,15 @@ const HomePage = () => {
                   />
                 </Box>
                 <img
-                  src="/static/runwayRollerPlaceholder.png"
+                  src="/static/Gameplay.gif"
                   alt={`Card Image`}
-                  style={{ width: "100%", display: "block" }}
+                  style={{ width: "100%", height:{
+                    xs: "1.5rem",
+                    sm: "3rem",
+                    md: "3rem",
+                    lg: "3rem",
+                    xl: "3rem",
+                  }, display: "block" }}
                 />
               </Card>
             </NextLink>
@@ -230,24 +236,57 @@ const HomePage = () => {
             }}
           >
             <Card
-              sx={{
-                border: "1px solid white",
-                borderRadius: {
-                  xs: "5px",
-                  sm: "5px",
-                  md: "10px",
-                  lg: "15px",
-                  xl: "15px",
-                },
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src="/static/jumpyHelixPlaceholder.png"
-                alt={`Card Image`}
-                style={{ width: "100%", display: "block" }}
-              />
-            </Card>
+                sx={{
+                  border: "1px solid white",
+                  borderRadius: {
+                    xs: "5px",
+                    sm: "5px",
+                    md: "10px",
+                    lg: "15px",
+                    xl: "15px",
+                  },
+                  overflow: "hidden",
+                  position: "relative"
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0.5rem 1rem",
+                    background:
+                      "linear-gradient(45deg, #045CD2 30%, #03A9F4 90%)",
+                    borderBottom: "1px solid white",
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    fontFamily="Chango"
+                    color="white"
+                    fontSize={{
+                      xs: "16px",
+                      sm: "24px",
+                      md: "32px",
+                      lg: "40px",
+                      xl: "40px",
+                    }}
+                  >
+                    Play Jumpy Helix (Coming Soon)
+                  </Typography>
+                </Box>
+                <img
+                  src="/static/Gameplay.gif"
+                  alt={`Card Image`}
+                  style={{ width: "100%", height:{
+                    xs: "1.5rem",
+                    sm: "3rem",
+                    md: "3rem",
+                    lg: "3rem",
+                    xl: "3rem",
+                  }, display: "block" }}
+                />
+              </Card>
           </Grid>
         </Grid>
       </Card>

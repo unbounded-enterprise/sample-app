@@ -244,7 +244,7 @@ const BalanceField = ({ balance }) => {
           style={{
             marginLeft: "10px",
             verticalAlign: "middle",
-            height: "2em", // Adjust this value to match the height of your text
+            height: "1.2em", // Adjust this value to match the height of your text
           }}
         />
       </Typography>

@@ -87,12 +87,13 @@ const Play = () => {
   return (
     <main
       style={{
-        backgroundImage: `url("/static/fakeRunwayRoller.png")`,
-        backgroundSize: "cover",
+        backgroundImage: `url("/static/Rotating Menu.gif")`,
+        backgroundSize: "auto 100vh",
         backgroundRepeat: "no-repeat",
         backgroundColor: "transparent",
         height: "100vh", // This ensures the background image covers the entire viewport height
         overflow: "hidden", // This ensures no overflow from the main container
+        backgroundPosition: "center", // This centers the image horizontally
       }}
     >
       <Fragment>
@@ -153,7 +154,7 @@ const Play = () => {
         )}
       </Fragment>
         <div id="applixir_vanishing_div" style={{ position: 'absolute', hidden: true, zIndex: 2000 }}>
-          <iframe id="applixir_parent" allowed="autoplay"></iframe>
+          <iframe id="applixir_parent" allowed="autoplay" style={{ border: 'none' }}></iframe>
         </div>
     </main>
   );

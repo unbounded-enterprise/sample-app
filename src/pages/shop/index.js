@@ -447,7 +447,7 @@ const PurchaseCoinsBody = ({ bundle }) => {
         }}
       >
         <img
-          src="/static/Coin With Outline.png"
+          src={bundle.imageLink} // swapped bundle's image link property for static image URL
           alt="balance-icon"
           style={{ width: "100%", height: "100%" }}
         />

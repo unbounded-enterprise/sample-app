@@ -7,6 +7,7 @@ import {
   Button,
   ButtonBase,
   Container,
+  Drawer,
   IconButton,
   Toolbar,
   Typography,
@@ -27,30 +28,26 @@ const menuItems = [
   { label: "My Stuff", value: "assetsMenuItem", href: "/assets" },
 ];
 
-export const MenuPopover = (props) => {
-  const { anchorEl, close, open, items, ...other } = props;
+export const MenuDrawer = (props) => {
+  const { open, onClose, items } = props;
 
   return (
-    <Popover
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        horizontal: "left",
-        vertical: "bottom",
-      }}
-      keepMounted
-      onClick={close}
-      onClose={close}
-      open={!!open}
-      PaperProps={{ sx: { width: 180} }} // Set height to 100vh
-      transitionDuration={0}
-      sx={{ display: !!open ? "inherit" : "none" }}
-      {...other}
+    <Drawer anchor="left" open={open} onClose={onClose}>
+      <Box
+        sx={{
+          width: 200, // Set the width of the drawer
+          top: 72, // Set top to the height of the AppBar
+          position: 'relative', // Ensure position is relative
+        }}
+        role="presentation"
+        onClick={onClose}
+        onKeyDown={onClose}
       >
-      {items.map((item) =>
-        item.href ? (
-          <NextLink key={item.value} href={item.href} passHref legacyBehavior>
-            <MenuItem>
-              <Typography
+        {items.map((item) =>
+          item.href ? (
+            <NextLink key={item.value} href={item.href} passHref legacyBehavior>
+              <MenuItem>
+                <Typography
                 variant="subtitle1"
                 color="#FF4D0D"
                 fontFamily="Chango"
@@ -64,15 +61,16 @@ export const MenuPopover = (props) => {
                   `,
                 }}
               >
-                {item.label}
-              </Typography>
-            </MenuItem>
-          </NextLink>
-        ) : (
-          <MenuItem key={item.value}>{item.label}</MenuItem>
-        )
-      )}
-    </Popover>
+                  {item.label}
+                </Typography>
+              </MenuItem>
+            </NextLink>
+          ) : (
+            <MenuItem key={item.value}>{item.label}</MenuItem>
+          )
+        )}
+      </Box>
+    </Drawer>
   );
 };
 
@@ -111,12 +109,8 @@ export const MainNavbar = (props) => {
           color: "text.secondary",
         }}
       >
-        <MenuPopover
-          anchorEl={menuRef.current}
-          close={handleCloseMenu}
-          open={menuOpen}
-          items={menuItems}
-        />
+        <MenuDrawer open={menuOpen} onClose={handleCloseMenu} items={menuItems} />
+
         <AccountPopover
           anchorEl={accountRef.current}
           onClose={handleCloseAccountPopover}

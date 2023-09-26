@@ -19,8 +19,6 @@ const Play = () => {
     handleUserLogin,
     unityOn,
     setUnityOn,
-    gameEnded,
-    setGameEnded,
   } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
   const sendMessageRef = useRef(null);
@@ -39,20 +37,14 @@ const Play = () => {
   }, [unityLoaded]);
 
   useEffect(() => {
-    if (loggedIn && !gameEnded) {
+    if (loggedIn && !unityOn) {
       setUnityOn(true);
     }
   }, [loggedIn]);
 
   useEffect(() => {
-    console.log("in this gameEnded useeffect, ", gameEnded);
-    if (gameEnded) {
-      setUnityOn(false);
-    }
-  }, [gameEnded]);
-
-  useEffect(() => {
     if (runOnceRef.current) return;
+    
     return () => {
       runOnceRef.current = true;
     };
@@ -82,6 +74,10 @@ const Play = () => {
       console.log("logged in already");
       assetlayerClient.initialize(onInitialized);
     }
+  }
+
+  async function handleClose() {
+    setUnityOn(false);
   }
 
   return (
@@ -135,7 +131,6 @@ const Play = () => {
                     },
                   }}
                   onClick={() => {
-                    setGameEnded(false);
                     setUnityOn(true);
                   }}
                 >
@@ -146,8 +141,7 @@ const Play = () => {
               <PlayUnity
                 sendMessageRef={sendMessageRef}
                 setUnityLoaded={setUnityLoaded}
-                gameEnded={gameEnded}
-                setGameEnded={setGameEnded}
+                onClose={handleClose}
               />
             )}
           </>
@@ -163,8 +157,7 @@ const Play = () => {
 const PlayUnity = ({
   sendMessageRef,
   setUnityLoaded,
-  gameEnded,
-  setGameEnded,
+  onClose,
 }) => {
   const {
     unityProvider,
@@ -172,8 +165,6 @@ const PlayUnity = ({
     isLoaded,
     unload,
     sendMessage,
-    addEventListener,
-    removeEventListener,
   } = useUnityContext({
     loaderUrl: "unity/Build/WebGL.loader.js",
     dataUrl: "unity/Build/WebGL.data",
@@ -181,41 +172,18 @@ const PlayUnity = ({
     codeUrl: "unity/Build/WebGL.wasm",
   });
 
-  const handleGameOver = useCallback((userName, score) => {}, []);
-
-  async function handleClickBack() {
-    await removeEventListener();
+  async function handleClose() {
     await unload();
-    setGameEnded(true);
+    onClose();
   }
 
   useEffect(() => {
-    // Add event listeners
-    addEventListener("GameOver", handleGameOver);
 
     // Cleanup function
     return () => {
-      removeEventListener("GameOver", handleGameOver);
       sendMessage.current = null;
-      const unityCanvas = document.querySelector("#unity-canvas");
-      if (unityCanvas) {
-        unityCanvas.remove();
-      }
-    };
-  }, [addEventListener, removeEventListener, handleGameOver]);
-
-  useEffect(() => {
-    // Add event listeners
-    addEventListener("GameOver", handleGameOver);
-
-    // Cleanup function
-    return () => {
-      removeEventListener("GameOver", handleGameOver);
-      sendMessage.current = null;
-      const unityCanvas = document.querySelector("#unity-canvas");
-      if (unityCanvas) {
-        unityCanvas.remove();
-      }
+      
+      onClose();
     };
   }, []);
 
@@ -228,11 +196,6 @@ const PlayUnity = ({
       sendMessageRef.current = sendMessage;
     }
   }, [sendMessage, sendMessageRef]);
-
-  useEffect(() => {
-    // addEventListener("GameOver", handleGameOver);
-    // return () => (removeEventListener("GameOver", handleGameOver));
-  }, [addEventListener, removeEventListener, handleGameOver]);
 
   return (
     <Fragment>
@@ -278,7 +241,7 @@ const PlayUnity = ({
               boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
             },
           }}
-          onClick={handleClickBack}
+          onClick={handleClose}
         >
           Back
         </Button>

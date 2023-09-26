@@ -12,7 +12,7 @@ import "@fontsource/inter";
 
 var collectionImage;
 
-export const CollectionCard = ({ collection }) => {
+export const CollectionCard = ({ collection, onClick }) => {
   collectionImage = "/static/collectionImage.png";
 
   const [isHovered, setIsHovered] = useState(false);
@@ -38,6 +38,7 @@ export const CollectionCard = ({ collection }) => {
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={onClick}
       >
         {/* Overlay */}
         {isHovered && (

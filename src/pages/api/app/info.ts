@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
-import { AssetLayer } from "@assetlayer/sdk-client";
+import { AssetLayer } from "@assetlayer/sdk";
 import { errorHandling } from "../validate";
 import { BasicError } from "src/types/error";
 

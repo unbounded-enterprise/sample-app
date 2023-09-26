@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { AssetLayer } from '@assetlayer/sdk-client';
+import { AssetLayer } from '@assetlayer/sdk';
 import { get } from 'http';
 
 export const AssetLayerContext = createContext();

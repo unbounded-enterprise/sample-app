@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { AssetLayer } from "@assetlayer/sdk-client";
+import { AssetLayer } from "@assetlayer/sdk";
 import {
   Box,
   TextField,

@@ -53,6 +53,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { StripeWordMark } from "src/icons/Stripe wordmark - blurple.js";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import { LoginContent } from "src/components/login-content";
 
 export const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
@@ -274,12 +275,13 @@ const BuyCoinsHeader = () => {
   );
 };
 
-const BuyCoinsGrid = ({ selectBundle }) => {
+const BuyCoinsGrid = ({ selectBundle, loggedIn, displayLogin }) => {
   return (
     <Grid container spacing={2} pb={4}>
       {rolltopiaBundles.map((item) => {
         function bundleSelected() {
-          selectBundle(item);
+          if (!loggedIn) displayLogin();
+          else selectBundle(item);
         }
 
         return (
@@ -340,19 +342,24 @@ const BuyBallsSearchbar = ({ search, setSearch }) => {
   );
 };
 
-const BuyBallsGrid = ({ collections }) => {
+const BuyBallsGrid = ({ collections, loggedIn, displayLogin }) => {
+  function handleClick() {
+    if (!loggedIn) displayLogin();
+    else console.log("ball clicked");
+  }
+
   return (
     <Grid container spacing={2}>
       {collections.map((collection) => (
         <Grid item xs={6} sm={4} md={3} key={collection.collectionId}>
-          <CollectionCard collection={collection} />
+          <CollectionCard collection={collection} onClick={handleClick}/>
         </Grid>
       ))}
     </Grid>
   );
 };
 
-const BuyBallsContent = ({ collections }) => {
+const BuyBallsContent = ({ collections, loggedIn, displayLogin }) => {
   const [search, setSearch] = useState("");
   const filteredCollections = useMemo(() => {
     return collections.filter((collection) =>
@@ -372,7 +379,7 @@ const BuyBallsContent = ({ collections }) => {
     <Box>
       <BuyBallsHeader />
       <BuyBallsSearchbar search={search} setSearch={setSearch} />
-      <BuyBallsGrid collections={filteredCollections} />
+      <BuyBallsGrid collections={filteredCollections} loggedIn={loggedIn} displayLogin={displayLogin}/>
     </Box>
   );
 };
@@ -761,7 +768,7 @@ const PlayNowButton = () => {
   );
 };
 
-const ShopContent = ({ user, balance, collections }) => {
+const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
   const [paymentQR, setPaymentQR] = useState("");
@@ -806,8 +813,8 @@ const ShopContent = ({ user, balance, collections }) => {
     <Card sx={shopCardSx}>
       <BalanceField balance={balance?.at(0)?.balance} />
       <BuyCoinsHeader />
-      <BuyCoinsGrid selectBundle={selectBundle} />
-      <BuyBallsContent collections={collections} />
+      <BuyCoinsGrid selectBundle={selectBundle} loggedIn={loggedIn} displayLogin={displayLogin}/>
+      <BuyBallsContent collections={collections} loggedIn={loggedIn} displayLogin={displayLogin}/>
     </Card>
   ) : !paymentComplete ? (
     <Card sx={shopCardSx2}>
@@ -929,6 +936,7 @@ const ShopPage = () => {
   const { assetlayerClient, loggedIn, handleUserLogin, user, balance } =
     useAssetLayer(); // Use the hook to get the client and loggedIn state
   const [collections, setCollections] = useState(undefined);
+  const [loggingIn, setLoggingIn] = useState(false);
   const runOnceRef = useRef(false);
 
   const getCollections = async () => {
@@ -939,6 +947,13 @@ const ShopPage = () => {
       });
     return collectionsObject.result;
   };
+
+  function displayLogin() {
+    setLoggingIn(true);
+  }
+  function hideLogin() {
+    setLoggingIn(false);
+  }
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -980,12 +995,25 @@ const ShopPage = () => {
           height: "100%",
         }}
       >
+        { loggingIn && 
+          <Box onClick={hideLogin} sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', zIndex: 9999 }}>
+            <Box onClick={(event)=>event.stopPropagation()}>
+              <LoginContent
+                assetlayerClient={assetlayerClient}
+                handleUserLogin={handleUserLogin}
+                onLogin={hideLogin}
+              />
+            </Box>
+          </Box> 
+        }
         <Container maxWidth="md">
           {collections ? (
             <ShopContent
               user={user}
               balance={balance}
               collections={collections}
+              loggedIn={loggedIn}
+              displayLogin={displayLogin}
             />
           ) : (
             <CenteredImage src="/static/loader.gif" alt="placeholder" />

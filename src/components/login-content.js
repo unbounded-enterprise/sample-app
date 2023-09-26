@@ -10,10 +10,26 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
+export const LoginContent = ({ assetlayerClient, handleUserLogin, onLogin }) => {
   const [email, setEmail] = useState("");
   function onInitialized() {
     handleUserLogin(true);
+    if (onLogin) onLogin();
+  }
+  function handleGetStartedClick() {
+    if (email.length > 0) {
+      assetlayerClient.loginUser({
+        email,
+        onSuccess: onInitialized,
+      });
+      setEmail("");
+    } else {
+      assetlayerClient.loginUser({
+        email: "abc",
+        onSuccess: onInitialized,
+      });
+      setEmail("");
+    }
   }
   return (
     <Stack alignItems="center" justifyContent="center" sx={{ height: "80vh" }}>
@@ -132,6 +148,7 @@ export const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
             InputProps={{
               disableUnderline: true,
               style: { color: "gray" },
+              name: 'email'
             }}
           />
           <Button
@@ -162,21 +179,7 @@ export const LoginContent = ({ assetlayerClient, handleUserLogin }) => {
               },
               fontWeight: "bold", // Bold font,
             }}
-            onClick={() => {
-              if (email.length > 0) {
-                assetlayerClient.loginUser({
-                  email,
-                  onSuccess: onInitialized,
-                });
-                setEmail("");
-              } else {
-                assetlayerClient.loginUser({
-                  email: "abc",
-                  onSuccess: onInitialized,
-                });
-                setEmail("");
-              }
-            }}
+            onClick={handleGetStartedClick}
           >
             Get Started
           </Button>

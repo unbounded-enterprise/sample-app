@@ -12,7 +12,7 @@ import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import th
 import { useEffectOnce } from "src/hooks/use-effect-once";
 import { LoginContent } from "src/components/login-content";
 
-const isLocal = window.location.host === "localhost:3000";
+const isLocal = (typeof window !== 'undefined') && window.location.host === "localhost:3000";
 
 const Play = () => {
   const {
@@ -149,25 +149,23 @@ const PlayUnity = ({
   didToken,
   onClose,
 }) => {
-  const {
-    unityProvider,
-    loadingProgression,
-    isLoaded,
-    unload,
-    sendMessage,
-  } = useUnityContext({
-    loaderUrl: "unity/Build/WebGL.loader.js",
-    dataUrl: "unity/Build/WebGL.data",
-    frameworkUrl: "unity/Build/WebGL.framework.js",
-    codeUrl: "unity/Build/WebGL.wasm",
-  });
+  const [isLoaded, setIsLoaded] = useState(false);
   const isInitialMount = useRef(true);
 
-  async function handleBack() {
-    if (!isLoaded) return;
+  function sendTokenToUnity(token) {
+    const iframe = document.getElementById('unity-webgl-iframe');  // Make sure to give your iframe an id
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({
+          type: "SendDIDToken",
+          value: token,
+      }, "*");
+    }
+  }
 
-    await unload();
-    onClose();
+  function handleUnityMessage(event) {
+    if (event.data === "unity-webgl-loaded") {
+      setIsLoaded(true);
+    }
   }
 
   /*
@@ -181,42 +179,36 @@ const PlayUnity = ({
     if (isLocal && isInitialMount.current) {
       isInitialMount.current = false;
     } else {
-      return () => {
-        // const unityCanvas = document.getElementById('react-unity-webgl-canvas-2');
-        // if (unityCanvas) { unityCanvas.remove(); }
-        onClose();
-      }
+      window.addEventListener("message", handleUnityMessage);
+
+      return () => onClose();
     }
   }, []);
 
   useEffect(() => {
     if (!user || !isLoaded || !didToken) return;
     
-    sendMessage(
-      "LoginReceiver",
-      "SetDIDToken",
-      didToken
-    );
+    sendTokenToUnity(didToken);
   }, [isLoaded, user]);
 
   return (
     <Fragment>
-      {!isLoaded && (
-        <p>Loading Application... {Math.round(loadingProgression * 100)}%</p>
-      )}
       <Stack>
-        <Unity
-          unityProvider={unityProvider}
+        <iframe
+          id="unity-webgl-iframe"
+          src="unity/index.html"
           style={{
-            position: "relative", // or 'absolute'
+            position: "relative",
             top: 0,
             left: 0,
-            zIndex: 1000, // any value higher than the z-index of your navbar
-            visibility: isLoaded ? "visible" : "hidden",
+            zIndex: 999,
             width: "100%",
             height: "96.5vh",
+            border: "none",  // to remove default iframe border
           }}
-        />
+          title="Unity WebGL Content"
+          allowFullScreen
+      />
         <Button
           variant="contained"
           color="primary"
@@ -243,7 +235,7 @@ const PlayUnity = ({
               boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
             },
           }}
-          onClick={handleBack}
+          onClick={onClose}
         >
           Back
         </Button>

@@ -9,32 +9,22 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import { Button, Stack } from "@mui/material";
 import { MainLayout } from "src/components/main-layout";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import the hook
+import { useEffectOnce } from "src/hooks/use-effect-once";
 import { LoginContent } from "src/components/login-content";
 
+const isLocal = window.location.host === "localhost:3000";
+
 const Play = () => {
-  const [unityLoaded, setUnityLoaded] = useState(false);
   const {
     assetlayerClient,
     loggedIn,
     handleUserLogin,
+    user,
     unityOn,
     setUnityOn,
   } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
-  const sendMessageRef = useRef(null);
   const runOnceRef = useRef(false);
-
-  useEffect(() => {
-    if (!loggedIn || !unityLoaded || !assetlayerClient.didToken) return;
-
-    assetlayerClient.users.getUser().then((user) => {
-      sendMessageRef.current(
-        "LoginReceiver",
-        "SetDIDToken",
-        assetlayerClient.didToken
-      );
-    });
-  }, [unityLoaded]);
 
   useEffect(() => {
     if (loggedIn && !unityOn) {
@@ -139,8 +129,8 @@ const Play = () => {
               </>
             ) : (
               <PlayUnity
-                sendMessageRef={sendMessageRef}
-                setUnityLoaded={setUnityLoaded}
+                user={user}
+                didToken={assetlayerClient.didToken}
                 onClose={handleClose}
               />
             )}
@@ -155,8 +145,8 @@ const Play = () => {
 };
 
 const PlayUnity = ({
-  sendMessageRef,
-  setUnityLoaded,
+  user,
+  didToken,
   onClose,
 }) => {
   const {
@@ -171,31 +161,43 @@ const PlayUnity = ({
     frameworkUrl: "unity/Build/WebGL.framework.js",
     codeUrl: "unity/Build/WebGL.wasm",
   });
+  const isInitialMount = useRef(true);
 
-  async function handleClose() {
+  async function handleBack() {
+    if (!isLoaded) return;
+
     await unload();
     onClose();
   }
 
-  useEffect(() => {
+  /*
+  useEffectOnce(() => {
 
-    // Cleanup function
-    return () => {
-      sendMessage.current = null;
-      
-      onClose();
-    };
+    return () => onClose();
+  }, []);
+  */
+
+  useEffect(() => {
+    if (isLocal && isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      return () => {
+        // const unityCanvas = document.getElementById('react-unity-webgl-canvas-2');
+        // if (unityCanvas) { unityCanvas.remove(); }
+        onClose();
+      }
+    }
   }, []);
 
   useEffect(() => {
-    setUnityLoaded(isLoaded);
-  }, [isLoaded, setUnityLoaded]);
-
-  useEffect(() => {
-    if (sendMessage) {
-      sendMessageRef.current = sendMessage;
-    }
-  }, [sendMessage, sendMessageRef]);
+    if (!user || !isLoaded || !didToken) return;
+    
+    sendMessage(
+      "LoginReceiver",
+      "SetDIDToken",
+      didToken
+    );
+  }, [isLoaded, user]);
 
   return (
     <Fragment>
@@ -241,7 +243,7 @@ const PlayUnity = ({
               boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
             },
           }}
-          onClick={handleClose}
+          onClick={handleBack}
         >
           Back
         </Button>

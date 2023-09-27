@@ -54,6 +54,8 @@ import {
 import { StripeWordMark } from "src/icons/Stripe wordmark - blurple.js";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import { LoginContent } from "src/components/login-content";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { rolltopiaBundles as rolltopiaBundlesObject } from "src/pages/api/stripe/createPaymentIntent";
 
 export const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
@@ -220,6 +222,14 @@ export async function createPaymentIntent(user, bundle) {
     console.warn(error.message);
     return { error };
   }
+}
+
+function formatHandcashPaymentUrl(url) {
+  const splitUrl = url.split("/");
+  const splitDomain = splitUrl[2].split(".");
+  splitDomain[0] = "app";
+
+  return 'https://' + splitDomain.join(".") + "/#/paymentLink?id=" + splitUrl[3];
 }
 
 const BalanceField = ({ balance }) => {
@@ -698,7 +708,7 @@ const HandcashPayButton = ({ active, onClick, onBack }) => {
   );
 };
 
-const HandcashQRElement = ({ src }) => {
+const HandcashQRElement = ({ src, paymentLink }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -728,43 +738,81 @@ const HandcashQRElement = ({ src }) => {
       <Typography variant="subtitle2">
         Scan the QR code with your Handcash app to pay
       </Typography>
+      { paymentLink && <Stack direction="row" spacing="1rem" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', mt: '1rem' }}>
+        <Typography variant="subtitle2">
+          or
+        </Typography>
+        <Button href={paymentLink} endIcon={<OpenInNewIcon/>} sx={{ 
+          border: "1px solid #e6e6e6",
+          borderRadius: "8px",
+          color: "#6d6e78",
+          "&:hover": { border: "1px solid #045CD2" },
+          "&:focus": { border: "2px solid #045CD2" },
+        }}>
+          Open in Handcash
+        </Button>
+      </Stack> }
     </Stack>
   );
 };
 
 const PlayNowButton = () => {
   return (
-    <Button
-      sx={{
-        width: "100%",
-        maxWidth: "35rem",
-        color: "white",
-        fontFamily: "Chango",
-        border: "2px solid white",
-        borderRadius: "4px",
-        background:
-          "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
-        boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-        cursor: "pointer",
-        position: "relative", // Set the card's position to relative
-        "&:hover::before": {
-          // Use the ::before pseudo-element for the overlay
-          content: '""',
-          position: "absolute",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
-          zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
-        },
-        "&:hover": {
+    <NextLink href="/play" passHref legacyBehavior>
+      <Button
+        sx={{
+          width: "100%",
+          maxWidth: "35rem",
+          color: "white",
+          fontFamily: "Chango",
+          border: "2px solid white",
+          borderRadius: "4px",
+          background:
+            "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
           boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-        },
-      }}
-    >
-      Play Now
-    </Button>
+          cursor: "pointer",
+          position: "relative", // Set the card's position to relative
+          "&:hover::before": {
+            // Use the ::before pseudo-element for the overlay
+            content: '""',
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+            zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+          },
+          "&:hover": {
+            boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+          },
+        }}
+      >
+        Play Now
+      </Button>
+    </NextLink>
+  );
+};
+
+const PaymentCompleteCard = ({ onBack }) => {
+
+  return (
+    <Card sx={shopCardSx2}>
+      <Stack
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          minHeight: "12rem",
+        }}
+      >
+        <PurchaseCoinsHeader
+          text="Purchase Completed"
+          onBack={onBack}
+        />
+        <PlayNowButton/>
+      </Stack>
+    </Card>
   );
 };
 
@@ -772,8 +820,10 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
   const [paymentQR, setPaymentQR] = useState("");
+  const [paymentLink, setPaymentLink] = useState("");
   const [paymentIntent, setPaymentIntent] = useState(undefined);
   const [paymentComplete, setPaymentComplete] = useState(false);
+  const [paymentCompleteBundle, setPaymentCompleteBundle] = useState(undefined);
   const [stripeReady, setStripeReady] = useState(false);
 
   function selectBundle(bundle) {
@@ -788,6 +838,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
       });
       console.log("payment response!", payment);
       setPaymentQR(payment.paymentRequestQrCodeUrl);
+      setPaymentLink(formatHandcashPaymentUrl(payment.paymentRequestUrl));
     } catch (e) {}
   }
 
@@ -806,8 +857,22 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
   }
 
   useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const bundleId = query.get("purchaseCompleteBundleId");
+    if (!bundleId) return;
+
+    const bundle = rolltopiaBundlesObject[bundleId];
+    if (!bundle) return;
+
+    setPaymentCompleteBundle(bundle);
+    window.history.replaceState({}, document.title, "/shop");
+  }, []);
+
+  useEffect(() => {
     if (selectedBundle) createStripePayment(selectedBundle);
   }, [selectedBundle]);
+
+  if (paymentCompleteBundle) return <PaymentCompleteCard onBack={() => setPaymentCompleteBundle(undefined)}/>;
 
   return selectedBundle === undefined ? (
     <Card sx={shopCardSx}>
@@ -902,7 +967,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
                     setPaymentComplete={setPaymentComplete}
                   />
                 ) : (
-                  <HandcashQRElement src={paymentQR} />
+                  <HandcashQRElement src={paymentQR} paymentLink={paymentLink}/>
                 )}
               </Elements>
             )}
@@ -911,24 +976,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
       </Stack>
     </Card>
   ) : (
-    <Card sx={shopCardSx2}>
-      <Stack
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          minHeight: "12rem",
-        }}
-      >
-        <PurchaseCoinsHeader
-          text="Purchase Completed"
-          onBack={() => setSelectedBundle(undefined)}
-        />
-        <NextLink href="/play" passHref legacyBehavior>
-          <PlayNowButton />
-        </NextLink>
-      </Stack>
-    </Card>
+    <PaymentCompleteCard onBack={() => { setSelectedBundle(undefined); setPaymentComplete(false); }}/>
   );
 };
 

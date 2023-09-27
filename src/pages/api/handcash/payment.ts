@@ -37,7 +37,7 @@ function getPaymentProps(userId: string, bundle: RolltopiaBundle) {
         email: 'jordan@assetlayer.com'
       },
       expirationType: 'never',
-      redirectUrl: 'https://www.rolltopia.games'
+      redirectUrl: process.env.URL + '/shop?purchaseCompleteBundleId=' + bundle.id,
     }
   };
 }

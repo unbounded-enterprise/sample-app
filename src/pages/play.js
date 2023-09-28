@@ -9,32 +9,22 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import { Button, Stack } from "@mui/material";
 import { MainLayout } from "src/components/main-layout";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js"; // Import the hook
+import { useEffectOnce } from "src/hooks/use-effect-once";
 import { LoginContent } from "src/components/login-content";
 
+const isLocal = (typeof window !== 'undefined') && window.location.host === "localhost:3000";
+
 const Play = () => {
-  const [unityLoaded, setUnityLoaded] = useState(false);
   const {
     assetlayerClient,
     loggedIn,
     handleUserLogin,
+    user,
     unityOn,
     setUnityOn,
   } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
-  const sendMessageRef = useRef(null);
   const runOnceRef = useRef(false);
-
-  useEffect(() => {
-    if (!loggedIn || !unityLoaded || !assetlayerClient.didToken) return;
-
-    assetlayerClient.users.getUser().then((user) => {
-      sendMessageRef.current(
-        "LoginReceiver",
-        "SetDIDToken",
-        assetlayerClient.didToken
-      );
-    });
-  }, [unityLoaded]);
 
   useEffect(() => {
     if (loggedIn && !unityOn) {
@@ -139,8 +129,8 @@ const Play = () => {
               </>
             ) : (
               <PlayUnity
-                sendMessageRef={sendMessageRef}
-                setUnityLoaded={setUnityLoaded}
+                user={user}
+                didToken={assetlayerClient.didToken}
                 onClose={handleClose}
               />
             )}
@@ -155,66 +145,70 @@ const Play = () => {
 };
 
 const PlayUnity = ({
-  sendMessageRef,
-  setUnityLoaded,
+  user,
+  didToken,
   onClose,
 }) => {
-  const {
-    unityProvider,
-    loadingProgression,
-    isLoaded,
-    unload,
-    sendMessage,
-  } = useUnityContext({
-    loaderUrl: "unity/Build/WebGL.loader.js",
-    dataUrl: "unity/Build/WebGL.data",
-    frameworkUrl: "unity/Build/WebGL.framework.js",
-    codeUrl: "unity/Build/WebGL.wasm",
-  });
+  const [isLoaded, setIsLoaded] = useState(false);
+  const isInitialMount = useRef(true);
 
-  async function handleClose() {
-    await unload();
-    onClose();
+  function sendTokenToUnity(token) {
+    const iframe = document.getElementById('unity-webgl-iframe');  // Make sure to give your iframe an id
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({
+          type: "SendDIDToken",
+          value: token,
+      }, "*");
+    }
   }
 
-  useEffect(() => {
+  function handleUnityMessage(event) {
+    if (event.data === "unity-webgl-loaded") {
+      setIsLoaded(true);
+    }
+  }
 
-    // Cleanup function
-    return () => {
-      sendMessage.current = null;
-      
-      onClose();
-    };
+  /*
+  useEffectOnce(() => {
+
+    return () => onClose();
+  }, []);
+  */
+
+  useEffect(() => {
+    if (isLocal && isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      window.addEventListener("message", handleUnityMessage);
+
+      return () => onClose();
+    }
   }, []);
 
   useEffect(() => {
-    setUnityLoaded(isLoaded);
-  }, [isLoaded, setUnityLoaded]);
-
-  useEffect(() => {
-    if (sendMessage) {
-      sendMessageRef.current = sendMessage;
-    }
-  }, [sendMessage, sendMessageRef]);
+    if (!user || !isLoaded || !didToken) return;
+    
+    sendTokenToUnity(didToken);
+  }, [isLoaded, user]);
 
   return (
     <Fragment>
-      {!isLoaded && (
-        <p>Loading Application... {Math.round(loadingProgression * 100)}%</p>
-      )}
       <Stack>
-        <Unity
-          unityProvider={unityProvider}
+        <iframe
+          id="unity-webgl-iframe"
+          src="unity/index.html"
           style={{
-            position: "relative", // or 'absolute'
+            position: "relative",
             top: 0,
             left: 0,
-            zIndex: 1000, // any value higher than the z-index of your navbar
-            visibility: isLoaded ? "visible" : "hidden",
+            zIndex: 999,
             width: "100%",
             height: "96.5vh",
+            border: "none",  // to remove default iframe border
           }}
-        />
+          title="Unity WebGL Content"
+          allowFullScreen
+      />
         <Button
           variant="contained"
           color="primary"
@@ -241,7 +235,7 @@ const PlayUnity = ({
               boxShadow: "0px 3px 5px 2px rgba(0, 0, 0, .3)", // Add drop shadow
             },
           }}
-          onClick={handleClose}
+          onClick={onClose}
         >
           Back
         </Button>

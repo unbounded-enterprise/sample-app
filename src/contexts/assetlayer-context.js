@@ -75,6 +75,7 @@ export const AssetLayerProvider = ({ children }) => {
     setGameEnded,
     user,
     balance,
+    loadCurrencyBalance,
   };
 
   return (

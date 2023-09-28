@@ -837,7 +837,7 @@ const PaymentCompleteCard = ({ onBack }) => {
   );
 };
 
-const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => {
+const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadCurrencyBalance }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
   const [hcPaymentId, setHCPaymentId] = useState("");
@@ -882,6 +882,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
   }
 
   function handlePaymentCompletion() {
+    loadCurrencyBalance();
     setPaymentComplete(true);
   }
 
@@ -1010,7 +1011,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
 };
 
 const ShopPage = () => {
-  const { assetlayerClient, loggedIn, handleUserLogin, user, balance } =
+  const { assetlayerClient, loggedIn, handleUserLogin, user, balance, loadCurrencyBalance } =
     useAssetLayer(); // Use the hook to get the client and loggedIn state
   const [collections, setCollections] = useState(undefined);
   const [loggingIn, setLoggingIn] = useState(false);
@@ -1091,6 +1092,7 @@ const ShopPage = () => {
               collections={collections}
               loggedIn={loggedIn}
               displayLogin={displayLogin}
+              loadCurrencyBalance={loadCurrencyBalance}
             />
           ) : (
             <CenteredImage src="/static/loader.gif" alt="placeholder" />

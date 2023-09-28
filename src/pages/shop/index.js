@@ -553,7 +553,7 @@ const StripeCheckoutForm = ({
   bundle,
   stripeReady,
   setStripeReady,
-  setPaymentComplete,
+  onComplete,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -594,7 +594,7 @@ const StripeCheckoutForm = ({
       return setIsLoading(false);
     }
 
-    setPaymentComplete(true);
+    onComplete();
   };
 
   return (
@@ -708,8 +708,29 @@ const HandcashPayButton = ({ active, onClick, onBack }) => {
   );
 };
 
-const HandcashQRElement = ({ src, paymentLink }) => {
+const HandcashQRElement = ({ src, paymentId, paymentLink, onComplete }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+
+  async function checkForPaymentCompletion() {
+    try { 
+      const paymentComplete = await authApi.checkHandcashPaymentCompleted({ paymentId });
+      
+      if (paymentComplete) onComplete();
+    }
+    catch(e) {
+      console.warn('error checking for payment completion');
+    }
+  }
+
+  useEffect(() => {
+    if (!paymentId) return;
+
+    const iid = setInterval(checkForPaymentCompletion, 2500);
+
+    return () => {
+      clearInterval(iid);
+    };
+  }, [paymentId]);
 
   return (
     <Stack
@@ -816,11 +837,12 @@ const PaymentCompleteCard = ({ onBack }) => {
   );
 };
 
-const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => {
+const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadCurrencyBalance }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
-  const [paymentQR, setPaymentQR] = useState("");
-  const [paymentLink, setPaymentLink] = useState("");
+  const [hcPaymentId, setHCPaymentId] = useState("");
+  const [hcPaymentQR, setHCPaymentQR] = useState("");
+  const [hcPaymentLink, setHCPaymentLink] = useState("");
   const [paymentIntent, setPaymentIntent] = useState(undefined);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [paymentCompleteBundle, setPaymentCompleteBundle] = useState(undefined);
@@ -837,14 +859,17 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
         bundleId: bundle.id,
       });
       console.log("payment response!", payment);
-      setPaymentQR(payment.paymentRequestQrCodeUrl);
-      setPaymentLink(formatHandcashPaymentUrl(payment.paymentRequestUrl));
-    } catch (e) {}
+      setHCPaymentId(payment.id);
+      setHCPaymentQR(payment.paymentRequestQrCodeUrl);
+      setHCPaymentLink(formatHandcashPaymentUrl(payment.paymentRequestUrl));
+    } catch (e) {
+      console.warn("error creating handcash payment", e)
+    }
   }
 
   async function handleHandcashSelected(bundle) {
     if (handcashSelected) return;
-    if (!paymentQR) createHandcashPayment(bundle);
+    if (!hcPaymentQR) createHandcashPayment(bundle);
     setHandcashSelected(true);
   }
 
@@ -854,6 +879,11 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
     if (result?.client_secret) {
       setPaymentIntent(result);
     }
+  }
+
+  function handlePaymentCompletion() {
+    loadCurrencyBalance();
+    setPaymentComplete(true);
   }
 
   useEffect(() => {
@@ -964,10 +994,10 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
                     bundle={selectedBundle}
                     stripeReady={stripeReady}
                     setStripeReady={setStripeReady}
-                    setPaymentComplete={setPaymentComplete}
+                    onComplete={handlePaymentCompletion}
                   />
                 ) : (
-                  <HandcashQRElement src={paymentQR} paymentLink={paymentLink}/>
+                  <HandcashQRElement src={hcPaymentQR} paymentId={hcPaymentId} paymentLink={hcPaymentLink} onComplete={handlePaymentCompletion}/>
                 )}
               </Elements>
             )}
@@ -981,7 +1011,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin }) => 
 };
 
 const ShopPage = () => {
-  const { assetlayerClient, loggedIn, handleUserLogin, user, balance } =
+  const { assetlayerClient, loggedIn, handleUserLogin, user, balance, loadCurrencyBalance } =
     useAssetLayer(); // Use the hook to get the client and loggedIn state
   const [collections, setCollections] = useState(undefined);
   const [loggingIn, setLoggingIn] = useState(false);
@@ -1062,6 +1092,7 @@ const ShopPage = () => {
               collections={collections}
               loggedIn={loggedIn}
               displayLogin={displayLogin}
+              loadCurrencyBalance={loadCurrencyBalance}
             />
           ) : (
             <CenteredImage src="/static/loader.gif" alt="placeholder" />

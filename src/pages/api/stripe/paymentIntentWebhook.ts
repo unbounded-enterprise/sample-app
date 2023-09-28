@@ -2,15 +2,15 @@ import { NextApiRequest, NextApiResponse } from "next/types";
 import { BasicError } from "src/types/error";
 import { errorHandling } from "../validate";
 import Stripe from 'stripe';
-// import { MongoClient } from 'mongodb';
-// import { assetlayer } from "../app/info";
+import { MongoClient } from 'mongodb';
+import { assetlayer } from "../app/info";
 // import { getUser } from "../user/info";
 
-// const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
-// const dbInvoices = mdb.db('rolltopia').collection('invoices');
+const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
+const dbInvoices = mdb.db('rolltopia').collection('invoices');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-08-16' });
 const endpointSecret = process.env.PAYMENT_INTENT_WEBHOOK_SECRET;
-const rolltopiaCurrencyId = "64f774cb151a6a3dee16df7c";
+export const rolltopiaCurrencyId = "64f774cb151a6a3dee16df7c";
 
 function getBodyBuffer(req: NextApiRequest) {
 	return new Promise((resolve, reject) => {
@@ -56,14 +56,13 @@ export async function handlePaymentIntentWebhook(sig, body) {
 	switch (event['type']) {
 		case 'payment_intent.succeeded': {
 			console.log("Succeeded:", paymentIntent.id);
-			/*
 			await assetlayer.currencies.increaseCurrencyBalance({ 
 				currencyId: rolltopiaCurrencyId, 
 				amount: Number(paymentIntent.metadata.quantity), 
-				walletUserId: paymentIntent.metadata.userId 
+				userId: paymentIntent.metadata.userId 
 			});
-			*/
-			// await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
+			
+			await dbInvoices.updateOne({ paymentIntentId: paymentIntent.id }, { $set: { completed: true } });
 			break;
 		}
 		case 'payment_intent.payment_failed': {

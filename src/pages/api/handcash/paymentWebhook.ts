@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next/types";
 import { errorHandling } from '../validate';
 import { BasicError } from 'src/types/error';
 import { MongoClient } from 'mongodb';
-// import { assetlayer } from "../app/info";
+import { assetlayer } from "../app/info";
+import { rolltopiaCurrencyId } from "../stripe/paymentIntentWebhook";
 
 const mdb = new MongoClient(process.env.MONGO_ENDPOINT || "");
 const dbInvoices = mdb.db('rolltopia').collection('invoices');
@@ -27,12 +28,11 @@ export default function paymentWebhookHandler(req:NextApiRequest, res:NextApiRes
 }
 
 async function handlePaymentWebhook(paymentId: string, userId: string, quantity: string) {
-  /*
   await assetlayer.currencies.increaseCurrencyBalance({ 
     currencyId: rolltopiaCurrencyId, 
     amount: Number(quantity), 
-    walletUserId: userId 
+    userId: userId 
   });
-  */
+  
   await dbInvoices.updateOne({ paymentRequestId: paymentId }, { $set: { completed: true } });
 }

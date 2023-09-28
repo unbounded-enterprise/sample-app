@@ -931,7 +931,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
       >
         <PurchaseCoinsHeader
           text=""
-          onBack={() => setSelectedBundle(undefined)}
+          onBack={onReset}
         />
         <Stack
           direction={{ xs: "column", md: "row" }}

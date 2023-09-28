@@ -594,7 +594,7 @@ const StripeCheckoutForm = ({
       return setIsLoading(false);
     }
 
-    onComplete();
+    onComplete(5000);
   };
 
   return (
@@ -881,8 +881,9 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     }
   }
 
-  function handlePaymentCompletion() {
-    loadCurrencyBalance();
+  function handlePaymentCompletion(delay = 0) {
+    if (delay) setTimeout(loadCurrencyBalance, delay);
+    else loadCurrencyBalance();
     setPaymentComplete(true);
   }
 

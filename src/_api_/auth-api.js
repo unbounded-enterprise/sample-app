@@ -162,6 +162,19 @@ class AuthApi {
       }
     });
   }
+
+  checkHandcashPaymentCompleted(props) {
+    return new Promise((resolve, reject) => {
+      try { 
+        axios.post('/api/handcash/checkPaymentCompleted', props)
+          .then((res) => resolveHandlingClient(res, resolve))
+          .catch((e) => errorHandlingClient(e, reject))
+      } 
+      catch (e) {
+        errorHandlingClient(e, reject);
+      }
+    });
+  }
   
   createStripePaymentIntent(props) {
     return new Promise((resolve, reject) => {

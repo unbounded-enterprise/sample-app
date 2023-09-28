@@ -887,6 +887,18 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     setPaymentComplete(true);
   }
 
+  function onReset() {
+    setSelectedBundle(undefined); 
+    setPaymentComplete(false);
+    setPaymentCompleteBundle(undefined);
+    setPaymentIntent(undefined);
+    setStripeReady(false);
+    setHandcashSelected(false);
+    setHCPaymentId("");
+    setHCPaymentQR("");
+    setHCPaymentLink("");
+  }
+
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const bundleId = query.get("purchaseCompleteBundleId");
@@ -1007,7 +1019,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
       </Stack>
     </Card>
   ) : (
-    <PaymentCompleteCard onBack={() => { setSelectedBundle(undefined); setPaymentComplete(false); }}/>
+    <PaymentCompleteCard onBack={onReset}/>
   );
 };
 

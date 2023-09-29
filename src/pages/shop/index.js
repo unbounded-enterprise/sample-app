@@ -54,7 +54,7 @@ import {
 import { StripeWordMark } from "src/icons/Stripe wordmark - blurple.js";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import { LoginContent } from "src/components/login-content";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { rolltopiaBundles as rolltopiaBundlesObject } from "src/pages/api/stripe/createPaymentIntent";
 
 export const stripePromise = loadStripe(
@@ -229,7 +229,9 @@ function formatHandcashPaymentUrl(url) {
   const splitDomain = splitUrl[2].split(".");
   splitDomain[0] = "app";
 
-  return 'https://' + splitDomain.join(".") + "/#/paymentLink?id=" + splitUrl[3];
+  return (
+    "https://" + splitDomain.join(".") + "/#/paymentLink?id=" + splitUrl[3]
+  );
 }
 
 const BalanceField = ({ balance }) => {
@@ -362,7 +364,10 @@ const BuyBallsGrid = ({ collections, loggedIn, displayLogin, onSelect }) => {
     <Grid container spacing={2}>
       {collections.map((collection) => (
         <Grid item xs={6} sm={4} md={3} key={collection.collectionId}>
-          <CollectionCard collection={collection} onClick={() => handleClick(collection)}/>
+          <CollectionCard
+            collection={collection}
+            onClick={() => handleClick(collection)}
+          />
         </Grid>
       ))}
     </Grid>
@@ -389,7 +394,12 @@ const BuyBallsContent = ({ collections, loggedIn, displayLogin, onSelect }) => {
     <Box>
       <BuyBallsHeader />
       <BuyBallsSearchbar search={search} setSearch={setSearch} />
-      <BuyBallsGrid collections={filteredCollections} loggedIn={loggedIn} displayLogin={displayLogin} onSelect={onSelect}/>
+      <BuyBallsGrid
+        collections={filteredCollections}
+        loggedIn={loggedIn}
+        displayLogin={displayLogin}
+        onSelect={onSelect}
+      />
     </Box>
   );
 };
@@ -712,13 +722,14 @@ const HandcashQRElement = ({ src, paymentId, paymentLink, onComplete }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   async function checkForPaymentCompletion() {
-    try { 
-      const paymentComplete = await authApi.checkHandcashPaymentCompleted({ paymentId });
-      
+    try {
+      const paymentComplete = await authApi.checkHandcashPaymentCompleted({
+        paymentId,
+      });
+
       if (paymentComplete) onComplete();
-    }
-    catch(e) {
-      console.warn('error checking for payment completion');
+    } catch (e) {
+      console.warn("error checking for payment completion");
     }
   }
 
@@ -749,7 +760,11 @@ const HandcashQRElement = ({ src, paymentId, paymentLink, onComplete }) => {
             src={src}
             alt=""
             onLoad={() => setIsLoaded(true)}
-            style={{ display: (isLoaded) ? 'flex' : 'none', width: "100%", height: "100%" }}
+            style={{
+              display: isLoaded ? "flex" : "none",
+              width: "100%",
+              height: "100%",
+            }}
           />
         )}
         {!isLoaded && (
@@ -759,20 +774,33 @@ const HandcashQRElement = ({ src, paymentId, paymentLink, onComplete }) => {
       <Typography variant="subtitle2">
         Scan the QR code with your Handcash app to pay
       </Typography>
-      { paymentLink && <Stack direction="row" spacing="1rem" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', mt: '1rem' }}>
-        <Typography variant="subtitle2">
-          or
-        </Typography>
-        <Button href={paymentLink} endIcon={<OpenInNewIcon/>} sx={{ 
-          border: "1px solid #e6e6e6",
-          borderRadius: "8px",
-          color: "#6d6e78",
-          "&:hover": { border: "1px solid #045CD2" },
-          "&:focus": { border: "2px solid #045CD2" },
-        }}>
-          Open in Handcash
-        </Button>
-      </Stack> }
+      {paymentLink && (
+        <Stack
+          direction="row"
+          spacing="1rem"
+          sx={{
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: "1rem",
+          }}
+        >
+          <Typography variant="subtitle2">or</Typography>
+          <Button
+            href={paymentLink}
+            endIcon={<OpenInNewIcon />}
+            sx={{
+              border: "1px solid #e6e6e6",
+              borderRadius: "8px",
+              color: "#6d6e78",
+              "&:hover": { border: "1px solid #045CD2" },
+              "&:focus": { border: "2px solid #045CD2" },
+            }}
+          >
+            Open in Handcash
+          </Button>
+        </Stack>
+      )}
     </Stack>
   );
 };
@@ -816,7 +844,6 @@ const PlayNowButton = () => {
 };
 
 const PaymentCompleteCard = ({ onBack }) => {
-
   return (
     <Card sx={shopCardSx2}>
       <Stack
@@ -827,11 +854,8 @@ const PaymentCompleteCard = ({ onBack }) => {
           minHeight: "12rem",
         }}
       >
-        <PurchaseCoinsHeader
-          text="Purchase Completed"
-          onBack={onBack}
-        />
-        <PlayNowButton/>
+        <PurchaseCoinsHeader text="Purchase Completed" onBack={onBack} />
+        <PlayNowButton />
       </Stack>
     </Card>
   );
@@ -851,12 +875,9 @@ const AssetPurchaseCard = ({ collection, onBack, onComplete }) => {
 
   return (
     <Card sx={shopCardSx2}>
-      <Stack sx={{ alignItems: 'center', width: '100%' }}>
-        <PurchaseCoinsHeader
-          text="Confirm Purchase"
-          onBack={onBack}
-        />
-        <Stack sx={{ alignItems: 'center', mt: '1.5rem' }}>
+      <Stack sx={{ alignItems: "center", width: "100%" }}>
+        <PurchaseCoinsHeader text="Confirm Purchase" onBack={onBack} />
+        <Stack sx={{ alignItems: "center", mt: "1.5rem" }}>
           <Typography
             variant="h5"
             color="#284B9B"
@@ -872,7 +893,8 @@ const AssetPurchaseCard = ({ collection, onBack, onComplete }) => {
             mt="0.75rem"
             sx={defaultTextSx}
           >
-            500 <img
+            500{" "}
+            <img
               src="/static/Coin With Outline.png"
               alt="balance-icon"
               style={{
@@ -883,10 +905,18 @@ const AssetPurchaseCard = ({ collection, onBack, onComplete }) => {
             />
           </Typography>
         </Stack>
-        <Box sx={{ maxWidth: '25rem', mt: '1.5rem' }}>
-          <img src={collection.collectionImage} alt="" style={{ width: '100%', height: '100%' }}/>
+        <Box sx={{ maxWidth: "25rem", mt: "1.5rem" }}>
+          <img
+            src={collection.collectionImage}
+            alt=""
+            style={{ width: "100%", height: "100%" }}
+          />
         </Box>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: '0.75rem', md: '2.5rem' }} sx={{ justifyContent: 'center', alignItems: 'center', mt: '1.5rem' }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={{ xs: "0.75rem", md: "2.5rem" }}
+          sx={{ justifyContent: "center", alignItems: "center", mt: "1.5rem" }}
+        >
           <Typography
             variant="h5"
             color="#284B9B"
@@ -904,50 +934,65 @@ const AssetPurchaseCard = ({ collection, onBack, onComplete }) => {
             Max Supply {collection.maximum}
           </Typography>
         </Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', mt: '2.5rem' }}>
-          { (processing) ? (<LinearProgress width="100%" maxWidth="25rem"/>)
-            : (
-              <Button
-                onClick={handlePurchase}
-                sx={{
-                  width: "100%",
-                  maxWidth: "25rem",
-                  color: "white",
-                  fontFamily: "Chango",
-                  border: "2px solid white",
-                  borderRadius: "4px",
-                  background:
-                    "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            mt: "2.5rem",
+          }}
+        >
+          {processing ? (
+            <LinearProgress width="100%" maxWidth="25rem" />
+          ) : (
+            <Button
+              onClick={handlePurchase}
+              sx={{
+                width: "100%",
+                maxWidth: "25rem",
+                color: "white",
+                fontFamily: "Chango",
+                border: "2px solid white",
+                borderRadius: "4px",
+                background:
+                  "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+                boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+                cursor: "pointer",
+                position: "relative", // Set the card's position to relative
+                "&:hover::before": {
+                  // Use the ::before pseudo-element for the overlay
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                  zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+                },
+                "&:hover": {
                   boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-                  cursor: "pointer",
-                  position: "relative", // Set the card's position to relative
-                  "&:hover::before": {
-                    // Use the ::before pseudo-element for the overlay
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-                    backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
-                    zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
-                  },
-                  "&:hover": {
-                    boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
-                  },
-                }}
-              >
-                Buy
-              </Button>
-            )
-          }
+                },
+              }}
+            >
+              Buy
+            </Button>
+          )}
         </Box>
       </Stack>
     </Card>
   );
 };
 
-const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadCurrencyBalance }) => {
+const ShopContent = ({
+  user,
+  balance,
+  collections,
+  loggedIn,
+  displayLogin,
+  loadCurrencyBalance,
+}) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
   const [selectedAssetBundle, setSelectedAssetBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
@@ -957,7 +1002,8 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
   const [paymentIntent, setPaymentIntent] = useState(undefined);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [paymentCompleteBundle, setPaymentCompleteBundle] = useState(undefined);
-  const [paymentCompleteAssetBundle, setPaymentCompleteAssetBundle] = useState(undefined);
+  const [paymentCompleteAssetBundle, setPaymentCompleteAssetBundle] =
+    useState(undefined);
   const [stripeReady, setStripeReady] = useState(false);
 
   function selectBundle(bundle) {
@@ -975,7 +1021,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
       setHCPaymentQR(payment.paymentRequestQrCodeUrl);
       setHCPaymentLink(formatHandcashPaymentUrl(payment.paymentRequestUrl));
     } catch (e) {
-      console.warn("error creating handcash payment", e)
+      console.warn("error creating handcash payment", e);
     }
   }
 
@@ -999,13 +1045,13 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     setPaymentComplete(true);
   }
 
-  function selectAssetBundle(collection) { 
+  function selectAssetBundle(collection) {
     setSelectedAssetBundle(collection);
   }
 
   function onReset() {
-    setSelectedBundle(undefined); 
-    setSelectedAssetBundle(undefined); 
+    setSelectedBundle(undefined);
+    setSelectedAssetBundle(undefined);
     setPaymentComplete(false);
     setPaymentCompleteBundle(undefined);
     setPaymentCompleteAssetBundle(undefined);
@@ -1033,26 +1079,40 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     if (selectedBundle) createStripePayment(selectedBundle);
   }, [selectedBundle]);
 
-  if (paymentCompleteBundle) return <PaymentCompleteCard onBack={onReset}/>;
-  if (paymentCompleteAssetBundle) return <PaymentCompleteCard onBack={onReset}/>;
-  if (selectedAssetBundle) return <AssetPurchaseCard collection={selectedAssetBundle} onBack={() => setSelectedAssetBundle(undefined)} onComplete={(collection) => setPaymentCompleteAssetBundle(collection)}/>;
+  if (paymentCompleteBundle) return <PaymentCompleteCard onBack={onReset} />;
+  if (paymentCompleteAssetBundle)
+    return <PaymentCompleteCard onBack={onReset} />;
+  if (selectedAssetBundle)
+    return (
+      <AssetPurchaseCard
+        collection={selectedAssetBundle}
+        onBack={() => setSelectedAssetBundle(undefined)}
+        onComplete={(collection) => setPaymentCompleteAssetBundle(collection)}
+      />
+    );
 
   return selectedBundle === undefined ? (
     <Card sx={shopCardSx}>
       <BalanceField balance={balance?.at(0)?.balance} />
       <BuyCoinsHeader />
-      <BuyCoinsGrid selectBundle={selectBundle} loggedIn={loggedIn} displayLogin={displayLogin}/>
-      <BuyBallsContent collections={collections} loggedIn={loggedIn} displayLogin={displayLogin} onSelect={selectAssetBundle}/>
+      <BuyCoinsGrid
+        selectBundle={selectBundle}
+        loggedIn={loggedIn}
+        displayLogin={displayLogin}
+      />
+      <BuyBallsContent
+        collections={collections}
+        loggedIn={loggedIn}
+        displayLogin={displayLogin}
+        onSelect={selectAssetBundle}
+      />
     </Card>
   ) : !paymentComplete ? (
     <Card sx={shopCardSx2}>
       <Stack
         sx={{ justifyContent: "center", alignItems: "center", width: "100%" }}
       >
-        <PurchaseCoinsHeader
-          text=""
-          onBack={onReset}
-        />
+        <PurchaseCoinsHeader text="" onBack={onReset} />
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing="1rem"
@@ -1130,7 +1190,12 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
                     onComplete={handlePaymentCompletion}
                   />
                 ) : (
-                  <HandcashQRElement src={hcPaymentQR} paymentId={hcPaymentId} paymentLink={hcPaymentLink} onComplete={handlePaymentCompletion}/>
+                  <HandcashQRElement
+                    src={hcPaymentQR}
+                    paymentId={hcPaymentId}
+                    paymentLink={hcPaymentLink}
+                    onComplete={handlePaymentCompletion}
+                  />
                 )}
               </Elements>
             )}
@@ -1139,13 +1204,19 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
       </Stack>
     </Card>
   ) : (
-    <PaymentCompleteCard onBack={onReset}/>
+    <PaymentCompleteCard onBack={onReset} />
   );
 };
 
 const ShopPage = () => {
-  const { assetlayerClient, loggedIn, handleUserLogin, user, balance, loadCurrencyBalance } =
-    useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const {
+    assetlayerClient,
+    loggedIn,
+    handleUserLogin,
+    user,
+    balance,
+    loadCurrencyBalance,
+  } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   const [collections, setCollections] = useState(undefined);
   const [loggingIn, setLoggingIn] = useState(false);
   const runOnceRef = useRef(false);
@@ -1206,17 +1277,28 @@ const ShopPage = () => {
           height: "100%",
         }}
       >
-        { loggingIn && 
-          <Box onClick={hideLogin} sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', zIndex: 9999 }}>
-            <Box onClick={(event)=>event.stopPropagation()}>
+        {loggingIn && (
+          <Box
+            onClick={hideLogin}
+            sx={{
+              position: "absolute",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              zIndex: 9999,
+            }}
+          >
+            <Box onClick={(event) => event.stopPropagation()}>
               <LoginContent
                 assetlayerClient={assetlayerClient}
                 handleUserLogin={handleUserLogin}
                 onLogin={hideLogin}
               />
             </Box>
-          </Box> 
-        }
+          </Box>
+        )}
         <Container maxWidth="md">
           {collections ? (
             <ShopContent

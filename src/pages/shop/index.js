@@ -352,24 +352,24 @@ const BuyBallsSearchbar = ({ search, setSearch }) => {
   );
 };
 
-const BuyBallsGrid = ({ collections, loggedIn, displayLogin }) => {
-  function handleClick() {
+const BuyBallsGrid = ({ collections, loggedIn, displayLogin, onSelect }) => {
+  function handleClick(collection) {
     if (!loggedIn) displayLogin();
-    else console.log("ball clicked");
+    else onSelect(collection);
   }
 
   return (
     <Grid container spacing={2}>
       {collections.map((collection) => (
         <Grid item xs={6} sm={4} md={3} key={collection.collectionId}>
-          <CollectionCard collection={collection} onClick={handleClick}/>
+          <CollectionCard collection={collection} onClick={() => handleClick(collection)}/>
         </Grid>
       ))}
     </Grid>
   );
 };
 
-const BuyBallsContent = ({ collections, loggedIn, displayLogin }) => {
+const BuyBallsContent = ({ collections, loggedIn, displayLogin, onSelect }) => {
   const [search, setSearch] = useState("");
   const filteredCollections = useMemo(() => {
     return collections.filter((collection) =>
@@ -389,7 +389,7 @@ const BuyBallsContent = ({ collections, loggedIn, displayLogin }) => {
     <Box>
       <BuyBallsHeader />
       <BuyBallsSearchbar search={search} setSearch={setSearch} />
-      <BuyBallsGrid collections={filteredCollections} loggedIn={loggedIn} displayLogin={displayLogin}/>
+      <BuyBallsGrid collections={filteredCollections} loggedIn={loggedIn} displayLogin={displayLogin} onSelect={onSelect}/>
     </Box>
   );
 };
@@ -837,8 +837,119 @@ const PaymentCompleteCard = ({ onBack }) => {
   );
 };
 
+const AssetPurchaseCard = ({ collection, onBack, onComplete }) => {
+  const [processing, setProcessing] = useState(false);
+
+  async function handlePurchase() {
+    setProcessing(true);
+
+    const completed = true; // await purchaseAssetBundle(collection);
+
+    if (completed) onComplete(collection);
+    else setProcessing(false);
+  }
+
+  return (
+    <Card sx={shopCardSx2}>
+      <Stack sx={{ alignItems: 'center', width: '100%' }}>
+        <PurchaseCoinsHeader
+          text="Confirm Purchase"
+          onBack={onBack}
+        />
+        <Stack sx={{ alignItems: 'center', mt: '1.5rem' }}>
+          <Typography
+            variant="h5"
+            color="#284B9B"
+            fontFamily="Chango"
+            sx={defaultTextSx}
+          >
+            Buy {collection.collectionName} for
+          </Typography>
+          <Typography
+            variant="h5"
+            color="#284B9B"
+            fontFamily="Chango"
+            mt="0.75rem"
+            sx={defaultTextSx}
+          >
+            500 <img
+              src="/static/Coin With Outline.png"
+              alt="balance-icon"
+              style={{
+                marginLeft: "10px",
+                verticalAlign: "middle",
+                height: "1.2em", // Adjust this value to match the height of your text
+              }}
+            />
+          </Typography>
+        </Stack>
+        <Box sx={{ maxWidth: '25rem', mt: '1.5rem' }}>
+          <img src={collection.collectionImage} alt="" style={{ width: '100%', height: '100%' }}/>
+        </Box>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: '0.75rem', md: '2.5rem' }} sx={{ justifyContent: 'center', alignItems: 'center', mt: '1.5rem' }}>
+          <Typography
+            variant="h5"
+            color="#284B9B"
+            fontFamily="Chango"
+            sx={defaultTextSx}
+          >
+            Available {collection.maximum - collection.minted}
+          </Typography>
+          <Typography
+            variant="h5"
+            color="#284B9B"
+            fontFamily="Chango"
+            sx={defaultTextSx}
+          >
+            Max Supply {collection.maximum}
+          </Typography>
+        </Stack>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', mt: '2.5rem' }}>
+          { (processing) ? (<LinearProgress width="100%" maxWidth="25rem"/>)
+            : (
+              <Button
+                onClick={handlePurchase}
+                sx={{
+                  width: "100%",
+                  maxWidth: "25rem",
+                  color: "white",
+                  fontFamily: "Chango",
+                  border: "2px solid white",
+                  borderRadius: "4px",
+                  background:
+                    "linear-gradient(180deg, #FF580F 0%, #FF440B 100%), linear-gradient(0deg, #FFFFFF, #FFFFFF)",
+                  boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+                  cursor: "pointer",
+                  position: "relative", // Set the card's position to relative
+                  "&:hover::before": {
+                    // Use the ::before pseudo-element for the overlay
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    backgroundColor: "rgba(255, 255, 255, 0.1)", // 10% white overlay
+                    zIndex: 1, // Ensure the overlay is above the card content but below any interactive elements
+                  },
+                  "&:hover": {
+                    boxShadow: `3px 3px 8px rgba(0, 0, 0, 0.5)`,
+                  },
+                }}
+              >
+                Buy
+              </Button>
+            )
+          }
+        </Box>
+      </Stack>
+    </Card>
+  );
+};
+
 const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadCurrencyBalance }) => {
   const [selectedBundle, setSelectedBundle] = useState(undefined);
+  const [selectedAssetBundle, setSelectedAssetBundle] = useState(undefined);
   const [handcashSelected, setHandcashSelected] = useState(false);
   const [hcPaymentId, setHCPaymentId] = useState("");
   const [hcPaymentQR, setHCPaymentQR] = useState("");
@@ -846,6 +957,7 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
   const [paymentIntent, setPaymentIntent] = useState(undefined);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [paymentCompleteBundle, setPaymentCompleteBundle] = useState(undefined);
+  const [paymentCompleteAssetBundle, setPaymentCompleteAssetBundle] = useState(undefined);
   const [stripeReady, setStripeReady] = useState(false);
 
   function selectBundle(bundle) {
@@ -887,10 +999,16 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     setPaymentComplete(true);
   }
 
+  function selectAssetBundle(collection) { 
+    setSelectedAssetBundle(collection);
+  }
+
   function onReset() {
     setSelectedBundle(undefined); 
+    setSelectedAssetBundle(undefined); 
     setPaymentComplete(false);
     setPaymentCompleteBundle(undefined);
+    setPaymentCompleteAssetBundle(undefined);
     setPaymentIntent(undefined);
     setStripeReady(false);
     setHandcashSelected(false);
@@ -915,14 +1033,16 @@ const ShopContent = ({ user, balance, collections, loggedIn, displayLogin, loadC
     if (selectedBundle) createStripePayment(selectedBundle);
   }, [selectedBundle]);
 
-  if (paymentCompleteBundle) return <PaymentCompleteCard onBack={() => setPaymentCompleteBundle(undefined)}/>;
+  if (paymentCompleteBundle) return <PaymentCompleteCard onBack={onReset}/>;
+  if (paymentCompleteAssetBundle) return <PaymentCompleteCard onBack={onReset}/>;
+  if (selectedAssetBundle) return <AssetPurchaseCard collection={selectedAssetBundle} onBack={() => setSelectedAssetBundle(undefined)} onComplete={(collection) => setPaymentCompleteAssetBundle(collection)}/>;
 
   return selectedBundle === undefined ? (
     <Card sx={shopCardSx}>
       <BalanceField balance={balance?.at(0)?.balance} />
       <BuyCoinsHeader />
       <BuyCoinsGrid selectBundle={selectBundle} loggedIn={loggedIn} displayLogin={displayLogin}/>
-      <BuyBallsContent collections={collections} loggedIn={loggedIn} displayLogin={displayLogin}/>
+      <BuyBallsContent collections={collections} loggedIn={loggedIn} displayLogin={displayLogin} onSelect={selectAssetBundle}/>
     </Card>
   ) : !paymentComplete ? (
     <Card sx={shopCardSx2}>

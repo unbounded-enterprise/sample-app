@@ -149,8 +149,13 @@ const PlayUnity = ({
   didToken,
   onClose,
 }) => {
+  const [frameHeight, setFrameHeight] = useState(`${window.innerHeight}px`);
   const [isLoaded, setIsLoaded] = useState(false);
   const isInitialMount = useRef(true);
+
+  function updateFrameHeight() {
+    setFrameHeight(`${window.innerHeight}px`);
+  }
 
   function sendTokenToUnity(token) {
     const iframe = document.getElementById('unity-webgl-iframe');  // Make sure to give your iframe an id
@@ -179,9 +184,15 @@ const PlayUnity = ({
     if (isLocal && isInitialMount.current) {
       isInitialMount.current = false;
     } else {
+      window.addEventListener("resize", updateFrameHeight);
       window.addEventListener("message", handleUnityMessage);
 
-      return () => onClose();
+      return () => {
+        window.removeEventListener("resize", updateFrameHeight);
+        window.removeEventListener("message", handleUnityMessage);
+
+        onClose();
+      };
     }
   }, []);
 
@@ -203,12 +214,12 @@ const PlayUnity = ({
             left: 0,
             zIndex: 999,
             width: "100%",
-            height: "96.5vh",
+            height: frameHeight,
             border: "none",  // to remove default iframe border
           }}
           title="Unity WebGL Content"
           allowFullScreen
-      />
+        />
         <Button
           variant="contained"
           color="primary"

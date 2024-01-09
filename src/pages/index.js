@@ -19,7 +19,7 @@ const loginUser = () => {
 //const assetlayerClient = new AssetLayer({baseUrl: "/api"});
 
 const Page = () => {
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
   const [app, setApp] = useState(null);
   const [user, setUser] = useState(null);
@@ -53,7 +53,7 @@ const Page = () => {
   useEffect(() => {
     getIsLoggedIn()
       .then((isLoggedIn) => {
-        setLoggedIn(isLoggedIn)
+        handleUserLogin(isLoggedIn)
       })
       .catch(e => { 
         const error = parseBasicErrorClient(e);

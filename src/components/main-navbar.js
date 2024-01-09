@@ -66,7 +66,7 @@ export const MainNavbar = (props) => {
   const menuRef = useRef(null);
   const accountRef = useRef(null);
   const { user } = useAuth();
-  const { loggedIn, setLoggedIn, assetlayerClient } = useAssetLayer();
+  const { loggedIn, handleUserLogin, assetlayerClient } = useAssetLayer();
 
   const handleOpenMenu = () => {
     setMenuOpen(true);
@@ -202,7 +202,7 @@ export const MainNavbar = (props) => {
             <Button
               onClick={() => {
                 assetlayerClient.logoutUser();
-                setLoggedIn(false);
+                handleUserLogin(false);
               }}
               sx={{
                 borderRadius: 1,

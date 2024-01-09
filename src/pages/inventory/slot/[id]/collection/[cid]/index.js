@@ -35,7 +35,7 @@ const InventoryCollectionPage = () => {
 
   const [slotId, setSlotId] = useState(null)
   const [collectionId, setCollectionId] = useState(null)
-  const { assetlayerClient, loggedIn, setLoggedIn } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
   const [user, setUser] = useState(null);
 
 
@@ -88,7 +88,7 @@ const InventoryCollectionPage = () => {
   useEffect(() => {
     getIsLoggedIn()
       .then((isLoggedIn) => {
-        setLoggedIn(isLoggedIn)
+        handleUserLogin(isLoggedIn)
       })
       .catch(e => { 
         const error = parseBasicErrorClient(e);

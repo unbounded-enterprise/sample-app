@@ -82,7 +82,7 @@ const ExplorerPage = () => {
           <Grid item xs={12}>
             { app && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
-                NFT Explorer
+                Asset Explorer
               </Typography>
               <Typography variant="p2" sx={{ fontWeight: 'bold', lineHeight: '40px', fontSize }}>
                 App:&nbsp;

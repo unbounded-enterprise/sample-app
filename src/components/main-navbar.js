@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   AppBar,
   Avatar,
@@ -19,6 +19,7 @@ import { UserCircle as UserCircleIcon } from "../icons/user-circle";
 import { AccountPopover } from "./account-popover";
 import { useAuth } from "src/hooks/use-auth";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js";
+import axios from "axios";
 
 const menuItems = [
   { label: "NFT Explorer", value: "explorerMenuItem", href: "/explorer" },
@@ -63,6 +64,7 @@ export const MenuPopover = (props) => {
 export const MainNavbar = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountPopoverOpen, setAccountPopoverOpen] = useState(false);
+  const [appId, setAppId] = useState(null);
   const menuRef = useRef(null);
   const accountRef = useRef(null);
   const { user } = useAuth();
@@ -80,6 +82,23 @@ export const MainNavbar = (props) => {
   const handleCloseAccountPopover = () => {
     setAccountPopoverOpen(false);
   };
+
+  const getAppId = async () => {
+    try {
+      // Make a GET request to your API endpoint
+      const response = await axios.get("/api/app/appId");
+      console.log("App ID:", response.data.appId);
+      return response.data.appId;
+    } catch (error) {
+      console.error("Error fetching appId:", error);
+    }
+  };
+
+  useEffect(() => {
+    getAppId().then((appId) => {
+      setAppId(appId);
+    });
+  }, []);
 
   return (
     <AppBar
@@ -137,7 +156,7 @@ export const MainNavbar = (props) => {
                 }}
               >
                 <Typography color="textSecondary" variant="subtitle2">
-                  NFT Explorer
+                  Explorer
                 </Typography>
               </Button>
             </NextLink>
@@ -150,11 +169,35 @@ export const MainNavbar = (props) => {
                 }}
               >
                 <Typography color="textSecondary" variant="subtitle2">
-                  My NFTs
+                  My Assets
                 </Typography>
               </Button>
             </NextLink>
-            <NextLink href="/marketplace" passHref legacyBehavior>
+            <NextLink
+              href={"https://www.assetlayer.com/market/browse/" + appId}
+              passHref
+              legacyBehavior
+            >
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                <Button
+                  sx={{
+                    borderRadius: 1,
+                    py: "0.25em",
+                    "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
+                  }}
+                >
+                  <Typography color="textSecondary" variant="subtitle2">
+                    Marketplace
+                  </Typography>
+                </Button>
+              </a>
+            </NextLink>
+
+            <NextLink href="/play" passHref legacyBehavior>
               <Button
                 sx={{
                   borderRadius: 1,
@@ -163,20 +206,7 @@ export const MainNavbar = (props) => {
                 }}
               >
                 <Typography color="textSecondary" variant="subtitle2">
-                  Marketplace
-                </Typography>
-              </Button>
-            </NextLink>
-            <NextLink href="/store" passHref legacyBehavior>
-              <Button
-                sx={{
-                  borderRadius: 1,
-                  py: "0.25em",
-                  "&:hover": { backgroundColor: "rgba(155,155,155,0.1)" },
-                }}
-              >
-                <Typography color="textSecondary" variant="subtitle2">
-                  Store
+                  Play
                 </Typography>
               </Button>
             </NextLink>

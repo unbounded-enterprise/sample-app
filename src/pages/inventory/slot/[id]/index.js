@@ -31,7 +31,7 @@ const InventorySlotPage = ()=>{
   const [chosenSlot, setChosenSlot] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("maximum");
-  const [totalNfts, setTotalNfts] = useState(0);
+  const [totalAssets, setTotalAssets] = useState(0);
   const [collectionCounts, setCollectionCounts] = useState({});
   const [activeCollections, setActiveCollections] = useState(null);
   const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
@@ -46,14 +46,14 @@ const InventorySlotPage = ()=>{
   }
 
   
-const countNfts = async (collectionCounts) => {
-  let nftCount = 0;
+const countAssets = async (collectionCounts) => {
+  let assetCount = 0;
   for (const key in collectionCounts) {
     if (collectionCounts.hasOwnProperty(key)) {
-      nftCount += collectionCounts[key];
+      assetCount += collectionCounts[key];
     }
   }
-  return nftCount;
+  return assetCount;
 }
   
 /*const getNftCounts = async (collections) => {
@@ -208,9 +208,9 @@ const getIsLoggedIn = async () => {
   }, []);
 
   useEffect(() => {
-    countNfts(activeCollections)
+    countAssets(activeCollections)
       .then((count) => {
-        setTotalNfts(count);
+        setTotalAssets(count);
       })
       .catch(e => { 
         const error = parseBasicErrorClient(e);
@@ -290,10 +290,10 @@ const getIsLoggedIn = async () => {
               {chosenSlot.collections.length} &emsp;
             </Typography>
             <Typography variant="p2" sx={sharedSxBold}>
-              Total NFTs Owned:&nbsp;
+              Total Assets Owned:&nbsp;
             </Typography>
             <Typography variant="p2" sx={sharedSx}>
-              { totalNfts }
+              { totalAssets }
               <br></br>
             </Typography>
           </Grid>

@@ -54,7 +54,7 @@ const Page = () => {
               </Grid>
               <Grid item xs={12} sx={{ display: 'flex', flexDirection: { xs:'column', md:'row' }, alignItems: 'center'}}>
                 <Typography variant="p2">
-                  Welcome to {app.appName}! From here, you can browse collections, view your inventory, buy NFTs in the shop or trade NFTs in the marketplace.
+                  Welcome to {app.appName}! From here, you can browse collections, view your inventory, buy Assets in the shop or trade Assets in the marketplace.
                 </Typography>
               </Grid>
             </Grid>
@@ -88,7 +88,7 @@ const Page = () => {
                   }}> 
                     <img src={"/static/inventoryImage.png"} alt={'Collection Image'} style={{ maxHeight: '300px', maxWidth: '300px', placeSelf: 'center' }} />
                     <Typography variant="p2" sx={{ padding: 1, fontWeight: "bold" }}>
-                      My NFTs
+                      My Assets
                     </Typography>
                   </Card>
                 </NextLink>

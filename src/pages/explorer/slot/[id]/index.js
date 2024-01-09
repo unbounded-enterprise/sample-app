@@ -243,7 +243,7 @@ const ExploreSlotPage = () => {
               {chosenSlot.collections.length} &emsp;
             </Typography>
             <Typography variant="p2" sx={sharedSxBold}>
-              Total NFTs:&nbsp;
+              Total Assets:&nbsp;
             </Typography>
             <Typography variant="p2" sx={sharedSx}>
               {minted}

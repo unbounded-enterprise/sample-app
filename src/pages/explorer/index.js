@@ -29,6 +29,7 @@ const ExplorerPage = () => {
     getSlots()
       .then((slots) => { 
         setSlots(slots);
+        console.log(slots);
       })
       .catch(e => { 
         const error = parseBasicErrorClient(e);
@@ -81,7 +82,7 @@ const ExplorerPage = () => {
           <Grid item xs={12}>
             { app && <>
               <Typography variant="h2" sx={{ marginBottom: '5px' }}>
-                NFT Explorer
+                Asset Explorer
               </Typography>
               <Typography variant="p2" sx={{ fontWeight: 'bold', lineHeight: '40px', fontSize }}>
                 App:&nbsp;
@@ -138,13 +139,12 @@ export default ExplorerPage;
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', {}));
-  return appObject.data.app;
+  return appObject.data.body.app;
 }
 
 const getSlots = async () => {
   const slotsObject = (await axios.post('/api/app/slots', { idOnly: false }));
-
-  return slotsObject.data.app.slots;
+  return slotsObject.data.body.app.slots;
 }
 
 const sumCollections = async (slots) => {

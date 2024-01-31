@@ -23,7 +23,7 @@ export interface GetCollectionProps{
     collectionIds?: string[];
 }
 
-export interface GetCollectionNftsProps {
+export interface GetCollectionAssetsProps {
     collectionId: string;
     serials?: string;
     idOnly?: boolean;

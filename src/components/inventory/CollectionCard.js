@@ -46,7 +46,7 @@ export const CollectionCard = ({ search, collection, slot, collectionCount }) =>
                 Created by:&nbsp;
               </Typography>
               <Typography variant="p2" sx={{ lineHeight:"25px", fontSize: fontSizeP2 }}>
-                { collection.handle }
+                { collection.creator.handle }
               </Typography>
             </Box>
             <Box>

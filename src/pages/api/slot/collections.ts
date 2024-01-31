@@ -1,11 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
-import axios from "axios";
 import { BasicError } from "src/types/error";
 import { GetCollectionsProps } from "src/types/slot";
-import { getSessionUser } from "../auth/[...nextauth]";
 import { errorHandling } from "../validate";
+import { assetlayer } from "../app/info";
 
-const headers = { appsecret: String(process.env.ASSETLAYER_APP_SECRET) };
 
 export default function getCollectionsHandler(req:NextApiRequest, res:NextApiResponse) {
     return new Promise((resolve, reject) => {
@@ -16,7 +14,7 @@ export default function getCollectionsHandler(req:NextApiRequest, res:NextApiRes
 
             if (!slotId) throw new BasicError('missing slotId', 409);
 
-            getCollections({ slotId, idOnly, includeDeactivated})
+			assetlayer.slots.raw.getSlotCollections({ slotId })
                 .then((body) => resolve(res.status(200).json(body)))
                 .catch(handleError)
         } catch(e:any) {
@@ -25,11 +23,7 @@ export default function getCollectionsHandler(req:NextApiRequest, res:NextApiRes
     })
 }
 
-export async function getCollections(props:GetCollectionsProps) {
-    const response = await axios.get('https://api.assetlayer.com/api/v1/slot/collections', { 
-        data: props, 
-        headers },
-    );
+export async function getSlotCollections(props:GetCollectionsProps) {
+	return await assetlayer.slots.getSlotCollections(props);
 
-    return response.data.body;
 }

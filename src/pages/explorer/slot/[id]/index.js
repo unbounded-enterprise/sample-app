@@ -243,7 +243,7 @@ const ExploreSlotPage = () => {
               {chosenSlot.collections.length} &emsp;
             </Typography>
             <Typography variant="p2" sx={sharedSxBold}>
-              Total NFTs:&nbsp;
+              Total Assets:&nbsp;
             </Typography>
             <Typography variant="p2" sx={sharedSx}>
               {minted}
@@ -279,18 +279,19 @@ ExploreSlotPage.getLayout = (page) => (
 
 const getApp = async () => {
   const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
+  return appObject.data.body.app;
 }
 
 const getSlot = async (slotId) => { // just used for testing
   const slotsObject = (await axios.post('/api/slot/info', { slotId }));
-  return slotsObject.data.slot;
+  return slotsObject.data.body.slot;
 }
   
 const getCollections = async (slot, sortFunction) => {
   if (slot) {
     const collectionsObject = (await axios.post('/api/slot/collections', { slotId: slot, idOnly: false, includeDeactivated: false }));
-    return collectionsObject.data.slot.collections.sort(maximumSort);
+    console.log(collectionsObject);
+    return collectionsObject.data.body.slot.collections.sort(maximumSort);
   }
 }
   

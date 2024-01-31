@@ -12,7 +12,10 @@ import DropdownMenu from '../../../../components/widgets/DropdownMenu';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
 import { useAuth } from 'src/hooks/use-auth';
-import { HomeHandcash } from 'src/components/home/home-handcash';
+import LoginButton from 'src/components/home/login-button';
+import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
+
+
 
 
 const CenteredImage = styled('img')({display: 'block', marginLeft: 'auto', maxWidth: '200px', marginRight: 'auto', width: '50%'});
@@ -28,10 +31,11 @@ const InventorySlotPage = ()=>{
   const [chosenSlot, setChosenSlot] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("maximum");
-  const [totalNfts, setTotalNfts] = useState(0);
+  const [totalAssets, setTotalAssets] = useState(0);
   const [collectionCounts, setCollectionCounts] = useState({});
   const [activeCollections, setActiveCollections] = useState(null);
-  const { user } = useAuth();
+  const { assetlayerClient, loggedIn, handleUserLogin } = useAssetLayer(); // Use the hook to get the client and loggedIn state
+  const [user, setUser] = useState(null);
   
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -41,6 +45,97 @@ const InventorySlotPage = ()=>{
     setSort(value);
   }
 
+  
+const countAssets = async (collectionCounts) => {
+  let assetCount = 0;
+  for (const key in collectionCounts) {
+    if (collectionCounts.hasOwnProperty(key)) {
+      assetCount += collectionCounts[key];
+    }
+  }
+  return assetCount;
+}
+  
+/*const getNftCounts = async (collections) => {
+  var nftCounts = {};
+  if (collections){
+    for (const element of collections) {
+      var nftCount = await axios.post('/api/nft/collections', { collectionIds:[element.collectionId], countsOnly: true });
+      if(nftCount){
+        nftCounts[element.collectionId] = nftCount.data.collections[element.collectionId];
+      }
+    }
+    console.log(nftCounts);
+    return nftCounts;
+  }
+}*/
+  
+const getApp = async () => {
+  const appObject = (await axios.post('/api/app/info', { }));
+  return appObject.data.body.app;
+}
+
+const getSlot = async (slotId)=>{ // just used for testing
+  const slotsObject = (await axios.post('/api/slot/info', { slotId }));
+  return slotsObject.data.body.slot;
+}
+  
+const getCollections = async (activeCollections) => {
+  if (activeCollections) {
+    const collections = Object.keys(activeCollections);
+    if (!(collections.length > 0)) return [];
+    const collectionsObject = await assetlayerClient.collections.safe.getCollections({collectionIds: collections, idOnly: false });
+    //(await axios.post('/api/collection/info', { collectionIds: collections, idOnly: false, includeDeactivated: false }));
+    return collectionsObject.result.sort(collectionSortMethods.maximum);
+  }
+}
+
+const getActiveCollections = async (slot) => {
+  if (slot) {
+    const {result: activeCollectionsObject} = await assetlayerClient.assets.safe.getUserSlotsAssets({slotIds: [slot], countsOnly: true });
+
+    //const activeCollectionsObject = await axios.post('/api/nft/slots', { slotIds: [slot], countsOnly: true });
+    //console.log(Object.keys(activeCollectionsObject.data.nfts));
+    console.log(activeCollectionsObject);
+    return activeCollectionsObject;
+  }
+}
+
+const getUser = async () => {
+  const {result: user} = await assetlayerClient.users.safe.getUser();
+  return user;
+}
+
+const getIsLoggedIn = async () => {
+  const loggedIn = await assetlayerClient.initialize();
+  return loggedIn;
+}
+
+  useEffect(() => {
+    getIsLoggedIn()
+      .then((isLoggedIn) => {
+        handleUserLogin(isLoggedIn)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    if(loggedIn){
+      getUser()
+      .then((user) => {
+        setUser(user)
+      })
+      .catch(e => { 
+        const error = parseBasicErrorClient(e);
+        console.log('setting error: ', error.message);
+      });
+    }
+  }, [loggedIn]);
+
+  
   useEffect(() => {
     if (router.isReady) {
       setThisLink(router.query.id.replace("/explorer/slot/",""));
@@ -51,6 +146,7 @@ const InventorySlotPage = ()=>{
     if (thisLink) {
       getSlot(thisLink)
         .then((slot) => {
+          console.log("chosen slot", slot);
           setChosenSlot(slot);
         })
         .catch((e) => {
@@ -61,7 +157,8 @@ const InventorySlotPage = ()=>{
   }, [thisLink]);
 
   useEffect(() => {
-    if (chosenSlot) {
+    if (chosenSlot && loggedIn) {
+      console.log("here");
       getActiveCollections(thisLink)
         .then((collections) => {
           setActiveCollections(collections);
@@ -71,7 +168,7 @@ const InventorySlotPage = ()=>{
           console.log('setting error: ', error.message);
         });
     }
-  }, [chosenSlot])
+  }, [chosenSlot, loggedIn])
 
   useEffect(() => {
     if (activeCollections) {
@@ -111,9 +208,9 @@ const InventorySlotPage = ()=>{
   }, []);
 
   useEffect(() => {
-    countNfts(activeCollections)
+    countAssets(activeCollections)
       .then((count) => {
-        setTotalNfts(count);
+        setTotalAssets(count);
       })
       .catch(e => { 
         const error = parseBasicErrorClient(e);
@@ -132,7 +229,7 @@ const InventorySlotPage = ()=>{
       });
   }, [collections]);*/
 
-  if (!user) return <HomeHandcash />;
+  if (!loggedIn) return <LoginButton />;
   if (!(app && chosenSlot && collections && collectionCounts)) return loading;
 
   const sharedSx = { font: 'nunito', lineHeight: '40px', fontSize: { xs: '12px', sm: '12px', md: '14px', lg: '16px', xl: '18px' }};
@@ -193,10 +290,10 @@ const InventorySlotPage = ()=>{
               {chosenSlot.collections.length} &emsp;
             </Typography>
             <Typography variant="p2" sx={sharedSxBold}>
-              Total NFTs Owned:&nbsp;
+              Total Assets Owned:&nbsp;
             </Typography>
             <Typography variant="p2" sx={sharedSx}>
-              { totalNfts }
+              { totalAssets }
               <br></br>
             </Typography>
           </Grid>
@@ -227,56 +324,5 @@ InventorySlotPage.getLayout = (page) => (
   </MainLayout>
 );
 
-const countNfts = async (collectionCounts) => {
-  let nftCount = 0;
-  for (const key in collectionCounts) {
-    if (collectionCounts.hasOwnProperty(key)) {
-      nftCount += collectionCounts[key];
-    }
-  }
-  return nftCount;
-}
-  
-/*const getNftCounts = async (collections) => {
-  var nftCounts = {};
-  if (collections){
-    for (const element of collections) {
-      var nftCount = await axios.post('/api/nft/collections', { collectionIds:[element.collectionId], countsOnly: true });
-      if(nftCount){
-        nftCounts[element.collectionId] = nftCount.data.collections[element.collectionId];
-      }
-    }
-    console.log(nftCounts);
-    return nftCounts;
-  }
-}*/
-  
-const getApp = async () => {
-  const appObject = (await axios.post('/api/app/info', { }));
-  return appObject.data.app;
-}
-
-const getSlot = async (slotId)=>{ // just used for testing
-  const slotsObject = (await axios.post('/api/slot/info', { slotId }));
-  return slotsObject.data.slot;
-}
-  
-const getCollections = async (activeCollections) => {
-  if (activeCollections) {
-    const collections = Object.keys(activeCollections);
-    if (!(collections.length > 0)) return [];
-
-    const collectionsObject = (await axios.post('/api/collection/info', { collectionIds: collections, idOnly: false, includeDeactivated: false }));
-    return collectionsObject.data.collections.sort(collectionSortMethods.maximum);
-  }
-}
-
-const getActiveCollections = async (slot) => {
-  if (slot) {
-    const activeCollectionsObject = await axios.post('/api/nft/slots', { slotIds: [slot], countsOnly: true });
-    //console.log(Object.keys(activeCollectionsObject.data.nfts));
-    return activeCollectionsObject.data.nfts;
-  }
-}
 
 export default InventorySlotPage;

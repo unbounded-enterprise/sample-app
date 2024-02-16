@@ -77,7 +77,7 @@ const PlayGamePage = () => {
   return (
     <>
       <Head>
-        <title>Rolltopia - Runway Roller</title>
+        <title>Sample App - Play</title>
         {/* Other head tags */}
       </Head>
       <main style={getMainPageStyle(portrait)}>

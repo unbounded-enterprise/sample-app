@@ -4,7 +4,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { MainLayout } from "src/components/main-layout";
 import { useAssetLayer } from "src/contexts/assetlayer-context.js";
 import { LoginContent } from "src/components/login-content";
@@ -77,12 +77,14 @@ const PlayGamePage = () => {
   return (
     <>
       <Head>
-        <title>Rolltopia - Runway Roller</title>
+        <title>Sample App - Play</title>
         {/* Other head tags */}
       </Head>
       <main style={getMainPageStyle(portrait)}>
         {retrievingSession ? (
-          <CircularProgress />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 64px)' }}>
+            <CircularProgress />
+          </Box>
         ) : (
           <Fragment>
             {!loggedIn ? (

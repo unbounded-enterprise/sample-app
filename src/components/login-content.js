@@ -136,10 +136,10 @@ export const LoginContent = ({
               width: "100%",
               mt: 1,
               mb: 3,
-              backgroundColor: "#FFE3A1",
+              backgroundColor: "#FBFBFB",
               color: "black",
               borderRadius: "5px",
-              border: "4px solid #6C2500",
+              border: "4px solid #AAAAAA",
               "& .MuiInputBase-input": {
                 height: "60px",
                 padding: "0 8px",

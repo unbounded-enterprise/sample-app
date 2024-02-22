@@ -1,123 +1,115 @@
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { Unity, useUnityContext } from "react-unity-webgl";
-import { AssetLayer } from '@assetlayer/sdk-client';
-import {Button, CircularProgress, Stack} from '@mui/material';
-import CryptoJS from "crypto-js";
+import React, {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Box, CircularProgress } from "@mui/material";
+import { MainLayout } from "src/components/main-layout";
+import { useAssetLayer } from "src/contexts/assetlayer-context.js";
+import { LoginContent } from "src/components/login-content";
+import Head from "next/head";
+import { getMainPageStyle } from "../theme/styles";
+import { useRouter } from "next/router";
+import { PlayUnity } from "src/components/play-unity";
 
+const backgroundWidth = 1920;
+const backgroundHeight = 1080;
+const imageAspectRatio = backgroundWidth / backgroundHeight;
 
-const assetlayer = (typeof window !== 'undefined') ? new AssetLayer({ baseUrl: '/api' }) : undefined;
+const PlayGamePage = () => {
+  const {
+    assetlayerClient,
+    loggedIn,
+    handleUserLogin,
+    user,
+    unityOn,
+    setUnityOn,
+    retrievingSession,
+  } = useAssetLayer(); // Use the hook to get the client and loggedIn state
 
-const Play = () => {
-  const [initialized, setInitialized] = useState(false);
-  const [sendMessage, setSendMessage] = useState(null);
-  const [unityLoaded, setUnityLoaded] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
-  const sendMessageRef = useRef(null);
-  const runOnceRef = useRef(false);
-
-  function onInitialized() {
-    setInitialized(true);
-  }
+  const [cardWidth, setCardWidth] = useState(0);
+  const [portrait, setPortrait] = useState(null);
+  const router = useRouter();
+  const cardRef = useRef(false);
 
   useEffect(() => {
-    if (!initialized || !unityLoaded || !assetlayer.didToken ) return;
+    const handleResize = () => {
+      setPortrait(window.innerWidth / window.innerHeight <= imageAspectRatio);
+      if (cardRef.current) {
+        // Measure the width of the card and set it to state
+        setCardWidth(cardRef.current.offsetWidth);
+      }
+    };
+    handleResize();
 
-    assetlayer.users.getUser().then(user => {
-          sendMessageRef.current("LoginReceiver", "SetDIDToken", assetlayer.didToken);
-  })}, [initialized, unityLoaded]);
+    window.addEventListener("resize", handleResize);
 
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
-    if (runOnceRef.current) return;
-
-    // assetlayer.initialize(onInitialized);
+    if (unityOn) {
+      // When the Unity game is active, prevent scrolling
+      document.body.style.overflow = "hidden";
+    } else {
+      // When the Unity game is not active, allow scrolling
+      document.body.style.overflow = "";
+    }
 
     return () => {
-      runOnceRef.current = true;
-    }
-  }, []);
-
-  async function logoutCLicked() {
-    assetlayer.logoutUser();
-    setInitialized(false);  
-  }
-
-
-  async function loginClicked() {
-    setShowLoading(true);
-    const loggedInAlready = await assetlayer.isUserLoggedIn();
-    if (!loggedInAlready) {
-      console.log('not logged in yet');
-      assetlayer.loginUser({onSuccess: onInitialized});
-    } else {
-      console.log('logged in already');
-      assetlayer.initialize(onInitialized);
-    }
-  }
-
-  return (<Fragment>
-    {!initialized ? 
-    <>
-      <Stack alignItems="center" justifyContent="center" sx={{height: '95vh'}}>
-      {showLoading? <CircularProgress /> 
-      :
-      <Button variant="contained" sx={{color: 'white', width: '40%'}} onClick={loginClicked}>Login</Button>
-      }
-      </Stack>
-    </>
-    : 
-    <>
-      <PlayUnity sendMessageRef={sendMessageRef} setUnityLoaded={setUnityLoaded}/>
-      <Button variant="contained" sx={{color: 'white'}} onClick={logoutCLicked}>Logout</Button>
-    </>
-    }
-  </Fragment>);
-}
-
-const PlayUnity = ({ sendMessageRef, setUnityLoaded }) => {
-  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext({
-    loaderUrl: "unity/Build/WEBGL.loader.js",
-    dataUrl: "unity/Build/WEBGL.data",
-    frameworkUrl: "unity/Build/WEBGL.framework.js",
-    codeUrl: "unity/Build/WEBGL.wasm",
-  });
-
-  const handleGameOver = useCallback((userName, score) => {
-  }, []);
-
-
-  useEffect(()=>{
-    setUnityLoaded(isLoaded);
-  },[isLoaded, setUnityLoaded])
-
-  useEffect(()=>{
-    if (sendMessage) {
-      sendMessageRef.current = sendMessage;
-    }
-  }, [sendMessage, sendMessageRef])
+      // Clean up by resetting the overflow property
+      document.body.style.overflow = "";
+    };
+  }, [unityOn]);
 
   useEffect(() => {
-    // addEventListener("GameOver", handleGameOver);
+    if (loggedIn && !unityOn) {
+      setUnityOn(true);
+    }
+  }, [loggedIn]);
 
-    // return () => (removeEventListener("GameOver", handleGameOver));
-  }, [addEventListener, removeEventListener, handleGameOver]);
+  async function handleClose() {
+    setUnityOn(false);
+    router.push("/");
+  }
 
-  return (<Fragment>
-    { !isLoaded && (
-      <p>Loading Application... {Math.round(loadingProgression * 100)}%</p>
-    ) }
-    <Unity unityProvider={unityProvider}
-      style={{ visibility: (isLoaded) ? "visible" : "hidden" }}
-    />
-  </Fragment>);
-}
+  return (
+    <>
+      <Head>
+        <title>Sample App - Play</title>
+        {/* Other head tags */}
+      </Head>
+      <main style={getMainPageStyle(portrait)}>
+        {retrievingSession ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 64px)' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Fragment>
+            {!loggedIn ? (
+              <LoginContent
+                assetlayerClient={assetlayerClient}
+                handleUserLogin={handleUserLogin}
+                cardRef={cardRef}
+                cardWidth={cardWidth}
+              />
+            ) : !unityOn ? (
+              <></>
+            ) : (
+              <PlayUnity
+                user={user}
+                didToken={assetlayerClient.didToken}
+                onClose={handleClose}
+              />
+            ) }
+          </Fragment>
+        )}
+      </main>
+    </>
+  );
+};
 
-/*
-Play.getLayout = (page) => (
-  <MainLayout>
-    { page }
-  </MainLayout>
-);
-*/
+PlayGamePage.getLayout = (page) => <MainLayout>{page}</MainLayout>;
 
-export default Play;
+export default PlayGamePage;

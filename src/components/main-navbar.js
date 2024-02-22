@@ -197,7 +197,7 @@ export const MainNavbar = (props) => {
               </a>
             </NextLink>
 
-            <NextLink href="/playgame" passHref legacyBehavior>
+            <NextLink href="/play" passHref legacyBehavior>
               <Button
                 sx={{
                   borderRadius: 1,

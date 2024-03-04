@@ -17,30 +17,15 @@ const Play = () => {
     if (!initialized || !assetlayer.didToken ) return;
 
     assetlayer.users.getUser().then(user => {
-          contactUnityEncrypted(assetlayer.didToken);
+          contactUnity(assetlayer.didToken);
           
 
   })}, [initialized]);
 
-  async function contactUnityEncrypted(token) {
-    const key = CryptoJS.enc.Utf8.parse('1234567812345678'); // 128-bit key
-    const iv = CryptoJS.enc.Utf8.parse('1234567812345678');  // 128-bit IV
-    
-    const encrypted = CryptoJS.AES.encrypt(
-      token, 
-      key,
-      { 
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      }
-    );
-  
-    const encryptedToken = encrypted.toString();
-  
+  async function contactUnity(token) {
     // Construct URL
-    const url = `http://localhost:8080/loginUnity?token=${encodeURIComponent(encryptedToken)}`;
-  
+    const url = `http://localhost:8080/loginUnity?token=${encodeURIComponent(token)}`;
+
     try {
       const response = await fetch(url);
       const data = await response.text();

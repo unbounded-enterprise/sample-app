@@ -6,7 +6,7 @@ import { Button, Card, CardMedia, Grid } from '@mui/material';
 import { MainLayout } from '../components/main-layout';
 import { HomeHero } from '../components/home/home-hero';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
-//import { AssetLayer } from '@assetlayer/sdk-client';
+//import { AssetLayer } from '@assetlayer/sdk';
 import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
 
 

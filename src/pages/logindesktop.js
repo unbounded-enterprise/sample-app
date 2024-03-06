@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { AssetLayer } from '@assetlayer/sdk-client';
+import { AssetLayer } from '@assetlayer/sdk';
 import CryptoJS from "crypto-js";
 import { CircularProgress, Stack } from "@mui/material";
 

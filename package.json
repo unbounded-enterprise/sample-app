@@ -13,7 +13,7 @@
     "create-env": "node ./src/utils/env-setup.js"
   },
   "dependencies": {
-    "@assetlayer/sdk-client": "^0.0.1-beta.5.5",
+    "@assetlayer/sdk": "^1.0.5",
     "@emotion/cache": "11.10.3",
     "@emotion/react": "11.10.4",
     "@emotion/server": "11.10.0",

@@ -9,7 +9,7 @@ import LoginButton from 'src/components/home/login-button';
 import { useAuth } from 'src/hooks/use-auth';
 import { parseBasicErrorClient } from 'src/_api_/auth-api';
 import { styled } from '@mui/system';
-//import { AssetLayer } from '@assetlayer/sdk-client';
+//import { AssetLayer } from '@assetlayer/sdk';
 import { useAssetLayer } from 'src/contexts/assetlayer-context.js'; // Import the hook
 
 

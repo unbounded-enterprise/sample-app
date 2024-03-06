@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import { errorHandling } from "../validate";
-import { AssetLayer } from "@assetlayer/sdk-client";
+import { AssetLayer } from "@assetlayer/sdk";
 
 export const assetlayerDidToken = new AssetLayer({ 
     appSecret: process.env.ASSETLAYER_APP_SECRET

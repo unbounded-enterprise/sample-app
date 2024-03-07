@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import { AssetLayer } from '@assetlayer/sdk-client';
+import { AssetLayer } from '@assetlayer/sdk';
 import {Button, CircularProgress, Stack} from '@mui/material';
 import CryptoJS from "crypto-js";
 
